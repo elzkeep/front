@@ -1,6 +1,34 @@
 import request from '~/global/request'
+/*
+enum type {
+    single = 1,
+    multi = 2
+}
 
-export default class Data {    
+
+interface Data {
+    id: int
+    topcategory: int
+    title: string
+    type: data.Type
+    category: int
+    order: int
+    report: int64
+    company: int64
+    date: string
+    
+}
+*/
+export default class Data {
+    static readonly type = { single: 1, multi: 2} as const 
+    static readonly types = ['', 'Single', 'Multi']
+        
+    
+    static getType(value: number) {
+        return this.types[value]
+    }
+    
+    
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
@@ -59,7 +87,7 @@ export default class Data {
         })
 
         if (res.items == null) {
-           res.items = []
+            res.items = []
         }
         return res
     }

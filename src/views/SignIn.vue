@@ -31,23 +31,22 @@ const item = reactive({
 
 async function clickSignin() {
   if (item.loginid === '') {
-    util.error('로그인 아이디를 입력하세요')
+    util.alert('로그인 아이디를 입력하세요')
     return
   }
 
   if (item.passwd === '') {
-    util.error('패스워드를 입력하세요')
+    util.alert('패스워드를 입력하세요')
     return
   }  
 
   const res = await Login.login(item)
   if (res.code === 'ok') {
-    store.commit('setRepair', null)
     util.login(store, res)
     router.push('/')
   } else {
-    console.log(res);
-    util.error('로그인 정보가 정확하지 않습니다')
+    console.log(res)
+    util.alert('로그인 정보가 정확하지 않습니다')
   }
 }
 

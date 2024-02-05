@@ -2,6 +2,11 @@
 
   <el-row style="border-bottom: 1px solid #ccc;height:">
     <el-col :span="12" style="text-align:left;">
+      <div style="display:flex;margin: 10px 10px 10px 10px;gap:10px;">
+      <img src="../../assets/logo.png" width="25" height="25" />      
+      <span style="font-size:20px;font-weight:bold;">지킴</span>
+      </div>
+      <!--
       <el-menu mode="horizontal" style="border:none;" v-if="data.apt.id == 0 && store.getters['getLevel'] == 'admin'">
         <el-menu-item index="7" @click="clickBase('/management/sales')" style="font-size:14px;font-weight:bold;">주소 관리</el-menu-item>
         <el-menu-item index="1" @click="clickBase('/management/apt')" style="font-size:14px;font-weight:bold;">작업 관리</el-menu-item>
@@ -11,6 +16,8 @@
         <el-menu-item index="6" @click="clickBase('/management/patrol/patrol')" style="font-size:14px;font-weight:bold;">순찰</el-menu-item>
         <el-menu-item index="2" @click="clickBase('/management/setting/user')" style="font-size:14px;font-weight:bold;">설정</el-menu-item>
       </el-menu>
+      -->
+      
       <div style="height:43px;font-size:20px;font-weight:bold;margin: 5px 0px 0px 5px;display:flex;padding-top:10px;" v-if="data.apt.id != 0">
         <div @click="clickHome" style="margin-left:10px;">
           <el-icon :size="25"><HomeFilled /></el-icon>

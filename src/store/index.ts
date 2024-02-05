@@ -4,8 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 export default createStore({
     state: {
         token: '',
-        user: null,
-        repair: null
+        user: null
     },
     mutations: {
         setToken(state, value) {
@@ -17,12 +16,8 @@ export default createStore({
         },
         setLogout(state) {            
             state.token = ''
-            state.repair = null
             state.user = null
-        },
-        setRepair(state, value) {
-            state.repair = value
-        },
+        }
     },
     getters: {
         isLogin(state) {
@@ -37,9 +32,6 @@ export default createStore({
         },
         getUser(state) {
             return state.user
-        },
-        getRepair(state) {
-            return state.repair
         },
         getLevel(state) {
             if (state.user == null) {

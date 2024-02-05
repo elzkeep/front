@@ -1,56 +1,23 @@
 import request from '~/global/request'
 /*
-enum level {
-    normal = 1,
-    manager = 2,
-    admin = 3,
-    rootadmin = 4
-}
-enum status {
-    use = 1,
-    notuser = 2
-}
 
 
-interface User {
+interface Licenselevel {
     id: int64
-    loginid: string
-    passwd: string
     name: string
-    email: string
-    tel: string
-    address: string
-    addressetc: string
-    joindate: string
-    careeryear: int
-    careermonth: int
-    level: user.Level
-    status: user.Status
-    company: int64
+    order: int
     date: string
     
 }
 */
-export default class User {
-    static readonly level = { normal: 1, manager: 2, admin: 3, rootadmin: 4} as const 
-    static readonly levels = ['', '일반', '팀장', '관리자', '전체관리자']
-    static readonly status = { use: 1, notuser: 2} as const 
-    static readonly statuss = ['', '사용', '사용안함']
+export default class Licenselevel {
         
-    
-    static getLevel(value: number) {
-        return this.levels[value]
-    }
-    
-    static getStatus(value: number) {
-        return this.statuss[value]
-    }
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/user',
+            url: '/api/licenselevel',
             data: item
         })
 
@@ -60,7 +27,7 @@ export default class User {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/user/batch',
+            url: '/api/licenselevel/batch',
             data: item
         })
 
@@ -70,7 +37,7 @@ export default class User {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/user',
+            url: '/api/licenselevel',
             data: item
         })
 
@@ -80,7 +47,7 @@ export default class User {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/user',
+            url: '/api/licenselevel',
             data: item
         })
 
@@ -90,7 +57,7 @@ export default class User {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/user/batch',
+            url: '/api/licenselevel/batch',
             data: item
         })
 
@@ -100,7 +67,7 @@ export default class User {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/user',
+            url: '/api/licenselevel',
             params: params
         })
 
@@ -113,7 +80,7 @@ export default class User {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/user/${id}`
+            url: `/api/licenselevel/${id}`
         })
 
         return res

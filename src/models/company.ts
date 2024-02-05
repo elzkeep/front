@@ -1,6 +1,51 @@
 import request from '~/global/request'
+/*
+enum type {
+    work = 1,
+    building = 2
+}
 
-export default class Company {    
+
+interface Company {
+    id: int
+    name: string
+    companyno: string
+    ceo: string
+    address: string
+    addressetc: string
+    buildingname: string
+    buildingcompanyno: string
+    buildingceo: string
+    buildingaddress: string
+    buildingaddressetc: string
+    type: company.Type
+    checkdate: int
+    managername: string
+    managertel: string
+    manageremail: string
+    contractstartdate: string
+    contractenddate: string
+    contractprice: int
+    billingdate: int
+    billingname: string
+    billingtel: string
+    billingemail: string
+    status: int
+    companygroup: int64
+    date: string
+    
+}
+*/
+export default class Company {
+    static readonly type = { work: 1, building: 2} as const 
+    static readonly types = ['', '점검', '건물']
+        
+    
+    static getType(value: number) {
+        return this.types[value]
+    }
+    
+    
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
@@ -59,7 +104,7 @@ export default class Company {
         })
 
         if (res.items == null) {
-           res.items = []
+            res.items = []
         }
         return res
     }

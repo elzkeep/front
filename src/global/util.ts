@@ -93,8 +93,15 @@ export default class util {
         return temp[0]
     }
 
+    static alert(str: string) {
+        ElMessageBox.alert(str, '', {
+            // if you want to disable its autofocus
+            // autofocus: false,
+            confirmButtonText: '닫기'            
+        })
+    }
     static info(str: string) {
-        ElMessage({message: str, duration: 1000})
+        //ElMessage({message: str, duration: 1000})
     }
 
     static error(str: string) {
@@ -133,117 +140,6 @@ export default class util {
         })
     }
 
-    static calculatePrice(direct: number, labor: number, cost: number) {
-        direct = this.getFloat(direct)
-        labor = this.getFloat(labor)
-        cost = this.getFloat(cost)
-        
-        let k = labor * 7.9/100
-        let l = (direct + labor) * 5.5/100
-        let m = labor * 3.75/100
-        let n = labor * 0.79/100
-        let o = labor * 3.23/100
-        let p = labor * 4.5/100
-
-        let q = o * 8.51/100
-        let r = labor * 2.3/100
-        let s = (direct + labor) * 3.09/100
-        let t = (direct + labor + cost) * 0.3/100
-        let u = (direct + labor + cost) * 0.07/100
-        let v = (direct + labor + cost) * 6/100
-        let w = (labor + cost + v) * 15/100
-
-        let x = direct + labor + cost + k + l + m + n + o + p + q + r + s + t + u + v + w
-        let y = x * 10/100
-
-        return parseInt(x + y)
-    }
-
-    static calculatePriceRate(direct: number, labor: number, cost: number, rate:number, parcelrate:number) {
-        direct = this.getFloat(direct)
-        labor = this.getFloat(labor)
-        cost = this.getFloat(cost)
-        rate = this.getFloat(rate)
-        parcelrate = this.getFloat(parcelrate)
-        
-        let k = labor * 7.9/100
-        let l = (direct + labor) * 5.5/100
-        let m = labor * 3.75/100
-        let n = labor * 0.79/100
-        let o = labor * 3.23/100
-        let p = labor * 4.5/100
-
-        let q = o * 8.51/100
-        let r = labor * 2.3/100
-        let s = (direct + labor) * 3.09/100
-        let t = (direct + labor + cost) * 0.3/100
-        let u = (direct + labor + cost) * 0.07/100
-        let v = (direct + labor + cost) * 6/100
-        let w = (labor + cost + v) * 15/100
-
-        let x = direct + labor + cost + k + l + m + n + o + p + q + r + s + t + u + v + w
-        let y = x * 10/100
-
-        let ret = (x+y)
-
-        if (rate != 0.0 && rate != 100.0) {
-            ret *= rate / 100.0
-        }
-
-        if (parcelrate != 0.0 && parcelrate != 100.0) {
-            ret *= parcelrate / 100.0
-        }
-
-        return parseInt(ret)
-    }
-
-    static calculateRepair(direct: number, labor: number, cost: number, rate:number, parcelrate:number, count:number, percent:number) {
-        direct = this.getFloat(direct)
-        labor = this.getFloat(labor)
-        cost = this.getFloat(cost)
-        rate = this.getFloat(rate)
-        parcelrate = this.getFloat(parcelrate)
-        count = this.getFloat(count)
-        percent = this.getFloat(percent)
-
-        /*
-        let k = labor * 7.9/100
-        let l = (direct + labor) * 5.5/100
-        let m = labor * 3.75/100
-        let n = labor * 0.79/100
-        let o = labor * 3.23/100
-        let p = labor * 4.5/100
-
-        let q = o * 8.51/100
-        let r = labor * 2.3/100
-        let s = (direct + labor) * 3.09/100
-        let t = (direct + labor + cost) * 0.3/100
-        let u = (direct + labor + cost) * 0.07/100
-        let v = (direct + labor + cost) * 6/100
-        let w = (labor + cost + v) * 15/100
-
-        let x = direct + labor + cost + k + l + m + n + o + p + q + r + s + t + u + v + w
-        let y = x * 10/100
-
-        let ret = (x+y)
-
-        if (rate != 0.0 && rate != 100.0) {
-            ret *= rate / 100.0
-        }
-
-        if (parcelrate != 0.0 && parcelrate != 100.0) {
-            ret *= parcelrate / 100.0
-        }
-        */
-
-        let ret = this.calculatePriceRate(direct, labor, cost, rate, parcelrate)
-
-        ret *= count
-        ret *= percent / 100.0
-
-        return parseInt(ret)
-    }
-    
     static getInt(value: any) {
         if (value == undefined || value == null) {
             return 0
@@ -376,15 +272,6 @@ export default class util {
         let temp = value.split('-')
 
         return `${temp[0]}년 ${temp[1]}월 ${temp[2]}일`
-    }
-
-    static reversPrice(directInt: number) {
-	      let value = util.getFloat(directInt)
-
-	      value = value * 10.0 / 11.0
-	      let direct = value * 100.0 / (100.0 + 5.5 + 3.09 + 0.3 + 0.07 + 6.0 + 0.9)
-
-	      return util.getInt(direct)
     }
 
     static getImagePath(filename: string, dir: string) {

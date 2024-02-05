@@ -26,5 +26,6 @@ const props = defineProps({
   background: #fafafa;
   font-size: 12px;
   padding:5px 5px;
+  text-align: left;
 }
 </style>

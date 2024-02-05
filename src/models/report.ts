@@ -1,6 +1,37 @@
 import request from '~/global/request'
+/*
+enum status {
+    newer = 1,
+    ing = 2,
+    check = 3,
+    complete = 4
+}
 
-export default class Report {    
+
+interface Report {
+    id: int64
+    title: string
+    period: int
+    number: int
+    checkdate: string
+    checktime: string
+    content: string
+    status: report.Status
+    company: int64
+    date: string
+    
+}
+*/
+export default class Report {
+    static readonly status = { newer: 1, ing: 2, check: 3, complete: 4} as const 
+    static readonly statuss = ['', '신규', '점검중', '점검완료', '작성완료']
+        
+    
+    static getStatus(value: number) {
+        return this.statuss[value]
+    }
+    
+    
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
@@ -59,7 +90,7 @@ export default class Report {
         })
 
         if (res.items == null) {
-           res.items = []
+            res.items = []
         }
         return res
     }

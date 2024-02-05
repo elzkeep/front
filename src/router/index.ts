@@ -4,7 +4,11 @@ import { useStore } from "vuex"
 import SignIn from '~/views/SignIn.vue'
 import SignUp from '~/views/SignUp.vue'
 
-import ManagementSettingUser from '~/views/management/setting/User.vue'
+import ManagementCompany from '~/views/management/Company.vue'
+import ManagementUser from '~/views/management/User.vue'
+import ManagementLicense from '~/views/management/License.vue'
+import ManagementBuilding from '~/views/management/Building.vue'
+import ManagementCustomer from '~/views/management/Customer.vue'
 
 import store from '~/store'
 
@@ -25,11 +29,35 @@ const routes = [
     component: SignUp
   },
   {
-    path: '/management/setting/user',
-    name: 'ManagementSettingUser',
+    path: '/management/company',
+    name: 'ManagementCompany',
     meta: { authorization: ['admin'] },
-    component: ManagementSettingUser
-  }
+    component: ManagementCompany
+  },
+  {
+    path: '/management/user',
+    name: 'ManagementUser',
+    meta: { authorization: ['admin'] },
+    component: ManagementUser
+  },
+  {
+    path: '/management/license',
+    name: 'ManagementLicene',
+    meta: { authorization: ['admin'] },
+    component: ManagementLicense
+  },
+  {
+    path: '/management/building',
+    name: 'ManagementBuilding',
+    meta: { authorization: ['admin'] },
+    component: ManagementBuilding
+  },
+  {
+    path: '/management/customer',
+    name: 'ManagementCustomer',
+    meta: { authorization: ['admin'] },
+    component: ManagementCustomer
+  }  
 ]
 
 const router = createRouter({
@@ -61,14 +89,14 @@ router.beforeEach(function (to, from, next) {
   
   if (to.path === '/signin' || to.path == '/') {
     if (level == 'normal' || level == 'manager') {  
-      const apt = store.getters['getUser'].apt
-      if (apt == undefined) {
+      const user = store.getters['getUser']
+      if (user == undefined) {
         next('/signin')
       } else {
-        next(`/${apt}/apt/apt`)
+        next(`/management/user`)
       }
     } else {
-      next('/management/setting/user')
+      next('/management/company')
     }
   } else {
     next()

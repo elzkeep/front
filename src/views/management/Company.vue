@@ -1,17 +1,19 @@
 <template>
-  <Title title="입력항목 관리" />
+  <Title title="업체 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
         
-    <el-select v-model.number="data.search.category" placeholder="분류" style="width:150px;">           
+    <el-select v-model.number="data.search.type" placeholder="분류" style="width:150px;">           
       <el-option
-        v-for="item in data.categorys"
+        v-for="item in data.types"
         :key="item.id"
         :label="item.name"
         :value="item.id"
       />
     </el-select>
 
+    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="width:300px;" @keyup.enter.native="clickSearch" />
+    
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
     
     <div style="flex:1;text-align:right;gap:5;">
@@ -22,21 +24,21 @@
 
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
-    <el-table-column type="selection" width="40" align="center" />    
-    <el-table-column label="분류" align="center" width="100">
-      <template #default="scope">
-        {{getCategory(scope.row.category)}}
-      </template>
-    </el-table-column>
-    <el-table-column prop="name" label="명칭" align="left" />
-    <el-table-column prop="remark" label="비고" align="left" />
+    <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="구분" align="center" width="100">
       <template #default="scope">
-        <span v-if="scope.row.type==1">기본</span>
-        <span v-if="scope.row.type==2">기타</span>
+        <span v-if="scope.row.type==1">점검회사</span>
+        <span v-if="scope.row.type==2">건물</span>
       </template>
     </el-table-column>    
-    <el-table-column prop="order" label="순번" align="center" width="100" />
+    <el-table-column prop="name" label="명칭" align="left" />
+    <el-table-column prop="remark" label="대표" align="left" width="100" />
+    <el-table-column prop="remark" label="주소" align="left">
+      <template #default="scope">
+        {{scope.row.address}} {{scope.row.addressetc}}
+      </template>      
+    </el-table-column>
+    <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>  
 
   
@@ -47,16 +49,12 @@
 
       <y-table>
         <y-tr>
-          <y-th>분류</y-th>
+          <y-th>구분</y-th>
           <y-td>
-            <el-select v-model.number="data.item.category" placeholder="분류" style="width:150px;">           
-              <el-option
-                v-for="item in data.categorys"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
+            <el-radio-group v-model.number="data.item.type">
+              <el-radio-button size="small" label="1">점검회사</el-radio-button>
+              <el-radio-button size="small" label="2">건물</el-radio-button>
+            </el-radio-group>
           </y-td>
         </y-tr>
         <y-tr>
@@ -66,26 +64,29 @@
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>비고</y-th>
+          <y-th>사업자번호</y-th>
           <y-td>
-            <el-input v-model="data.item.remark" />
+            <el-input v-model="data.item.companyno" />
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>구분</y-th>
+          <y-th>대표자</y-th>
           <y-td>
-            <el-radio-group v-model.number="data.item.type">
-              <el-radio-button size="small" label="1">기본</el-radio-button>
-              <el-radio-button size="small" label="2">기타</el-radio-button>
-            </el-radio-group>
+            <el-input v-model="data.item.ceo" />
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>순번</y-th>
+          <y-th>주소</y-th>
           <y-td>
-            <el-input v-model.number="data.item.order" />
+            <el-input v-model="data.item.address" />
           </y-td>
-        </y-tr>        
+        </y-tr>
+        <y-tr>
+          <y-th>상세주소</y-th>
+          <y-td>
+            <el-input v-model="data.item.addressetc" />
+          </y-td>
+        </y-tr>
       </y-table>
 
       <template #footer>
@@ -102,36 +103,30 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { Datacategory } from "~/models"
+import { Company } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
-import { v3ImgPreviewFn } from 'v3-img-preview'
 
 const { width, height } = size()
 
 const store = useStore()
 const route = useRoute()
 
-const model = Datacategory
-
-const headers = {
-  Authorization: 'Bearer ' + store.state.token
-}
+const model = Company
 
 const item = {
   id: 0,
-  type: 2,
-  filename: '',
   name: '',
-  use: 1,
-  order: 0,
-  periodic: 0,
+  companyno: '',
+  ceo: '',
+  address: '',
+  addressetc: '',
+  type: 1,
   date: ''
 }
 
 const data = reactive({
-  apt: 0,
   id: 0,
   mode: 'normal',
   items: [],
@@ -141,34 +136,15 @@ const data = reactive({
   item: util.clone(item),
   visible: false,
   search: {
-    category: 0
+    text: '',
+    type: 0
   },
-  categorys: [
+  types: [
     {id: 0, name: ' '},
-    {id: 1, name: '부위'},
-    {id: 2, name: '부재 - 빨강'},
-    {id: 10, name: '부재 - 파랑'},
-    {id: 3, name: '결함종류 - 빨강'},
-    {id: 11, name: '결함종류 - 파랑'},
-    {id: 4, name: '폭'},
-    {id: 5, name: '길이'},
-    {id: 6, name: '개소'},
-    {id: 7, name: '진행사항'},
-    {id: 8, name: '비고'}    
+    {id: 1, name: '점검회사'},
+    {id: 2, name: '건물'}        
   ]
 })
-
-function getCategory(pos) {
-  for (let i = 0; i < data.categorys.length; i++) {
-    let item = data.categorys[i]
-
-    if (item.id == pos) {
-      return item.name
-    }
-  }
-
-  return ''
-}
 
 async function clickSearch() {
   await getItems(true)
@@ -179,10 +155,11 @@ async function initData() {
 
 async function getItems() {
   let res = await model.find({
+    name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    category: data.search.category,
-    orderby: 'dc_category,dc_order,dc_id'
+    type: data.search.type,
+    orderby: 'c_id desc'
   })
 
   if (res.items == null) {
@@ -217,8 +194,6 @@ function clickUpdate(item, index) {
 }
 
 onMounted(async () => {
-  data.apt = parseInt(route.params.apt)
-  
   util.loading(true)
   
   await initData()
@@ -261,7 +236,7 @@ function clickDeleteMulti() {
       await model.remove(item)
     }
 
-    util.info('삭제되었습니다')
+    //util.info('삭제되었습니다')
     await getItems()
 
     util.loading(false)
@@ -274,16 +249,14 @@ async function clickSubmit() {
   let item = util.clone(data.item)
   
   item.type = util.getInt(item.type)
-  item.category = util.getInt(item.category)
-  item.order = util.getInt(item.order)
-
+  
   if (item.id > 0) {
     await model.update(item)
   } else {
     await model.insert(item)
   }
 
-  util.info('등록되었습니다')
+  //util.info('등록되었습니다')
   
   await getItems()
 
