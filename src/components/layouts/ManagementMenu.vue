@@ -8,23 +8,29 @@
 
     <el-menu-item index="2">
       <template #title>
+        <el-icon><Coin /></el-icon>팀 관리
+      </template>
+    </el-menu-item>
+
+    <el-menu-item index="3">
+      <template #title>
         <el-icon><User /></el-icon>직원 관리
       </template>
     </el-menu-item>    
     
-    <el-menu-item index="3">
+    <el-menu-item index="4">
       <template #title>
         <el-icon><Cpu /></el-icon>면허 관리
       </template>
     </el-menu-item>
 
-    <el-menu-item index="4">
+    <el-menu-item index="5">
       <template #title>
         <el-icon><OfficeBuilding /></el-icon>건물 관리
       </template>
     </el-menu-item>
 
-    <el-menu-item index="5">
+    <el-menu-item index="6">
       <template #title>
         <el-icon><Money /></el-icon>고객 관리
       </template>
@@ -46,12 +52,14 @@ const clickMenu = async (key: string, keyPath: string[]) => {
   if (key == '1') {
     router.push('/management/company')
   } else if (key == '2') {
-    router.push('/management/user')    
+    router.push('/management/department')
   } else if (key == '3') {
-    router.push('/management/license')
+    router.push('/management/user')    
   } else if (key == '4') {
-    router.push('/management/building')
+    router.push('/management/license')
   } else if (key == '5') {
+    router.push('/management/building')
+  } else if (key == '6') {
     router.push('/management/customer')    
   }
 }

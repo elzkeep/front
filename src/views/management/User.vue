@@ -2,7 +2,7 @@
   <Title title="직원 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level >= User.level.rootadmin">           
+    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;">           
       <el-option
         v-for="item in data.companys"
         :key="item.id"
@@ -24,9 +24,14 @@
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column label="업체" align="left" width="200" v-if="data.session.level >= User.level.rootadmin">
+    <el-table-column label="업체" align="left" width="200">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
+      </template>
+    </el-table-column>
+    <el-table-column label="팀" align="left" width="200">
+      <template #default="scope">
+        {{getDepartment(scope.row.department)}}
       </template>
     </el-table-column>
     <el-table-column prop="loginid" label="로그인아이디" align="left" />
@@ -53,12 +58,25 @@
   >
 
       <y-table>
-        <y-tr v-show="data.session.level >= User.level.rootadmin">
+        <y-tr>
           <y-th>업체</y-th>
           <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
+            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;" @change="changeCompany">           
               <el-option
                 v-for="item in data.companys"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>            
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>팀</y-th>
+          <y-td>
+            <el-select v-model.number="data.item.department" placeholder="팀" style="width:150px;">           
+              <el-option
+                v-for="item in data.departments"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
@@ -156,7 +174,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Company } from "~/models"
+import { User, Company, Department } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -182,6 +200,7 @@ const item = {
   level: 1,
   status: 1,
   company: 0,
+  department: 0,
   date: ''
 }
 
@@ -200,9 +219,11 @@ const data = reactive({
   visible: false,
   search: {
     text: '',
-    company: 0
+    company: 0,
+    department: 0
   },
   companys: [],
+  departments: [],
   levels: [
     {id: 0, name: ' '},
     {id: 1, name: '일반'},
@@ -225,28 +246,33 @@ async function initData() {
   
   data.companys = [{id: 0, name: ' '}, ...res.items]
 
-  if (data.session.level < User.level.rootadmin) {
-    data.levels =  [
-      {id: 0, name: ' '},
-      {id: 1, name: '일반'},
-      {id: 2, name: '팀장'},
-      {id: 3, name: '관리자'}
-    ]
-  }
+  /*
+     if (data.session.level < User.level.rootadmin) {
+     data.levels =  [
+     {id: 0, name: ' '},
+     {id: 1, name: '일반'},
+     {id: 2, name: '팀장'},
+     {id: 3, name: '관리자'}
+     ]
+     }
+   */
 }
 
 async function getItems() {
   console.log('getItems')
 
-  if (data.session.company > 0) {
-    data.search.company = data.session.company
-  }
+  /*
+     if (data.session.company > 0) {
+     data.search.company = data.session.company
+     }
+   */
   
   let res = await model.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
+    department: data.search.department,
     orderby: 'u_id desc'
   })
 
@@ -270,8 +296,10 @@ async function getItems() {
 }
 
 function clickInsert() {
+  data.departments = []
+  
   data.item = util.clone(item)
-  data.item.company = data.session.company
+  //data.item.company = data.session.company
   data.item.passwd2 = data.item.passwd
   data.visible = true  
 }
@@ -282,7 +310,7 @@ function clickUpdate(item, index) {
   }
   
   data.item = util.clone(item)
-  data.item.company = data.session.company
+  //data.item.company = data.session.company
   data.item.passwd2 = data.item.passwd
   data.visible = true  
 }
@@ -291,7 +319,7 @@ onMounted(async () => {
   data.session = store.getters['getUser']
   
   util.loading(true)
-    
+  
   await initData()
   await getItems()
 
@@ -347,6 +375,11 @@ async function clickSubmit() {
     return
   }
 
+  if (item.department == 0) {
+    util.alert('팀을 선택하세요')
+    return
+  }
+
   if (item.loginid == '') {
     util.alert('로그인아이디를 입력하세요')
     return
@@ -380,6 +413,7 @@ async function clickSubmit() {
   util.loading(true)
   
   item.company = util.getInt(item.company)
+  item.department = util.getInt(item.department)
   item.careeryear = util.getInt(item.careeryear)
   item.careermonth = util.getInt(item.careermonth)
   item.joindate = util.convertDBDate(item.joindate)
@@ -408,6 +442,16 @@ function getCompany(id) {
   return items[0].name
 }
 
+function getDepartment(id) {
+  let items = data.departments.filter(item => item.id == id)
+
+  if (items.length == 0) {
+    return ''
+  }
+
+  return items[0].name
+}
+
 function getLevel(id) {
   let items = data.levels.filter(item => item.id == id)
 
@@ -416,5 +460,19 @@ function getLevel(id) {
   }
 
   return items[0].name
+}
+
+async function changeCompany(item) {
+  let res = await Department.find({
+    company: item,
+    page: data.page,
+    pagesize: data.pagesize,
+    orderby: 'de_order,de_name'
+  })
+  
+  data.departments = [{id: 0, name: ' '}, ...res.items]
+
+  data.item.department = 0;
+
 }
 </script>

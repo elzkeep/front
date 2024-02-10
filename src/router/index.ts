@@ -5,6 +5,7 @@ import SignIn from '~/views/SignIn.vue'
 import SignUp from '~/views/SignUp.vue'
 
 import ManagementCompany from '~/views/management/Company.vue'
+import ManagementDepartment from '~/views/management/Department.vue'
 import ManagementUser from '~/views/management/User.vue'
 import ManagementLicense from '~/views/management/License.vue'
 import ManagementBuilding from '~/views/management/Building.vue'
@@ -33,6 +34,12 @@ const routes = [
     name: 'ManagementCompany',
     meta: { authorization: ['admin'] },
     component: ManagementCompany
+  },
+  {
+    path: '/management/department',
+    name: 'ManagementDepartment',
+    meta: { authorization: ['admin'] },
+    component: ManagementDepartment
   },
   {
     path: '/management/user',
