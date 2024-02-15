@@ -38,6 +38,11 @@
       </template>      
     </el-table-column>
     <el-table-column prop="date" label="등록일" align="center" width="150" />
+    <el-table-column prop="remark" label="" align="center" width="100">
+      <template #default="scope">
+        <el-button size="small" class="filter-item" type="primary" @click="clickFacility(scope.row.id)">설비 관리</el-button>
+      </template>
+    </el-table-column>
   </el-table>  
 
   
@@ -191,7 +196,7 @@ function clickInsert() {
 }
 
 function clickUpdate(item, index) {
-  if (index.no == 0) {
+  if (index.no == 0 || index.no == 6) {
     return
   }
 
@@ -258,7 +263,7 @@ async function clickSubmit() {
   }
 
   util.loading(true)
-    
+
   item.company = util.getInt(item.company)
   
   if (item.id > 0) {
@@ -285,4 +290,8 @@ function getCompany(id) {
   return items[0].name
 }
 
+function clickFacility(id) {
+  console.log(id)
+  router.push(`/building/${id}/facility`)
+}
 </script>

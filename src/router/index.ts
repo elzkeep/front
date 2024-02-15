@@ -11,6 +11,8 @@ import ManagementLicense from '~/views/management/License.vue'
 import ManagementBuilding from '~/views/management/Building.vue'
 import ManagementCustomer from '~/views/management/Customer.vue'
 
+import BuildingFacility from '~/views/building/Facility.vue'
+
 import store from '~/store'
 
 const routes = [
@@ -64,7 +66,13 @@ const routes = [
     name: 'ManagementCustomer',
     meta: { authorization: ['admin'] },
     component: ManagementCustomer
-  }  
+  },
+  {
+    path: '/building/:id/facility',
+    name: 'BuildingFacility',
+    meta: { authorization: ['admin'] },
+    component: BuildingFacility
+  }
 ]
 
 const router = createRouter({

@@ -108,5 +108,7 @@ export default class Customer {
         })
 
         return res
-    }        
+    }
+
+
 }

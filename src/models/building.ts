@@ -89,5 +89,7 @@ export default class Building {
         })
 
         return res
-    }        
+    }
+
+
 }

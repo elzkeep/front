@@ -128,5 +128,23 @@ export default class Item {
         })
 
         return res
-    }        
+    }
+
+
+
+     static async deleteByReportTopcategory(report ,topcategory) {
+        let item = {
+          report ,topcategory
+        }
+        
+        const res = await request({
+            method: 'DELETE',
+            url: '/api/item/byreporttopcategory',
+            data: item
+        })
+
+        return res
+    }
+    
+
 }

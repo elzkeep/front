@@ -2,23 +2,34 @@ import request from '~/global/request'
 /*
 
 
-interface Department {
+interface Facility {
     id: int64
-    name: string
-    order: int
-    company: int64
+    category: int
+    parent: int64
+    value1: string
+    value2: string
+    value3: string
+    value4: string
+    value5: string
+    value6: string
+    value7: string
+    value8: string
+    value9: string
+    value10: string
+    content: string
+    building: int64
     date: string
     
 }
 */
-export default class Department {
+export default class Facility {
         
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/department',
+            url: '/api/facility',
             data: item
         })
 
@@ -28,7 +39,7 @@ export default class Department {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/department/batch',
+            url: '/api/facility/batch',
             data: item
         })
 
@@ -38,7 +49,7 @@ export default class Department {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/department',
+            url: '/api/facility',
             data: item
         })
 
@@ -48,7 +59,7 @@ export default class Department {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/department',
+            url: '/api/facility',
             data: item
         })
 
@@ -58,7 +69,7 @@ export default class Department {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/department/batch',
+            url: '/api/facility/batch',
             data: item
         })
 
@@ -68,7 +79,7 @@ export default class Department {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/department',
+            url: '/api/facility',
             params: params
         })
 
@@ -81,11 +92,27 @@ export default class Department {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/department/${id}`
+            url: `/api/facility/${id}`
         })
 
         return res
     }
 
+
+
+     static async deleteByBuildingCategory(building ,category) {
+        let item = {
+          building ,category
+        }
+        
+        const res = await request({
+            method: 'DELETE',
+            url: '/api/facility/bybuildingcategory',
+            data: item
+        })
+
+        return res
+    }
+    
 
 }

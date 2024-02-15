@@ -84,5 +84,7 @@ export default class Licensecategory {
         })
 
         return res
-    }        
+    }
+
+
 }

@@ -102,5 +102,7 @@ export default class Report {
         })
 
         return res
-    }        
+    }
+
+
 }

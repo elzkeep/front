@@ -118,5 +118,13 @@ export default class User {
         })
 
         return res
-    }        
+    }
+
+
+    
+
+    
+
+    
+
 }
