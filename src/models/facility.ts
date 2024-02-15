@@ -16,6 +16,16 @@ interface Facility {
     value8: string
     value9: string
     value10: string
+    value11: string
+    value12: string
+    value13: string
+    value14: string
+    value15: string
+    value16: string
+    value17: string
+    value18: string
+    value19: string
+    value20: string
     content: string
     building: int64
     date: string

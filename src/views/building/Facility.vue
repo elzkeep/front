@@ -9,7 +9,7 @@
     </el-tab-pane>
     <el-tab-pane label="발전설비" name="totalplan">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-
+        <Generator :id="data.id" />
       </div>
     </el-tab-pane>
     <el-tab-pane label="태양광 발전" name="plan">

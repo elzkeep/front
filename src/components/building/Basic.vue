@@ -17,7 +17,7 @@
     <y-tr>
       <y-th>수전형태</y-th>
       <y-td>
-        <el-radio-group v-model.number="data.item.value3">
+        <el-radio-group v-model="data.item.value3">
           <el-radio-button size="small" label="1">저압</el-radio-button>
           <el-radio-button size="small" label="2">특고압</el-radio-button>
         </el-radio-group>
@@ -26,7 +26,7 @@
     <y-tr>
       <y-th>수전위치</y-th>
       <y-td style="display:flex;border: none !important;gap:10px;">
-        <el-select v-model.number="data.item.value4" placeholder="" style="width:150px;">
+        <el-select v-model="data.item.value4" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.positions"
             :key="item.id"
@@ -50,7 +50,7 @@
     </y-tr>
     <y-tr>
       <y-td>
-        <el-select v-model.number="data.item.value5" placeholder="" style="width:150px;">
+        <el-select v-model="data.item.value5" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.volts"
             :key="item.id"
@@ -62,7 +62,7 @@
         <el-input v-model="data.item.value6" style="margin-left:5px;width:100px;" v-if="data.item.value5 == 3" />
       </y-td>
       <y-td>
-        <el-select v-model.number="data.item.value7" placeholder="" style="width:150px;">
+        <el-select v-model="data.item.value7" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.faucets"
             :key="item.id"
@@ -73,7 +73,7 @@
       </y-td>
 
       <y-td>
-        <el-select v-model.number="data.item.value8" placeholder="" style="width:150px;">
+        <el-select v-model="data.item.value8" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.sides"
             :key="item.id"
@@ -95,7 +95,7 @@
     </y-tr>
     <y-tr v-for="(item, index) in data.items">
       <y-td>
-        <el-select v-model.number="data.items[index].value1" placeholder="" style="width:150px;" @change="changeVolt">
+        <el-select v-model="data.items[index].value1" placeholder="" style="width:150px;" @change="changeVolt">
           <el-option
             v-for="item in data.volts"
             :key="item.id"
@@ -107,7 +107,7 @@
         <el-input v-model="data.items[index].value2" style="margin-left:5px;width:100px;" v-if="data.items[index].value1 == 3" />
       </y-td>
       <y-td>
-        <el-select v-model.number="data.items[index].value3" placeholder="" style="width:150px;">
+        <el-select v-model="data.items[index].value3" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.supplys"
             :key="item.id"
@@ -117,7 +117,7 @@
         </el-select>
       </y-td>
       <y-td>
-        <el-select v-model.number="data.items[index].value4" placeholder="" style="width:150px;">
+        <el-select v-model="data.items[index].value4" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.sides"
             :key="item.id"
@@ -184,7 +184,7 @@
         <el-input v-model="data.transs[index].value1" style="width:150px;" />        
       </y-td>
       <y-td>
-        <el-select v-model.number="data.transs[index].value2" placeholder="" style="width:80px;">
+        <el-select v-model="data.transs[index].value2" placeholder="" style="width:80px;">
           <el-option
             v-for="item in data.forms"
             :key="item.id"
@@ -238,7 +238,7 @@
         <el-input v-model="data.highs[index].value1" style="width:150px;" />        
       </y-td>
       <y-td>
-        <el-select v-model.number="data.highs[index].value2" placeholder="" style="width:80px;">
+        <el-select v-model="data.highs[index].value2" placeholder="" style="width:80px;">
           <el-option
             v-for="item in data.names"
             :key="item.id"
@@ -285,7 +285,7 @@
               <el-input v-model="data.highs[index].content[index2].value1" style="width:150px;" />        
             </y-td>
             <y-td>
-              <el-select v-model.number="data.highs[index].content[index2].value2" placeholder="" style="width:80px;">
+              <el-select v-model="data.highs[index].content[index2].value2" placeholder="" style="width:80px;">
                 <el-option
                   v-for="item in data.relaynames"
                   :key="item.id"
@@ -308,7 +308,7 @@
             </y-td>
 
             <y-td>
-              <el-select v-model.number="data.highs[index].content[index2].value7" placeholder="" style="width:80px;">
+              <el-select v-model="data.highs[index].content[index2].value7" placeholder="" style="width:80px;">
                 <el-option
                   v-for="item in data.transs"
                   :key="item.value1"
@@ -566,7 +566,7 @@ async function clickSubmit() {
   await model.deleteByBuildingCategory(data.id, 11)
 
   for (let i = 0; i < data.items.length; i++) {
-    let item = makeData(data.items[i])
+    let item = makeData(util.clone(data.items[i]))
     item.building = data.id
     item.category = 11
     
@@ -576,7 +576,7 @@ async function clickSubmit() {
   await model.deleteByBuildingCategory(data.id, 12)
 
   for (let i = 0; i < data.transs.length; i++) {
-    let item = makeData(data.transs[i])
+    let item = makeData(util.clone(data.transs[i]))
     item.building = data.id
     item.category = 12
     

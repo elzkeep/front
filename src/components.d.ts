@@ -32,6 +32,7 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    Generator: typeof import('./components/building/Generator.vue')['default']
     InquiryInsert: typeof import('./components/management/InquiryInsert.vue')['default']
     ManagementMenu: typeof import('./components/layouts/ManagementMenu.vue')['default']
     PageTitle: typeof import('./components/PageTitle.vue')['default']
