@@ -163,6 +163,8 @@ const route = useRoute()
 
 const model = Facility
 
+const category = 20
+
 const item = {
   id: 0,
   value1: '',
@@ -223,7 +225,7 @@ async function initData() {
 async function getItems() {
   let res = await model.find({
     building: data.id,
-    category: 20,
+    category: category,
     orderby: 'f_id'
   })
 
@@ -272,12 +274,12 @@ function makeData(item) {
 async function clickSubmit() {
   util.loading(true)
 
-  await model.deleteByBuildingCategory(data.id, 20)
+  await model.deleteByBuildingCategory(data.id, category)
 
   for (let i = 0; i < data.items.length; i++) {
     let item = makeData(util.clone(data.items[i]))
     item.building = data.id
-    item.category = 20
+    item.category = category
 
     await model.insert(item)
   }

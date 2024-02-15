@@ -35,7 +35,7 @@
           />
         </el-select>
 
-        <el-input v-model="data.item.value5" v-if="data.item.value4 == 7" />
+        <el-input v-model="data.item.value5" v-if="data.item.value4 == '7'" />
       </y-td>
     </y-tr>        
   </y-table>
@@ -59,7 +59,7 @@
           />
         </el-select>
 
-        <el-input v-model="data.item.value6" style="margin-left:5px;width:100px;" v-if="data.item.value5 == 3" />
+        <el-input v-model="data.item.value6" style="margin-left:5px;width:100px;" v-if="data.item.value5 == '3'" />
       </y-td>
       <y-td>
         <el-select v-model="data.item.value7" placeholder="" style="width:150px;">
@@ -81,7 +81,7 @@
             :value="item.id"
           />
         </el-select>        
-        <el-input v-model="data.item.value9" style="margin-left:5px;width:100px;" v-if="data.item.value8 == 13" />        
+        <el-input v-model="data.item.value9" style="margin-left:5px;width:100px;" v-if="data.item.value8 == '13'" />        
       </y-td>
     </y-tr>
   </y-table>
@@ -104,7 +104,7 @@
           />
         </el-select>
 
-        <el-input v-model="data.items[index].value2" style="margin-left:5px;width:100px;" v-if="data.items[index].value1 == 3" />
+        <el-input v-model="data.items[index].value2" style="margin-left:5px;width:100px;" v-if="data.items[index].value1 == '3'" />
       </y-td>
       <y-td>
         <el-select v-model="data.items[index].value3" placeholder="" style="width:150px;">
@@ -126,7 +126,7 @@
           />
         </el-select>
 
-        <el-input v-model="data.items[index].value5" style="margin-left:5px;width:100px;" v-if="data.items[index].value4 == 13" />          
+        <el-input v-model="data.items[index].value5" style="margin-left:5px;width:100px;" v-if="data.items[index].value4 == '13'" />          
       </y-td>        
       <y-td style="text-align:center;">
         <el-button v-if="index == 0" size="small" class="filter-item" type="primary" @click="clickAdd"><el-icon><Plus /></el-icon></el-button>
@@ -219,9 +219,9 @@
     </y-tr>
   </y-table>
   
-  <Title title="고압차단기" v-if="data.item.value3 == 2" />
+  <Title title="고압차단기" v-if="data.item.value3 == '2'" />
 
-  <y-table style="margin-top:10px;" v-if="data.item.value3 == 2">
+  <y-table style="margin-top:10px;" v-if="data.item.value3 == '2'">
     <y-tr>
       <y-th>설치장소</y-th>
       <y-th>차단기명</y-th>

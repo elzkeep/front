@@ -14,7 +14,7 @@
     </el-tab-pane>
     <el-tab-pane label="태양광 발전" name="plan">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-
+        <Sunlight :id="data.id" />
       </div>
     </el-tab-pane>
     <el-tab-pane label="전기차 충전기" name="year">
@@ -24,7 +24,7 @@
     </el-tab-pane>
     <el-tab-pane label="ESS" name="combine">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-
+        <Ess :id="data.id" />
       </div>
     </el-tab-pane>
     <el-tab-pane label="UPS" name="summary">
