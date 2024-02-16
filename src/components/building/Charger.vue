@@ -10,8 +10,62 @@
     </y-tr>
     <y-tr>
       <y-th>설치장소</y-th>
+      <y-td>        
+        <el-input v-model="data.item.value2" style="width:200px;" />
+      </y-td>
+    </y-tr>
+    <y-tr>
+      <y-th>전압</y-th>
       <y-td>
-        <el-select v-model="data.item.value2" placeholder="" style="width:150px;">
+        <div style="display:flex;justify-content: space-between;">
+          <div>
+            <el-select v-model="data.item.value3" placeholder="" style="width:150px;">
+              <el-option
+                v-for="item in data.volts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+
+            <el-input v-model="data.item.value4" style="margin-left:5px;width:100px;" v-if="data.item.value3 == '4'" />
+          </div>
+          <el-button size="small" class="filter-item" type="success" @click="clickRead">수배전설비와 동일</el-button>
+        </div>
+      </y-td>
+    </y-tr>
+    <y-tr>
+      <y-th>용량</y-th>
+      <y-td>
+        <el-input v-model="data.item.value5" style="width:50px;" /> V        
+      </y-td>
+    </y-tr>        
+  </y-table>
+
+  <div style="display:flex;justify-content: space-between;">    
+    <Title title="충전설비" />
+    <div style="margin-top:20px;">총 {{data.total}} kW</div>
+  </div>
+
+<y-table style="margin-top:10px;">
+    <y-tr>
+      <y-th>설치현황</y-th>
+      <y-th>설치장소</y-th>
+      <y-th>충전형식</y-th>
+      <y-th>출력전압</y-th>
+      <y-th>충전용량</y-th>
+      <y-th>제조사</y-th>
+      <y-th>모델명</y-th>
+      <y-th>제작년월</y-th>
+      <y-th style="width:30px;"></y-th>
+    </y-tr>
+    <y-tr v-for="(item, index) in data.items">
+      <y-td>
+        <el-input v-model="data.items[index].value1" style="width:50px;" @keyup="changeValue" /> kW X <el-input v-model="data.items[index].value2" style="width:30px;" @keyup="changeValue" /> 대
+        
+      </y-td>
+      <y-td>
+        <el-select v-model="data.items[index].value2" placeholder="" style="width:150px;">
           <el-option
             v-for="item in data.positions"
             :key="item.id"
@@ -20,98 +74,43 @@
           />
         </el-select>
 
-        <el-input v-model="data.item.value3" style="margin-left:5px;width:100px;" v-if="data.item.value2 == '4'" />        
+        <el-input v-model="data.items[index].value3" style="margin-left:5px;width:100px;" v-if="data.items[index].value2 == '3'" />
       </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>발전전압</y-th>
       <y-td>
-        <el-select v-model="data.item.value4" placeholder="" style="width:150px;">
+        <el-select v-model="data.items[index].value4" placeholder="" style="width:150px;">
           <el-option
-            v-for="item in data.volts"
+            v-for="item in data.types"
             :key="item.id"
             :label="item.name"
             :value="item.id"
           />
         </el-select>
-
-        <el-input v-model="data.item.value5" style="margin-left:5px;width:100px;" v-if="data.item.value4 == '3'" />
+        
       </y-td>
+      <y-td>
+        <el-input v-model="data.items[index].value5" style="width:100px;" /> V
+      </y-td>
+      <y-td>
+        <el-input v-model="data.items[index].value6" style="width:100px;" /> kVA
+      </y-td>
+      <y-td>
+        <el-input v-model="data.items[index].value7" />
+      </y-td>
+      <y-td>
+        <el-input v-model="data.items[index].value8" />
+      </y-td>
+      <y-td>
+        <el-input v-model="data.items[index].value9" style="width:50px;" /> 년 <el-input v-model="data.items[index].value10" style="width:30px;" /> 월
+      </y-td>
+      <y-td style="text-align:center;">
+        <el-button v-if="index == 0" size="small" class="filter-item" type="primary" @click="clickAdd"><el-icon><Plus /></el-icon></el-button>
+        <el-button v-if="index != 0" size="small" class="filter-item" type="danger" @click="clickDelete(index)"><el-icon><Close /></el-icon></el-button>
+      </y-td>            
     </y-tr>
-    <y-tr>
-      <y-th>발전용량</y-th>
-      <y-td>
-        <el-input v-model="data.item.value6" style="width:50px;" /> V        
-      </y-td>
-    </y-tr>        
-  </y-table>
-
-  <Title title="태양광 모듈" />  
-
-  <y-table>
-    <y-tr>
-      <y-th style="width:100px;">형식</y-th>
-      <y-td>
-        <el-input v-model="data.item.value7" />        
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>최대전력용량</y-th>
-      <y-td>
-        <el-input v-model="data.item.value8" style="width:50px;" /> kW        
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>최대동작전압</y-th>
-      <y-td>
-        <el-input v-model="data.item.value9" style="width:50px;" /> V
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>최대동작전류</y-th>
-      <y-td>
-        <el-input v-model="data.item.value10" style="width:50px;" /> A        
-      </y-td>
-    </y-tr>        
-  </y-table>
+</y-table>
 
 
-  <Title title="인버터" />  
 
-  <y-table>
-    <y-tr>
-      <y-th style="width:100px;">형식</y-th>
-      <y-td>
-        <el-input v-model="data.item.value11" />        
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>정격용량</y-th>
-      <y-td>
-        <el-input v-model="data.item.value12" style="width:50px;" /> kW        
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>최소입력전압</y-th>
-      <y-td>
-        <el-input v-model="data.item.value13" style="width:50px;" /> V
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>최대입력전압</y-th>
-      <y-td>
-        <el-input v-model="data.item.value14" style="width:50px;" /> V        
-      </y-td>
-    </y-tr>
-    <y-tr>
-      <y-th>출력전압</y-th>
-      <y-td>
-        <el-input v-model="data.item.value15" style="width:50px;" /> V        
-      </y-td>
-    </y-tr>
-  </y-table>
-
-  
   <div style="margin-top:10px;text-align:left;">
     <el-button class="filter-item" type="success" @click="clickSubmit">저장</el-button>
   </div>
@@ -172,18 +171,25 @@ const data = reactive({
   item: util.clone(item),
   positions: [
     {id: '0', name: ' '},
-    {id: '1', name: '옥상'},
-    {id: '2', name: '옥외'},
-    {id: '3', name: '임야'},
-    {id: '4', name: '직접입력'}        
+    {id: '1', name: '옥내'},
+    {id: '2', name: '옥외'},    
+    {id: '3', name: '직접입력'}        
+  ],
+  types: [
+    {id: '0', name: ' '},
+    {id: '1', name: 'DC차데모'},
+    {id: '2', name: 'DC콤보'},
+    {id: '3', name: 'AC3상'}        
   ],
   volts: [
     {id: '0', name: ' '},
     {id: '1', name: '380/220V'},
     {id: '2', name: '220V'},
-    {id: '3', name: '직접입력'}        
+    {id: '3', name: '22,900V'},    
+    {id: '4', name: '직접입력'}        
   ],
-  items: []    
+  items: [],
+  total: 0
 })
 
 async function initData() {
@@ -201,8 +207,24 @@ async function getItems() {
   } else {
     res = await Building.get(data.id)    
     
-    data.item.value1 = res.item.name + ' 태양광발전'
+    data.item.value1 = res.item.name + ' EV충전기'
   }
+
+  res = await model.find({
+    building: data.id,
+    category: category + 1,
+    orderby: 'f_id'
+  })
+  
+  data.items = res.items
+  
+  if (data.items.length == 0) {
+    data.items.push(
+      util.clone(item)
+    )
+  }
+
+  changeValue()
 }
 
 onMounted(async () => {
@@ -215,13 +237,6 @@ onMounted(async () => {
 
   util.loading(false)
 })
-
-function clickDelete(pos) {
-  let items = util.clone(data.items)
-
-  items.splice(pos, 1)
-  data.items = items
-}
 
 function makeData(item) {
   for (let i = 1; i <= 20; i++) {
@@ -244,11 +259,73 @@ async function clickSubmit() {
   } else {
     await model.insert(item)
   }
+
+  await model.deleteByBuildingCategory(data.id, category + 1)
+
+  for (let i = 0; i < data.items.length; i++) {
+    let item = makeData(util.clone(data.items[i]))
+    item.building = data.id
+    item.category = category + 1
+    
+    await model.insert(item)
+  }
   
   util.alert('저장되었습니다')
   
   util.loading(false)  
 }
 
+function clickAdd() {
+  data.items.push(
+    util.clone(item)    
+  )
+}
+
+function clickDelete(pos) {
+  let items = util.clone(data.items)
+
+  items.splice(pos, 1)
+  data.items = items
+}
+
+function changeValue() {
+  let total = 0
+  for (let i = 0; i < data.items.length; i++) {
+    let item = data.items[i]
+
+    let value1 = util.getInt(item.value1)
+    let value2 = util.getInt(item.value2)
+
+    total += value1 * value2
+  }
+
+  data.total = total
+}
+
+async function clickRead() {
+  let res = await model.find({
+    building: data.id,
+    category: 10,
+    orderby: 'f_id'
+  })
+
+  if (res.items.length == 0) {
+    return
+  }
+
+  let item = res.items[0]
+
+  data.item.value5 = item.value2
+
+  if (item.value5 == '1') {
+    data.item.value3 = '1'
+  } else if (item.value5 == '2') {
+    data.item.value3 = '3'
+  } else if (item.value5 == '3') {
+    data.item.value3 = '4'
+    data.item.value4 = item.value6
+  }
+  
+}
 </script>
 

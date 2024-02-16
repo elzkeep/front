@@ -19,7 +19,7 @@
     </el-tab-pane>
     <el-tab-pane label="전기차 충전기" name="year">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-
+        <Charger :id="data.id" />
       </div>
     </el-tab-pane>
     <el-tab-pane label="ESS" name="combine">
