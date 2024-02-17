@@ -4,55 +4,55 @@
   <el-tabs v-model="data.menu" @tab-click="clickTab">
     <el-tab-pane label="수배전설비" name="basic">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-        <Basic :id="data.id" />
+        <Fuel :id="data.id" />
       </div>
     </el-tab-pane>
-    <el-tab-pane label="발전설비" name="totalplan">
+    <el-tab-pane label="발전설비" name="generator">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
         <Generator :id="data.id" />
       </div>
     </el-tab-pane>
-    <el-tab-pane label="태양광 발전" name="plan">
+    <el-tab-pane label="태양광 발전" name="sunlight">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
         <Sunlight :id="data.id" />
       </div>
     </el-tab-pane>
-    <el-tab-pane label="전기차 충전기" name="year">
+    <el-tab-pane label="전기차 충전기" name="charger">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
         <Charger :id="data.id" />
       </div>
     </el-tab-pane>
-    <el-tab-pane label="ESS" name="combine">
+    <el-tab-pane label="ESS" name="ess">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
         <Ess :id="data.id" />
       </div>
     </el-tab-pane>
-    <el-tab-pane label="UPS" name="summary">
+    <el-tab-pane label="UPS" name="ups">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
 
       </div>
     </el-tab-pane>
-    <el-tab-pane label="연료전지" name="summary">
+    <el-tab-pane label="연료전지" name="fuel">
+      <div :style="{'height': data.height, 'overflow': 'auto'}">
+        <Fuel :id="data.id" />
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="풍력발전" name="wind">
+      <div :style="{'height': data.height, 'overflow': 'auto'}">
+        <Wind :id="data.id" />
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="수력발전" name="water">
+      <div :style="{'height': data.height, 'overflow': 'auto'}">
+        <Water :id="data.id" />
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="소방펌프 발전기" name="pump">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
 
       </div>
     </el-tab-pane>
-    <el-tab-pane label="풍력발전" name="summary">
-      <div :style="{'height': data.height, 'overflow': 'auto'}">
-
-      </div>
-    </el-tab-pane>
-    <el-tab-pane label="수력발전" name="summary">
-      <div :style="{'height': data.height, 'overflow': 'auto'}">
-
-      </div>
-    </el-tab-pane>
-    <el-tab-pane label="소방펌프 발전기" name="summary">
-      <div :style="{'height': data.height, 'overflow': 'auto'}">
-
-      </div>
-    </el-tab-pane>
-    <el-tab-pane label="공동주택 세대점검" name="summary">
+    <el-tab-pane label="공동주택 세대점검" name="apt">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
 
       </div>
