@@ -181,7 +181,7 @@
     </y-tr>
     <y-tr v-for="(item, index) in data.transs">
       <y-td>
-        <el-input v-model="data.transs[index].value1" style="width:150px;" />        
+        <el-input v-model="data.transs[index].name" style="width:150px;" />        
       </y-td>
       <y-td>
         <el-select v-model="data.transs[index].value2" placeholder="" style="width:80px;">
@@ -486,7 +486,7 @@ async function getItems() {
   
   if (data.transs.length == 0) {
     let item2 = util.clone(item)
-    item2.value1 = 'TR1'
+    item2.name = 'TR1'
     data.transs.push(
       item2
     )
@@ -641,14 +641,14 @@ function clickAddTrans() {
   let pos = 1
   for (let i = 0; i < data.transs.length; i++) {
     let item2 = data.transs[i];
-    if (regex.test(item2.value1)) {
-      item2.value1 = `TR${pos}`
+    if (regex.test(item2.name)) {
+      item2.name = `TR${pos}`
       pos++
     }    
   }
   
   let item2 = util.clone(item)
-  item2.value1 = `TR${pos}`
+  item2.name = `TR${pos}`
   data.transs.push(
     item2
   )
@@ -663,8 +663,8 @@ function clickDeleteTrans(pos) {
   let num = 1
   for (let i = 0; i < items.length; i++) {
     let item2 = items[i];
-    if (regex.test(item2.value1)) {
-      item2.value1 = `TR${num}`
+    if (regex.test(item2.name)) {
+      item2.name = `TR${num}`
       num++
     }    
   }

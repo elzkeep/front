@@ -9,7 +9,7 @@
     </y-tr>
     <y-tr v-for="(item, index) in data.items">
       <y-td>
-        <el-input v-model="data.items[index].value1" />
+        <el-input v-model="data.items[index].name" />
       </y-td>
       <y-td>
         <y-table>
@@ -249,7 +249,7 @@ onMounted(async () => {
 
 function clickAdd() {
   let item2 = util.clone(item)
-  item2.value1 = '발전설비'
+  item2.name = '발전설비'
   data.items.push(
     item2
   )

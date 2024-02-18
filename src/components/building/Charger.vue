@@ -5,7 +5,7 @@
       <y-th style="width:100px;">설비명</y-th>
       <y-td>
 
-        <el-input v-model="data.item.value1" readonly />        
+        <el-input v-model="data.item.name" readonly />        
       </y-td>
     </y-tr>
     <y-tr>
@@ -207,7 +207,7 @@ async function getItems() {
   } else {
     res = await Building.get(data.id)    
     
-    data.item.value1 = res.item.name + ' EV충전기'
+    data.item.name = res.item.name + ' EV충전기'
   }
 
   res = await model.find({

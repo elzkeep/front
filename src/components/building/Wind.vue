@@ -1,22 +1,23 @@
 <template>
 
-  <y-table>
-    <y-tr>
-      <y-th style="width:100px;">설비명</y-th>
-      <y-td>
-
-        <el-input v-model="data.item.value1" readonly />        
-      </y-td>
-    </y-tr>            
-  </y-table>
   
   <y-table style="margin-top:10px;">
     <y-tr>
+      <y-th>설비명</y-th>      
       <y-th>풍차설비</y-th>
       <y-th>발전설비</y-th>      
       <y-th style="width:30px;"></y-th>
     </y-tr>
     <y-tr v-for="(item, index) in data.items">
+      <y-td>
+        <y-table>
+          <y-tr>
+            <y-td>
+              <el-input v-model="data.items[index].name" />
+            </y-td>
+          </y-tr>
+        </y-table>
+      </y-td>
       <y-td>
         <y-table>
           <y-tr>
@@ -199,6 +200,7 @@ const item = {
 
 const data = reactive({
   id: 0,
+  name: '',
   item: util.clone(item),  
   items: []  
 })
@@ -218,7 +220,7 @@ async function getItems() {
   } else {
     res = await Building.get(data.id)    
     
-    data.item.value1 = res.item.name + ' 풍력발전소'
+    data.name = res.item.name
   }
 
   res = await model.find({
@@ -230,9 +232,7 @@ async function getItems() {
   data.items = res.items
   
   if (data.items.length == 0) {
-    data.items.push(
-      util.clone(item)
-    )
+    clickAdd()
   }
 }
 
@@ -285,8 +285,10 @@ async function clickSubmit() {
 }
 
 function clickAdd() {
+  let item2 = util.clone(item)
+  item2.name = data.name + ' 풍력발전소' 
   data.items.push(
-    util.clone(item)    
+    item2
   )
 }
 

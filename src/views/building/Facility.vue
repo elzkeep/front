@@ -4,7 +4,7 @@
   <el-tabs v-model="data.menu" @tab-click="clickTab">
     <el-tab-pane label="수배전설비" name="basic">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-        <Fuel :id="data.id" />
+        <Basic :id="data.id" />
       </div>
     </el-tab-pane>
     <el-tab-pane label="발전설비" name="generator">
@@ -29,7 +29,7 @@
     </el-tab-pane>
     <el-tab-pane label="UPS" name="ups">
       <div :style="{'height': data.height, 'overflow': 'auto'}">
-
+        <Ups :id="data.id" />
       </div>
     </el-tab-pane>
     <el-tab-pane label="연료전지" name="fuel">

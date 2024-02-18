@@ -1,19 +1,15 @@
 <template>
 
-  <y-table>
-    <y-tr>
-      <y-th style="width:100px;">설비명</y-th>
-      <y-td>
-
-        <el-input v-model="data.item.value1" readonly />        
-      </y-td>
-    </y-tr>            
-  </y-table>
-  
   <y-table style="margin-top:10px;">
     <y-tr v-for="(item, index) in data.items">
       <y-td>
         <y-table>
+          <y-tr>
+            <y-th style="width:100px;">설비명</y-th>
+            <y-td colspan="3">
+              <el-input v-model="data.items[index].name" />
+            </y-td>
+          </y-tr>
           <y-tr>
             <y-th style="width:100px;">형식</y-th>
             <y-td>
@@ -32,7 +28,7 @@
 
               <el-input v-model="data.items[index].value3" v-if="data.items[index].value2 == '4'" style="margin-left:5px;width:100px;" />
             </y-td>
-          </y-tr>
+          </y-tr>          
           <y-tr>
             <y-th>정격출력</y-th>
             <y-td>
@@ -193,6 +189,7 @@ const item = {
 
 const data = reactive({
   id: 0,
+  name: '',
   item: util.clone(item),
   gass: [
     {id: '0', name: ' '},
@@ -228,8 +225,8 @@ async function getItems() {
     data.item = res.items[0]    
   } else {
     res = await Building.get(data.id)    
-    
-    data.item.value1 = res.item.name + ' 연료전지 발전설비'
+
+    data.name = res.item.name    
   }
 
   res = await model.find({
@@ -241,9 +238,7 @@ async function getItems() {
   data.items = res.items
   
   if (data.items.length == 0) {
-    data.items.push(
-      util.clone(item)
-    )
+    clickAdd()
   }
 }
 
@@ -296,8 +291,10 @@ async function clickSubmit() {
 }
 
 function clickAdd() {
+  let item2 = util.clone(item)
+  item2.name = data.name + ' 연료전지 발전설비'
   data.items.push(
-    util.clone(item)    
+    item2
   )
 }
 

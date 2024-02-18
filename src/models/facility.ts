@@ -6,6 +6,7 @@ interface Facility {
     id: int64
     category: int
     parent: int64
+    name: string
     value1: string
     value2: string
     value3: string
