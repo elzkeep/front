@@ -2,7 +2,7 @@
   <Title title="팀 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;">           
+    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
         v-for="item in data.companys"
         :key="item.id"
@@ -24,7 +24,7 @@
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column label="업체" align="left" width="200">
+    <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
       </template>
@@ -41,7 +41,7 @@
   >
 
       <y-table>
-        <y-tr>
+        <y-tr v-if="data.session.level == User.level.rootadmin">
           <y-th>업체</y-th>
           <y-td>
             <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
@@ -82,7 +82,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { Department, Company } from "~/models"
+import { User, Department, Company } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -180,7 +180,7 @@ function clickUpdate(item, index) {
 
 onMounted(async () => {
   data.session = store.getters['getUser']
-  
+
   util.loading(true)
     
   await initData()
@@ -233,9 +233,13 @@ function clickDeleteMulti() {
 async function clickSubmit() {  
   let item = util.clone(data.item)
 
-  if (item.company == 0) {
-    util.alert('업체를 선택하세요')
-    return
+  if (data.session.level == User.level.rootadmin) {
+    if (item.company == 0) {
+      util.alert('업체를 선택하세요')
+      return
+    }
+  } else {
+    item.company = data.session.company
   }
   
   if (item.name == '') {
@@ -243,9 +247,8 @@ async function clickSubmit() {
     return
   }
 
-  console.log(item)
   util.loading(true)
-  
+
   item.company = util.getInt(item.company)
   item.order = util.getInt(item.order)
   

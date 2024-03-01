@@ -2,39 +2,39 @@
   <Title title="면허 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
-        
-    <el-select v-model.number="data.search.user" placeholder="직원" style="width:150px;">           
+
+    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
-        v-for="item in data.users"
+        v-for="item in data.companys"
         :key="item.id"
         :label="item.name"
         :value="item.id"
       />
     </el-select>
 
-    <el-select v-model.number="data.search.licensecategory" placeholder="면허 종류" style="width:150px;">           
+    <el-select v-model.number="data.search.licensecategory" placeholder="면허 종류" style="width:150px;">
       <el-option
         v-for="item in data.licensecategorys"
         :key="item.id"
         :label="item.name"
         :value="item.id"
       />
-    </el-select>    
-    
+    </el-select>
+
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
-    
+
     <div style="flex:1;text-align:right;gap:5;">
       <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
       <el-button size="small" type="success" @click="clickInsert">등록</el-button>
     </div>
-  </div>  
+  </div>
 
-  
+
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column label="이름" align="left" width="200">
+    <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
-        {{getUser(scope.row.user)}}
+        {{getCompany(scope.row.company)}}
       </template>
     </el-table-column>
     <el-table-column label="면허 종류" align="left">
@@ -47,53 +47,53 @@
         {{getLicenselevel(scope.row.licenselevel)}}
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="150" />    
-  </el-table>  
+    <el-table-column prop="date" label="등록일" align="center" width="150" />
+  </el-table>
 
-  
+
   <el-dialog
     v-model="data.visible"
     width="800px"
   >
 
       <y-table>
-        <y-tr>
-          <y-th>직원</y-th>
+        <y-tr v-if="data.session.level == User.level.rootadmin">
+          <y-th>업체</y-th>
           <y-td>
-            <el-select v-model.number="data.item.user" placeholder="직원">           
+            <el-select v-model.number="data.item.company" placeholder="업체">
               <el-option
-                v-for="item in data.users"
+                v-for="item in data.companys"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
-            </el-select>            
+            </el-select>
           </y-td>
         </y-tr>
         <y-tr>
           <y-th>면허 종류</y-th>
           <y-td>
-            <el-select v-model.number="data.item.licensecategory" placeholder="면허 종류">           
+            <el-select v-model.number="data.item.licensecategory" placeholder="면허 종류">
               <el-option
                 v-for="item in data.licensecategorys"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
-            </el-select>            
+            </el-select>
           </y-td>
         </y-tr>
         <y-tr>
           <y-th>면허 등급</y-th>
           <y-td>
-            <el-select v-model.number="data.item.licenselevel" placeholder="면허 등급">           
+            <el-select v-model.number="data.item.licenselevel" placeholder="면허 등급">
               <el-option
                 v-for="item in data.licenselevels"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
-            </el-select>            
+            </el-select>
           </y-td>
         </y-tr>
       </y-table>
@@ -112,7 +112,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Company, License, Licensecategory, Licenselevel } from "~/models"
+import { User, Company, Companylicense, Licensecategory, Licenselevel } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -122,7 +122,7 @@ const { width, height } = size()
 const store = useStore()
 const route = useRoute()
 
-const model = License
+const model = Companylicense
 
 const item = {
   id: 0,
@@ -146,10 +146,10 @@ const data = reactive({
   item: util.clone(item),
   visible: false,
   search: {
-    user: 0,
+    company: 0,
     licensecategory: 0
   },
-  users: [],
+  companys: [],
   licensecategorys: [],
   licenselevels: []
 })
@@ -159,35 +159,34 @@ async function clickSearch() {
 }
 
 async function initData() {
-  let company = 0
-  if (data.session.level != User.level.rootadmin) {
-    company = data.session.company
-  }
-  let res = await User.find({
-    company: company,
-    orderby: 'u_name'
+  let res = await Company.find({
+    orderby: 'c_name'
   })
-  
-  data.users = [{id: 0, name: ' '}, ...res.items]
 
-  res = await Licensecategory.find({    
+  data.companys = [{id: 0, name: ' '}, ...res.items]
+
+  res = await Licensecategory.find({
     orderby: 'lc_name'
   })
-  
+
   data.licensecategorys = [{id: 0, name: ' '}, ...res.items]
 
-  res = await Licenselevel.find({    
+  res = await Licenselevel.find({
     orderby: 'll_name'
   })
-  
+
   data.licenselevels = [{id: 0, name: ' '}, ...res.items]
 }
 
 async function getItems() {
+  if (data.session.level != User.level.rootadmin) {
+    data.search.company = data.session.company
+  }
+
   let res = await model.find({
     page: data.page,
     pagesize: data.pagesize,
-    user: data.search.user,
+    company: data.search.company,
     licensecategory: data.search.licensecategory,
     orderby: 'l_id desc'
   })
@@ -197,7 +196,7 @@ async function getItems() {
   }
 
   let items = []
-  
+
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
@@ -211,8 +210,8 @@ async function getItems() {
 
 function clickInsert() {
   item.passwd2 = item.passwd
-  data.item = util.clone(item)  
-  data.visible = true  
+  data.item = util.clone(item)
+  data.visible = true
 }
 
 function clickUpdate(item, index) {
@@ -222,14 +221,14 @@ function clickUpdate(item, index) {
 
   item.passwd2 = item.passwd
   data.item = util.clone(item)
-  data.visible = true  
+  data.visible = true
 }
 
 onMounted(async () => {
   data.session = store.getters['getUser']
 
   util.loading(true)
-  
+
   await initData()
   await getItems()
 
@@ -259,7 +258,7 @@ const changeList = (val) => {
 function clickDeleteMulti() {
   util.confirm('삭제하시겠습니까', async function() {
     util.loading(true)
-    
+
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
@@ -277,12 +276,16 @@ function clickDeleteMulti() {
   })
 }
 
-async function clickSubmit() {  
+async function clickSubmit() {
   let item = util.clone(data.item)
 
-  if (item.user == 0) {
-    util.alert('직원을 선택하세요')
-    return
+  if (data.session.level == User.level.rootadmin) {
+    if (item.company == 0) {
+      util.alert('업체를 선택하세요')
+      return
+    }
+  } else {
+    item.company = data.session.company
   }
 
   if (item.licensecategory == 0) {
@@ -296,11 +299,11 @@ async function clickSubmit() {
   }
 
   util.loading(true)
-  
-  item.user = util.getInt(item.user)
+
+  item.company = util.getInt(item.company)
   item.licensecategory = util.getInt(item.licensecategory)
   item.licenselevel = util.getInt(item.licenselevel)
-  
+
   if (item.id > 0) {
     await model.update(item)
   } else {
@@ -308,15 +311,15 @@ async function clickSubmit() {
   }
 
   //util.info('등록되었습니다')
-  
+
   await getItems()
 
-  data.visible = false  
-  util.loading(false)  
+  data.visible = false
+  util.loading(false)
 }
 
-function getUser(id) {
-  let items = data.users.filter(item => item.id == id)
+function getCompany(id) {
+  let items = data.companys.filter(item => item.id == id)
 
   if (items.length == 0) {
     return ''

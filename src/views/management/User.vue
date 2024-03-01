@@ -2,7 +2,7 @@
   <Title title="직원 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;">           
+    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
         v-for="item in data.companys"
         :key="item.id"
@@ -24,31 +24,42 @@
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column label="업체" align="left" width="200">
+    <el-table-column label="업체" align="left" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
       </template>
     </el-table-column>
-    <el-table-column label="팀" align="left" width="200">
+    <el-table-column label="팀" align="left">
       <template #default="scope">
         {{getDepartment(scope.row.department)}}
       </template>
     </el-table-column>
     <el-table-column prop="loginid" label="로그인아이디" align="left" />
-    <el-table-column prop="name" label="이름" align="left" />
+    <el-table-column prop="name" label="이름" align="left" width="80" />
     <el-table-column prop="email" label="이메일" align="left" />
-    <el-table-column prop="tel" label="연락처" align="left" />
+    <el-table-column prop="tel" label="연락처" align="left" width="100" />
     <el-table-column label="주소" align="left">
       <template #default="scope">
         {{scope.row.address}} {{scope.row.addressetc}}
       </template>      
     </el-table-column>
-    <el-table-column label="권한" align="center" width="80">
+    <el-table-column label="권한" align="center" width="70">
       <template #default="scope">
         {{getLevel(scope.row.level)}}
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="150" />    
+    <el-table-column label="상태" align="center" width="70">
+      <template #default="scope">
+        <span v-if="scope.row.status==1">사용</span>
+        <span v-if="scope.row.status==2">사용중지</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="점수" align="center" width="70">
+      <template #default="scope">
+        {{scope.row.totalscore}} / {{scope.row.score}}
+      </template>
+    </el-table-column>
+    <el-table-column prop="date" label="등록일" align="center" width="140" />
   </el-table>  
 
   
@@ -58,7 +69,7 @@
   >
 
       <y-table>
-        <y-tr>
+        <y-tr v-if="data.session.level == User.level.rootadmin">
           <y-th>업체</y-th>
           <y-td>
             <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;" @change="changeCompany">           
@@ -158,6 +169,21 @@
             </el-select>            
           </y-td>
         </y-tr>
+        <y-tr>
+          <y-th>상태</y-th>
+          <y-td>
+            <el-radio-group v-model.number="data.item.status">
+              <el-radio-button size="small" label="1">사용</el-radio-button>
+              <el-radio-button size="small" label="2">사용중지</el-radio-button>
+            </el-radio-group>
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>점수</y-th>
+          <y-td>
+            <el-input v-model="data.item.score" />
+          </y-td>
+        </y-tr>
       </y-table>
 
       <template #footer>
@@ -174,7 +200,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Company, Department } from "~/models"
+import { User, Userlist, Company, Department } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -246,28 +272,31 @@ async function initData() {
   
   data.companys = [{id: 0, name: ' '}, ...res.items]
 
-  /*
-     if (data.session.level < User.level.rootadmin) {
-     data.levels =  [
-     {id: 0, name: ' '},
-     {id: 1, name: '일반'},
-     {id: 2, name: '팀장'},
-     {id: 3, name: '관리자'}
-     ]
-     }
-   */
+  if (data.session.level != User.level.rootadmin) {
+    let res = await Department.find({
+      page: data.page,
+      pagesize: data.pagesize,
+      company: data.session.company,
+      orderby: 'de_order,de_name'
+    })
+
+    data.departments = [{id: 0, name: ' '}, ...res.items]
+
+    data.levels =  [
+      {id: 0, name: ' '},
+      {id: 1, name: '일반'},
+      {id: 2, name: '팀장'},
+      {id: 3, name: '관리자'}
+    ]
+  }
 }
 
 async function getItems() {
-  console.log('getItems')
+  if (data.session.level != User.level.rootadmin) {
+      data.search.company = data.session.company
+  }
 
-  /*
-     if (data.session.company > 0) {
-     data.search.company = data.session.company
-     }
-   */
-  
-  let res = await model.find({
+  let res = await Userlist.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
@@ -276,8 +305,7 @@ async function getItems() {
     orderby: 'u_id desc'
   })
 
-  console.log(res)
-  
+  console.log(res.items)
   if (res.items == null) {
     res.items = []
   }
@@ -296,12 +324,13 @@ async function getItems() {
 }
 
 function clickInsert() {
-  data.departments = []
-  
+  if (data.session.level == User.level.rootadmin) {
+    data.departments = []
+  }
+
   data.item = util.clone(item)
-  //data.item.company = data.session.company
   data.item.passwd2 = data.item.passwd
-  data.visible = true  
+  data.visible = true
 }
 
 function clickUpdate(item, index) {
@@ -310,7 +339,6 @@ function clickUpdate(item, index) {
   }
   
   data.item = util.clone(item)
-  //data.item.company = data.session.company
   data.item.passwd2 = data.item.passwd
   data.visible = true  
 }
@@ -370,9 +398,13 @@ function clickDeleteMulti() {
 async function clickSubmit() {  
   let item = util.clone(data.item)
 
-  if (item.company == 0) {
-    util.alert('업체를 선택하세요')
-    return
+  if (data.session.level == User.level.rootadmin) {
+    if (item.company == 0) {
+      util.alert('업체를 선택하세요')
+      return
+    }
+  } else {
+    item.company = data.session.company
   }
 
   if (item.department == 0) {
@@ -382,6 +414,12 @@ async function clickSubmit() {
 
   if (item.loginid == '') {
     util.alert('로그인아이디를 입력하세요')
+    return
+  }
+
+  let res = await User.find({loginid: item.loginid})
+  if ((item.id == 0 && res.items.length > 0) || (item.id != 0 && res.items.length != 1)) {
+    util.alert('이미 등록된 로그인아이디 입니다')
     return
   }
   
@@ -411,12 +449,16 @@ async function clickSubmit() {
   }
 
   util.loading(true)
-  
+
   item.company = util.getInt(item.company)
   item.department = util.getInt(item.department)
   item.careeryear = util.getInt(item.careeryear)
   item.careermonth = util.getInt(item.careermonth)
   item.joindate = util.convertDBDate(item.joindate)
+  item.level = util.getInt(item.level)
+  item.status = util.getInt(item.status)
+
+  item.score = util.getFloat(item.score)
   
   if (item.id > 0) {
     await model.update(item)

@@ -2,23 +2,24 @@ import request from '~/global/request'
 /*
 
 
-interface License {
-    id: int64
-    user: int64
-    licensecategory: int64
-    licenselevel: int64
-    date: string
+interface Statisticsmonth {
+    id: int
+    year: string
+    duration: string
+    total: int64
+    totalprice: int64
+    billdate: string
     
 }
 */
-export default class License {
+export default class Statisticsmonth {
         
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/license',
+            url: '/api/statisticsmonth',
             data: item
         })
 
@@ -28,7 +29,7 @@ export default class License {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/license/batch',
+            url: '/api/statisticsmonth/batch',
             data: item
         })
 
@@ -38,7 +39,7 @@ export default class License {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/license',
+            url: '/api/statisticsmonth',
             data: item
         })
 
@@ -48,7 +49,7 @@ export default class License {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/license',
+            url: '/api/statisticsmonth',
             data: item
         })
 
@@ -58,7 +59,7 @@ export default class License {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/license/batch',
+            url: '/api/statisticsmonth/batch',
             data: item
         })
 
@@ -68,7 +69,7 @@ export default class License {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/license',
+            url: '/api/statisticsmonth',
             params: params
         })
 
@@ -81,7 +82,7 @@ export default class License {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/license/${id}`
+            url: `/api/statisticsmonth/${id}`
         })
 
         return res
@@ -90,7 +91,7 @@ export default class License {
     static async sum(params: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/license/sum?${params}`
+            url: `/api/statisticsmonth/sum?${params}`
         })
 
         return res

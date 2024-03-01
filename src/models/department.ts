@@ -87,5 +87,14 @@ export default class Department {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/department/sum?${params}`
+        })
+
+        return res
+    }
+
 
 }

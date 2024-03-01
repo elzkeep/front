@@ -130,6 +130,15 @@ export default class Item {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/item/sum?${params}`
+        })
+
+        return res
+    }
+
 
 
      static async deleteByReportTopcategory(report ,topcategory) {

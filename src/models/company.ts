@@ -118,5 +118,14 @@ export default class Company {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/company/sum?${params}`
+        })
+
+        return res
+    }
+
 
 }

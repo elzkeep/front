@@ -1,24 +1,47 @@
 import request from '~/global/request'
 /*
+enum status {
+    wait = 1,
+    complete = 2
+}
+enum giro {
+    wait = 1,
+    complete = 2
+}
 
 
-interface License {
+interface Billing {
     id: int64
-    user: int64
-    licensecategory: int64
-    licenselevel: int64
+    price: int
+    status: billing.Status
+    giro: billing.Giro
+    billdate: string
+    company: int64
+    building: int64
     date: string
     
 }
 */
-export default class License {
+export default class Billing {
+    static readonly status = { wait: 1, complete: 2} as const 
+    static readonly statuss = ['', '입금대기', '입금완료']
+    static readonly giro = { wait: 1, complete: 2} as const 
+    static readonly giros = ['', '미발행', '발행']
         
+    
+    static getStatus(value: number) {
+        return this.statuss[value]
+    }
+    
+    static getGiro(value: number) {
+        return this.giros[value]
+    }
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/license',
+            url: '/api/billing',
             data: item
         })
 
@@ -28,7 +51,7 @@ export default class License {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/license/batch',
+            url: '/api/billing/batch',
             data: item
         })
 
@@ -38,7 +61,7 @@ export default class License {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/license',
+            url: '/api/billing',
             data: item
         })
 
@@ -48,7 +71,7 @@ export default class License {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/license',
+            url: '/api/billing',
             data: item
         })
 
@@ -58,7 +81,7 @@ export default class License {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/license/batch',
+            url: '/api/billing/batch',
             data: item
         })
 
@@ -68,7 +91,7 @@ export default class License {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/license',
+            url: '/api/billing',
             params: params
         })
 
@@ -81,7 +104,7 @@ export default class License {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/license/${id}`
+            url: `/api/billing/${id}`
         })
 
         return res
@@ -90,7 +113,7 @@ export default class License {
     static async sum(params: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/license/sum?${params}`
+            url: `/api/billing/sum?${params}`
         })
 
         return res

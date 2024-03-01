@@ -8,7 +8,7 @@ enum level {
 }
 enum status {
     use = 1,
-    notuser = 2
+    notuse = 2
 }
 
 
@@ -25,6 +25,7 @@ interface User {
     careeryear: int
     careermonth: int
     level: user.Level
+    score: Double
     status: user.Status
     company: int64
     department: int64
@@ -35,7 +36,7 @@ interface User {
 export default class User {
     static readonly level = { normal: 1, manager: 2, admin: 3, rootadmin: 4} as const 
     static readonly levels = ['', '일반', '팀장', '관리자', '전체관리자']
-    static readonly status = { use: 1, notuser: 2} as const 
+    static readonly status = { use: 1, notuse: 2} as const 
     static readonly statuss = ['', '사용', '사용안함']
         
     
@@ -115,6 +116,15 @@ export default class User {
         const res = await request({
             method: 'GET',
             url: `/api/user/${id}`
+        })
+
+        return res
+    }
+
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/user/sum?${params}`
         })
 
         return res

@@ -86,5 +86,14 @@ export default class Licenselevel {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/licenselevel/sum?${params}`
+        })
+
+        return res
+    }
+
 
 }

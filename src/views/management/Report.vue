@@ -1,5 +1,5 @@
 <template>
-  <Title title="고객 관리" />
+  <Title title="점검 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
@@ -12,7 +12,7 @@
       />
     </el-select>
 
-    <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">           
+    <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">
       <el-option
         v-for="item in data.buildings"
         :key="item.id"
@@ -21,17 +21,34 @@
       />
     </el-select>
 
-    <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
-    
-    <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
-      <el-button size="small" type="success" @click="clickInsert">등록</el-button>
-    </div>
-  </div>  
+    <el-select v-model.number="data.search.user" placeholder="점검자" style="width:150px;">
+      <el-option
+        v-for="item in data.users"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
+      />
+    </el-select>
 
-  
+    <el-select v-model.number="data.search.status" placeholder="상태" style="width:100px;">
+      <el-option
+        v-for="item in data.statuss"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
+      />
+    </el-select>
+
+    <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+
+    <div style="flex:1;text-align:right;gap:5;">
+
+    </div>
+  </div>
+
+
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
-    <el-table-column type="selection" width="40" align="center" />
+    <el-table-column prop="id" label="ID" align="center" width="80" />
     <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
@@ -42,25 +59,31 @@
         {{getBuilding(scope.row.building)}}
       </template>
     </el-table-column>
-    <el-table-column label="관리형태" align="center" width="80">
+    <el-table-column prop="title" label="점검지명" align="left" />
+    <el-table-column label="상태" align="center" width="70">
       <template #default="scope">
-        <span v-if="scope.row.type==1">직영</span>
-        <span v-if="scope.row.type==2">위탁관리</span>
+        {{Report.getStatus(scope.row.status)}}
       </template>
     </el-table-column>
-    <el-table-column label="점검 담당자" align="left">
+    <el-table-column label="점검 주기" align="left" width="80">
+      <template #default="scope">
+        {{getPeriod(scope.row)}}
+      </template>
+    </el-table-column>
+    <el-table-column label="점검 담당자" align="left" width="70">
       <template #default="scope">
         {{getUser(scope.row.user)}}
       </template>
     </el-table-column>
-    <el-table-column prop="extra.building.score" label="점수" align="right" width="80" />
-    <el-table-column prop="managername" label="담당자" align="left" width="80" />
-    <el-table-column prop="managertel" label="담당자 연락처" align="left" />
-    <el-table-column prop="manageremail" label="담당자 이메일" align="left" />    
-    <el-table-column prop="date" label="등록일" align="center" width="150" />
-  </el-table>  
+    <el-table-column label="점검일" align="center" width="140">
+      <template #default="scope">
+        {{scope.row.checkdate}} {{scope.row.checktime}}
+      </template>
+    </el-table-column>
+    <el-table-column prop="date" label="등록일" align="center" width="140" />
+  </el-table>
 
-  
+
   <el-dialog
     v-model="data.visible"
     width="800px"
@@ -70,27 +93,27 @@
         <y-tr v-if="data.session.level == User.level.rootadmin">
           <y-th>업체</y-th>
           <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
+            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">
               <el-option
                 v-for="item in data.companys"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
-            </el-select>                      
+            </el-select>
           </y-td>
         </y-tr>
         <y-tr>
           <y-th>고객명</y-th>
           <y-td>
-            <el-select v-model.number="data.item.building" placeholder="고객명" style="width:150px;">           
+            <el-select v-model.number="data.item.building" placeholder="고객명" style="width:150px;">
               <el-option
                 v-for="item in data.buildings"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
-            </el-select>            
+            </el-select>
           </y-td>
         </y-tr>
 
@@ -130,8 +153,8 @@
 
         <y-tr>
           <y-th>계악일</y-th>
-          <y-td>            
-            <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractstartdate" /> ~ <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractenddate" /> 
+          <y-td>
+            <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractstartdate" /> ~ <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractenddate" />
           </y-td>
         </y-tr>
 
@@ -196,7 +219,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Customer, Building, Company } from "~/models"
+import { User, Customer, Building, Company,Report } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -206,7 +229,7 @@ const { width, height } = size()
 const store = useStore()
 const route = useRoute()
 
-const model = Customer
+const model = Report
 
 const item = {
   id: 0,
@@ -245,6 +268,8 @@ const data = reactive({
   search: {
     company: 0,
     building: 0,
+    user: 0,
+    status: 0,
     type: 0
   },
   companys: [],
@@ -253,7 +278,14 @@ const data = reactive({
   types: [
     {id: 0, name: ' '},
     {id: 1, name: '직영'},
-    {id: 2, name: '위탁관리'}        
+    {id: 2, name: '위탁관리'}
+  ],
+  statuss: [
+    {id: 0, name: ' '},
+    {id: 1, name: '신규'},
+    {id: 2, name: '점검중'},
+    {id: 3, name: '점검완료'},
+    {id: 4, name: '작성완료'}
   ]
 })
 
@@ -266,13 +298,13 @@ async function initData() {
     type: Company.type.work,
     orderby: 'c_name'
   })
-  
+
   data.companys = [{id: 0, name: ' '}, ...res.items]
 
   res = await Building.find({
     orderby: 'b_name'
   })
-  
+
   data.buildings = [{id: 0, name: ' '}, ...res.items]
 
   let company = 0
@@ -300,7 +332,9 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
-    orderby: 'cu_id desc'
+    user: data.search.user,
+    status: data.search.status,
+    orderby: 'r_id desc'
   })
 
   if (res.items == null) {
@@ -308,7 +342,7 @@ async function getItems() {
   }
 
   let items = []
-  
+
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
@@ -320,25 +354,27 @@ async function getItems() {
   data.items = items
 }
 
-function clickInsert() {  
+function clickInsert() {
   data.item = util.clone(item)
-  data.visible = true  
+  data.visible = true
 }
 
 function clickUpdate(item, index) {
+  return
+
   if (index.no == 0) {
     return
   }
 
   data.item = util.clone(item)
-  data.visible = true  
+  data.visible = true
 }
 
 onMounted(async () => {
   data.session = store.getters['getUser']
 
   util.loading(true)
-  
+
   await initData()
   await getItems()
 
@@ -368,7 +404,7 @@ const changeList = (val) => {
 function clickDeleteMulti() {
   util.confirm('삭제하시겠습니까', async function() {
     util.loading(true)
-    
+
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
@@ -413,12 +449,12 @@ async function clickSubmit() {
 
   item.contractstartdate = util.convertDBDate(item.contractstartdate)
   item.contractenddate = util.convertDBDate(item.contractenddate)
-  
+
   item.contractprice = util.getInt(item.contractprice)
   item.contractday = util.getInt(item.contractday)
 
-  item.status = util.getInt(item.status)  
-  
+  item.status = util.getInt(item.status)
+
   if (item.id > 0) {
     await model.update(item)
   } else {
@@ -426,11 +462,11 @@ async function clickSubmit() {
   }
 
   //util.info('등록되었습니다')
-  
+
   await getItems()
 
-  data.visible = false  
-  util.loading(false)  
+  data.visible = false
+  util.loading(false)
 }
 
 function getCompany(id) {
@@ -463,4 +499,9 @@ function getUser(id) {
   return items[0].name
 }
 
+function getPeriod(item) {
+  const titles = ['월차', '분기', '반기', '연차']
+
+  return titles[item.period] + ' ' + item.number + '차'
+}
 </script>

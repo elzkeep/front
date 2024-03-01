@@ -1,7 +1,7 @@
 <template>
-  <Title title="고객 관리" />
+  <Title title="매출 관리" />
 
-  <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
+  <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
 
     <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
@@ -21,12 +21,22 @@
       />
     </el-select>
 
+    <el-select v-model.number="data.search.status" placeholder="상태" style="width:150px;">           
+      <el-option
+        v-for="item in data.statuss"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
+      />
+    </el-select>
+
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
-    
+
     <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
-      <el-button size="small" type="success" @click="clickInsert">등록</el-button>
-    </div>
+      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right:-5px;">입금대기</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right:-5px;">입금완료</el-button>
+      <el-button size="small" type="success" @click="clickGiroMulti">지로발행</el-button>
+    </div>    
   </div>  
 
   
@@ -42,21 +52,27 @@
         {{getBuilding(scope.row.building)}}
       </template>
     </el-table-column>
-    <el-table-column label="관리형태" align="center" width="80">
+    <el-table-column label="금액" align="right" width="100">
       <template #default="scope">
-        <span v-if="scope.row.type==1">직영</span>
-        <span v-if="scope.row.type==2">위탁관리</span>
+        {{util.money(scope.row.price)}} 원
       </template>
     </el-table-column>
-    <el-table-column label="점검 담당자" align="left">
+    <el-table-column label="상태" align="center" width="80">
       <template #default="scope">
-        {{getUser(scope.row.user)}}
+        <span v-if="scope.row.status==1">입금대기</span>
+        <span v-if="scope.row.status==2">입금완료</span>
       </template>
     </el-table-column>
-    <el-table-column prop="extra.building.score" label="점수" align="right" width="80" />
-    <el-table-column prop="managername" label="담당자" align="left" width="80" />
-    <el-table-column prop="managertel" label="담당자 연락처" align="left" />
-    <el-table-column prop="manageremail" label="담당자 이메일" align="left" />    
+    <el-table-column label="지로" align="center" width="80">
+      <template #default="scope">
+        <span v-if="scope.row.giro==1">미발행</span>
+        <span v-if="scope.row.giro==2">발행완료</span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="billingname" label="계약담당자" align="left" width="80" />
+    <el-table-column prop="billingtel" label="계약담당자 연락처" align="left" />
+    <el-table-column prop="billingemail" label="계약담당자 이메일" align="left" />
+    <el-table-column prop="billdate" label="청구일" align="center" width="100" />    
     <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>  
 
@@ -81,9 +97,9 @@
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>고객명</y-th>
+          <y-th>빌딩</y-th>
           <y-td>
-            <el-select v-model.number="data.item.building" placeholder="고객명" style="width:150px;">           
+            <el-select v-model.number="data.item.building" placeholder="빌딩" style="width:150px;">           
               <el-option
                 v-for="item in data.buildings"
                 :key="item.id"
@@ -196,7 +212,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Customer, Building, Company } from "~/models"
+import { User, Customer, Building, Billinglist, Company, Billing } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -206,26 +222,15 @@ const { width, height } = size()
 const store = useStore()
 const route = useRoute()
 
-const model = Customer
+const model = Billinglist
 
 const item = {
   id: 0,
-  type: Customer.type.outsourcing,
-  checkdate: 1,
-  managername: '',
-  managertel: '',
-  manageremail: '',
-  contractstartdate: null,
-  contractendate: null,
-  contractprice: 0,
-  billingdate: 1,
-  billingname: '',
-  billingtel: '',
-  billingemail: '',
+  price: 0,
   status: 1,
+  billdate: '',
   company: 0,
-  building: 0,
-  user: 0,
+  building: 0,  
   date: ''
 }
 
@@ -245,15 +250,14 @@ const data = reactive({
   search: {
     company: 0,
     building: 0,
+    status: 0,
     type: 0
   },
-  companys: [],
-  users: [],
   buildings: [],
-  types: [
+  statuss: [
     {id: 0, name: ' '},
-    {id: 1, name: '직영'},
-    {id: 2, name: '위탁관리'}        
+    {id: 1, name: '입금대기'},
+    {id: 2, name: '입금완료'}
   ]
 })
 
@@ -262,31 +266,19 @@ async function clickSearch() {
 }
 
 async function initData() {
-  let res = await Company.find({
-    type: Company.type.work,
-    orderby: 'c_name'
-  })
-  
-  data.companys = [{id: 0, name: ' '}, ...res.items]
-
-  res = await Building.find({
+  let res = await Customer.find({
+    company: data.session.company,
     orderby: 'b_name'
   })
-  
-  data.buildings = [{id: 0, name: ' '}, ...res.items]
+
+  let items = res.items.map(item => item.extra.building)
+  data.buildings = [{id: 0, name: ' '}, ...items]  
 
   let company = 0
 
   if (data.session.level != User.level.rootadmin) {
     company = data.session.company
-  }
-
-  res = await User.find({
-    company: company,
-    orderby: 'u_name'
-  })
-
-  data.users = [{id: 0, name: ' '}, ...res.items]
+  }  
 }
 
 async function getItems() {
@@ -300,8 +292,11 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
-    orderby: 'cu_id desc'
+    status: data.search.status,
+    orderby: 'bi_id desc'
   })
+
+  console.log(res.items)
 
   if (res.items == null) {
     res.items = []
@@ -326,6 +321,8 @@ function clickInsert() {
 }
 
 function clickUpdate(item, index) {
+  return
+  
   if (index.no == 0) {
     return
   }
@@ -399,7 +396,7 @@ async function clickSubmit() {
   }
 
   if (item.building == 0) {
-    util.alert('고객명을 선택하세요')
+    util.alert('빌딩을 선택하세요')
     return
   }
 
@@ -462,5 +459,51 @@ function getUser(id) {
 
   return items[0].name
 }
+
+function clickStatusMulti(status) {
+  let title = ''
+  if (status == 1) {
+    title = '입금완료 처리하시겠습니까'
+  } else {
+    title = '입금대기 처리하시겠습니까'    
+  }
+  
+  util.confirm(title, async function() {
+      util.loading(true)
+    
+    for (let i = 0; i < listSelection.value.length; i++) {
+      let value = listSelection.value[i]
+
+      let res = await Billing.get(value.id)      
+      res.item.status = status
+      await Billing.update(res.item)
+    }
+
+    //util.info('삭제되었습니다')
+    await getItems()
+
+    util.loading(false)
+  })
+}
+
+function clickGiroMulti() {
+  util.confirm('지로 출력하시겠습니까', async function() {
+    util.loading(true)
+    
+    for (let i = 0; i < listSelection.value.length; i++) {
+      let value = listSelection.value[i]
+
+      let res = await Billing.get(value.id)
+      res.item.giro = Billing.giro.complete
+      await Billing.update(res.item)
+    }
+
+    //util.info('삭제되었습니다')
+    await getItems()
+
+    util.loading(false)
+  })
+}
+
 
 </script>

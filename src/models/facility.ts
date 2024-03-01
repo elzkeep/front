@@ -114,6 +114,15 @@ export default class Facility {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/facility/sum?${params}`
+        })
+
+        return res
+    }
+
 
 
      static async deleteByBuildingCategory(building ,category) {

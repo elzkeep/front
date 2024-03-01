@@ -286,4 +286,40 @@ export default class util {
         let d = new Date()  
         return this.makeDate(d.getFullYear(), d.getMonth() + 1, d.getDate())
     }
+
+    static getScore(value: number): number {
+        let rate:number = 0
+
+        if (value <= 100) {
+            rate = 1
+        } else if(value > 100 && value <= 200) {
+            rate = 1.2
+        } else if(value > 200 && value <= 300) {
+            rate = 1.3
+        } else if(value > 300 && value <= 400) {
+            rate = 1
+        } else if(value > 400 && value <= 500) {
+            rate = 1.2
+        } else if(value > 500 && value <= 600) {
+            rate = 1
+        } else if(value > 600 && value <= 700) {
+            rate = 1.35
+        } else if(value > 700 && value <= 800) {
+            rate = 1.25
+        } else if(value > 800 && value <= 900) {
+            rate = 1.5
+        } else if(value > 900 && value <= 1000) {
+            rate = 1.85
+        } else if(value > 1000 && value <= 1250) {
+            rate = 2.5
+        } else if(value > 1250 && value <= 1500) {
+            rate = 3
+        } else if(value > 1500 && value <= 2000) {
+            rate = 3
+        } else if(value > 2000 && value <= 2499) {
+            rate = 3.35
+        }
+
+        return rate
+    }
 }

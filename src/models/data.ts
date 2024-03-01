@@ -101,6 +101,15 @@ export default class Data {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/data/sum?${params}`
+        })
+
+        return res
+    }
+
 
 
      static async deleteByReportTopcategory(report ,topcategory) {

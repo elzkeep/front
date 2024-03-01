@@ -18,6 +18,8 @@ interface Report {
     content: string
     status: report.Status
     company: int64
+    user: int64
+    building: int64
     date: string
     
 }
@@ -99,6 +101,15 @@ export default class Report {
         const res = await request({
             method: 'GET',
             url: `/api/report/${id}`
+        })
+
+        return res
+    }
+
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/report/sum?${params}`
         })
 
         return res

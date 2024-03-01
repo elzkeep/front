@@ -3,7 +3,7 @@
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;">           
+    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
         v-for="item in data.companys"
         :key="item.id"
@@ -25,7 +25,7 @@
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column label="업체" align="left" width="200">
+    <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
       </template>
@@ -52,7 +52,7 @@
   >
 
       <y-table>
-        <y-tr>
+        <y-tr v-if="data.session.level == User.level.rootadmin">
           <y-th>구분</y-th>
           <y-td>
             <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
@@ -111,7 +111,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { Building, Company } from "~/models"
+import { User, Building, Company } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -135,6 +135,10 @@ const item = {
 }
 
 const data = reactive({
+  session: {
+    level: 0,
+    company: 0
+  },
   id: 0,
   mode: 'normal',
   items: [],
@@ -144,6 +148,7 @@ const data = reactive({
   item: util.clone(item),
   visible: false,
   search: {
+    company: 0,
     text: '',
     type: 0
   },
@@ -165,10 +170,15 @@ async function initData() {
 }
 
 async function getItems() {
+  if (data.session.level != User.level.rootadmin) {
+    data.search.company = data.session.company
+  }
+
   let res = await model.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
+    company: data.search.company,
     type: data.search.type,
     orderby: 'b_id desc'
   })
@@ -205,6 +215,8 @@ function clickUpdate(item, index) {
 }
 
 onMounted(async () => {
+  data.session = store.getters['getUser']
+
   util.loading(true)
   
   await initData()
@@ -256,11 +268,16 @@ function clickDeleteMulti() {
 
 async function clickSubmit() {
   let item = util.clone(data.item)
-  
-  if (item.company == 0) {
-    util.alert('업체를 선택하세요')
-    return
+
+  if (data.session.level == User.level.rootadmin) {
+    if (item.company == 0) {
+      util.alert('업체를 선택하세요')
+      return
+    }
+  } else {
+    item.company = data.session.company
   }
+
 
   util.loading(true)
 

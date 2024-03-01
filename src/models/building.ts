@@ -9,6 +9,7 @@ interface Building {
     ceo: string
     address: string
     addressetc: string
+    score: Double
     status: int
     company: int64
     date: string
@@ -86,6 +87,15 @@ export default class Building {
         const res = await request({
             method: 'GET',
             url: `/api/building/${id}`
+        })
+
+        return res
+    }
+
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/building/sum?${params}`
         })
 
         return res

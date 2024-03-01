@@ -86,5 +86,14 @@ export default class Licensecategory {
         return res
     }
 
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/licensecategory/sum?${params}`
+        })
+
+        return res
+    }
+
 
 }

@@ -22,6 +22,7 @@ interface Customer {
     billingtel: string
     billingemail: string
     status: int
+    user: int64
     company: int64
     building: int64
     date: string
@@ -105,6 +106,15 @@ export default class Customer {
         const res = await request({
             method: 'GET',
             url: `/api/customer/${id}`
+        })
+
+        return res
+    }
+
+    static async sum(params: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/customer/sum?${params}`
         })
 
         return res

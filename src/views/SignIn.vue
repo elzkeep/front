@@ -19,7 +19,7 @@
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
 import { util } from '~/global'
-import { Login } from "~/models"
+import { Login, Company, User } from "~/models"
 import router from '~/router'
 
 const store = useStore()
@@ -42,7 +42,16 @@ async function clickSignin() {
 
   const res = await Login.login(item)
   if (res.code === 'ok') {
-    util.login(store, res)
+    util.login(store, res)    
+    
+    if (res.user.level != User.level.rootadmin) {      
+      let res2 = await Company.get(res.user.company)
+      console.log(res2)
+      let company = res2.item
+
+      store.commit('setCompany', company)
+    }        
+
     router.push('/')
   } else {
     console.log(res)
