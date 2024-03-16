@@ -1,70 +1,33 @@
 <template>
-  <Title title="건물별 현황" />
+  <Title title="고객별 현황" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
-      <el-option
-        v-for="item in data.companys"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-
-    <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">           
-      <el-option
-        v-for="item in data.buildings"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
+    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="width:300px;" @keyup.enter.native="clickSearch" />
 
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
     
     <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
-      <el-button size="small" type="success" @click="clickInsert">등록</el-button>
+      
     </div>
   </div>  
 
   
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
-    <el-table-column type="selection" width="40" align="center" />    
-    <el-table-column label="건물명" align="left" width="200">
-      <template #default="scope">
-        {{getBuilding(scope.row.building)}}
-      </template>
-    </el-table-column>
+  <el-table :data="data.items" border :height="height(170)">        
+    <el-table-column prop="name" label="사업자명" align="left" width="200" />
+    <el-table-column prop="companyno" label="사업자번호" align="left" width="120" />
     <el-table-column label="주소" align="left">
       <template #default="scope">
-        {{scope.row.extra.building.address}} {{scope.row.extra.building.addressetc}}
+        {{scope.row.address}} {{scope.row.addressetc}}
       </template>
     </el-table-column>
-    <el-table-column label="소유고객" align="left" width="200">
-      <template #default="scope">
-        {{getCompany(scope.row.company)}}
-      </template>
-    </el-table-column>
-    <el-table-column label="관리형태" align="center" width="80">
-      <template #default="scope">
-        <span v-if="scope.row.type==1">직영</span>
-        <span v-if="scope.row.type==2">위탁관리</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="점검자" align="left">
-      <template #default="scope">
-        {{getUser(scope.row.user)}}
-      </template>
-    </el-table-column>
-    <el-table-column prop="contractstartdate" label="계약일" align="center" width="100" />
-    <el-table-column label="계약금액" align="right" width="120">
+    <el-table-column prop="ceo" label="대표자" align="left" width="80" />
+    <el-table-column prop="buildingcount" label="보유건물수" align="right" width="80" />
+    <el-table-column label="계약총액" align="right" width="120">
       <template #default="scope">
         {{util.money(scope.row.contractprice)}} 원
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>  
 
   
@@ -88,9 +51,9 @@
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>건물명</y-th>
+          <y-th>고객명</y-th>
           <y-td>
-            <el-select v-model.number="data.item.building" placeholder="건물명" style="width:150px;">           
+            <el-select v-model.number="data.item.building" placeholder="고객명" style="width:150px;">           
               <el-option
                 v-for="item in data.buildings"
                 :key="item.id"
@@ -203,7 +166,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Customer, Building, Company } from "~/models"
+import { User, Customer, Building, Company, Customercompany } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -213,7 +176,7 @@ const { width, height } = size()
 const store = useStore()
 const route = useRoute()
 
-const model = Customer
+const model = Customercompany
 
 const item = {
   id: 0,
@@ -252,7 +215,8 @@ const data = reactive({
   search: {
     company: 0,
     building: 0,
-    type: 0
+    type: 0,
+    text: ''
   },
   companys: [],
   users: [],
@@ -268,32 +232,7 @@ async function clickSearch() {
   await getItems(true)
 }
 
-async function initData() {
-  let res = await Company.find({
-    type: Company.type.work,
-    orderby: 'c_name'
-  })
-  
-  data.companys = [{id: 0, name: ' '}, ...res.items]
-
-  res = await Building.find({
-    orderby: 'b_name'
-  })
-  
-  data.buildings = [{id: 0, name: ' '}, ...res.items]
-
-  let company = 0
-
-  if (data.session.level != User.level.rootadmin) {
-    company = data.session.company
-  }
-
-  res = await User.find({
-    company: company,
-    orderby: 'u_name'
-  })
-
-  data.users = [{id: 0, name: ' '}, ...res.items]
+async function initData() {  
 }
 
 async function getItems() {
@@ -306,8 +245,8 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    building: data.search.building,
-    orderby: 'cu_id desc'
+    name: data.search.text,
+    orderby: 'c_name'
   })
 
   if (res.items == null) {
@@ -327,20 +266,6 @@ async function getItems() {
   data.items = items
 }
 
-function clickInsert() {  
-  data.item = util.clone(item)
-  data.visible = true  
-}
-
-function clickUpdate(item, index) {
-  if (index.no == 0) {
-    return
-  }
-
-  data.item = util.clone(item)
-  data.visible = true  
-}
-
 onMounted(async () => {
   data.session = store.getters['getUser']
 
@@ -355,119 +280,6 @@ onMounted(async () => {
 
 function clickCancel() {
   data.visible = false
-}
-
-const listRef = ref<InstanceType<typeof ElTable>>()
-const listSelection = ref([])
-const toggleListSelection = (rows) => {
-  if (rows) {
-    rows.forEach((row) => {
-      listRef.value!.toggleRowSelection(row, undefined)
-    })
-  } else {
-    listRef.value!.clearSelection()
-  }
-}
-const changeList = (val) => {
-  listSelection.value = val
-}
-
-function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function() {
-    util.loading(true)
-    
-    for (let i = 0; i < listSelection.value.length; i++) {
-      let value = listSelection.value[i]
-
-      let item = {
-        id: value.id
-      }
-
-      await model.remove(item)
-    }
-
-    //util.info('삭제되었습니다')
-    await getItems()
-
-    util.loading(false)
-  })
-}
-
-async function clickSubmit() {
-  let item = util.clone(data.item)
-
-  if (data.session.level == User.level.rootadmin) {
-    if (item.company == 0) {
-      util.alert('업체를 선택하세요')
-      return
-    }
-  } else {
-    item.company = data.session.company
-  }
-
-  if (item.building == 0) {
-    util.alert('건물명을 선택하세요')
-    return
-  }
-
-  util.loading(true)
-
-  item.user = util.getInt(item.user)
-  item.company = util.getInt(item.company)
-  item.building = util.getInt(item.building)
-  item.type = util.getInt(item.type)
-  item.checkdate = util.getInt(item.checkdate)
-
-  item.contractstartdate = util.convertDBDate(item.contractstartdate)
-  item.contractenddate = util.convertDBDate(item.contractenddate)
-  
-  item.contractprice = util.getInt(item.contractprice)
-  item.contractday = util.getInt(item.contractday)
-
-  item.status = util.getInt(item.status)  
-  
-  if (item.id > 0) {
-    await model.update(item)
-  } else {
-    await model.insert(item)
-  }
-
-  //util.info('등록되었습니다')
-  
-  await getItems()
-
-  data.visible = false  
-  util.loading(false)  
-}
-
-function getCompany(id) {
-  let items = data.companys.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
-}
-
-function getBuilding(id) {
-  let items = data.buildings.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
-}
-
-function getUser(id) {
-  let items = data.users.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
 }
 
 </script>

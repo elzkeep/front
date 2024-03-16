@@ -29,7 +29,7 @@
         {{getCompany(scope.row.company)}}
       </template>
     </el-table-column>
-    <el-table-column label="팀" align="left" width="100">
+    <el-table-column label="팀" align="left">
       <template #default="scope">
         {{getDepartment(scope.row.department)}}
       </template>
@@ -60,9 +60,6 @@
       </template>
     </el-table-column>
     <el-table-column prop="date" label="등록일" align="center" width="140" />
-    <el-table-column label="고객배치현황" align="center" width="80">
-      <el-button size="small" type="primary" @click="clickView" style="margin-right:-5px;">보기</el-button>
-    </el-table-column>
   </el-table>  
 
   
@@ -195,29 +192,6 @@
       </template>
   </el-dialog>
 
-
-  <el-dialog
-    v-model="data.visibleView"
-    width="800px"
-  >
-
-    <el-table :data="data.customers" border :height="'500px'">
-      <el-table-column prop="extra.building.name" label="건물명" align="left" width="100" />
-      <el-table-column label="고객명" align="left" width="100">
-        <template #default="scope">
-          {{getCompany(scope.row.extra.building.company)}}
-        </template>
-      </el-table-column>
-      <el-table-column label="주소" align="left">
-        <template #default="scope">
-          {{scope.row.extra.building.address}} {{scope.row.extra.building.addressetc}}
-        </template>
-      </el-table-column>          
-      <el-table-column prop="extra.building.score" label="점수" align="right" width="70" />              
-    </el-table>  
-
-  </el-dialog>
-  
 </template>
 
 
@@ -226,7 +200,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Userlist, Company, Department, Customer } from "~/models"
+import { User, Userlist, Company, Department } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -269,7 +243,6 @@ const data = reactive({
   pagesize: 0,
   item: util.clone(item),
   visible: false,
-  visibleView: false,
   search: {
     text: '',
     company: 0,
@@ -283,8 +256,7 @@ const data = reactive({
     {id: 2, name: '팀장'},
     {id: 3, name: '관리자'},
     {id: 4, name: '전체관리자'}
-  ],
-  customers: []
+  ]
 })
 
 async function clickSearch() {
@@ -362,10 +334,6 @@ function clickInsert() {
 
 function clickUpdate(item, index) {
   if (index.no == 0) {
-    return
-  }
-
-  if (index.no == 11) {
     return
   }
   
@@ -547,21 +515,5 @@ async function changeCompany(item) {
 
   data.item.department = 0;
 
-}
-
-async function clickView() {
-  console.log(data.session)
-  let res = await Customer.find({
-    user: data.session.id,
-    orderby: 'b_name'
-  })
-  
-  data.customers = res.items
-  
-  data.visibleView = true
-}
-
-function clickCancelView() {
-  data.visibleView = false
 }
 </script>

@@ -4,6 +4,19 @@ import { useStore } from "vuex"
 import SignIn from '~/views/SignIn.vue'
 import SignUp from '~/views/SignUp.vue'
 
+import AdminDashboard from '~/views/admin/Dashboard.vue'
+import AdminCompany from '~/views/admin/Company.vue'
+import AdminCompanyinfo from '~/views/admin/Companyinfo.vue'
+import AdminDepartment from '~/views/admin/Department.vue'
+import AdminUser from '~/views/admin/User.vue'
+import AdminLicense from '~/views/admin/License.vue'
+import AdminCompanylicense from '~/views/admin/Companylicense.vue'
+import AdminBuilding from '~/views/admin/Building.vue'
+import AdminCustomer from '~/views/admin/Customer.vue'
+import AdminBilling from '~/views/admin/Billing.vue'
+import AdminReport from '~/views/admin/Report.vue'
+import AdminStatistics from '~/views/admin/Statistics.vue'
+
 import ManagementDashboard from '~/views/management/Dashboard.vue'
 import ManagementCompany from '~/views/management/Company.vue'
 import ManagementCompanyinfo from '~/views/management/Companyinfo.vue'
@@ -16,6 +29,9 @@ import ManagementCustomer from '~/views/management/Customer.vue'
 import ManagementBilling from '~/views/management/Billing.vue'
 import ManagementReport from '~/views/management/Report.vue'
 import ManagementStatistics from '~/views/management/Statistics.vue'
+import ManagementCustomercompany from '~/views/management/Customercompany.vue'
+import ManagementContract from '~/views/management/Contract.vue'
+import ManagementPayment from '~/views/management/Payment.vue'
 
 import BuildingFacility from '~/views/building/Facility.vue'
 
@@ -37,7 +53,93 @@ const routes = [
     name: 'SignUp',
     component: SignUp
   },
+  
   {
+    path: '/management/statistics',
+    name: 'ManagementStatistics',
+    meta: { authorization: ['admin'] },
+    component: ManagementStatistics
+  },
+  {
+    path: '/admin/dashboard',
+    name: 'AdminDashboard',
+    meta: { authorization: ['admin'] },
+    component: AdminDashboard
+  },
+  {
+    path: '/admin/company',
+    name: 'AdminCompany',
+    meta: { authorization: ['admin'] },
+    component: AdminCompany
+  },
+  {
+    path: '/admin/companyinfo',
+    name: 'AdminCompanyinfo',
+    meta: { authorization: ['admin'] },
+    component: AdminCompanyinfo
+  },
+  {
+    path: '/admin/department',
+    name: 'AdminDepartment',
+    meta: { authorization: ['admin'] },
+    component: AdminDepartment
+  },
+  {
+    path: '/admin/user',
+    name: 'AdminUser',
+    meta: { authorization: ['admin'] },
+    component: AdminUser
+  },
+  {
+    path: '/admin/license',
+    name: 'AdminLicene',
+    meta: { authorization: ['admin'] },
+    component: AdminLicense
+  },
+  {
+    path: '/admin/companylicense',
+    name: 'AdminCompanylicene',
+    meta: { authorization: ['admin'] },
+    component: AdminCompanylicense
+  },
+  {
+    path: '/admin/building',
+    name: 'AdminBuilding',
+    meta: { authorization: ['admin'] },
+    component: AdminBuilding
+  },
+  {
+    path: '/admin/customer',
+    name: 'AdminCustomer',
+    meta: { authorization: ['admin'] },
+    component: AdminCustomer
+  },
+  {
+    path: '/admin/billing',
+    name: 'AdminBilling',
+    meta: { authorization: ['admin'] },
+    component: AdminBilling
+  },
+  {
+    path: '/admin/report',
+    name: 'AdminReport',
+    meta: { authorization: ['admin'] },
+    component: AdminReport
+  },
+  {
+    path: '/admin/statistics',
+    name: 'AdminStatistics',
+    meta: { authorization: ['admin'] },
+    component: AdminStatistics
+  },    
+  {
+    path: '/building/:id/facility',
+    name: 'BuildingFacility',
+    meta: { authorization: ['admin'] },
+    component: BuildingFacility
+  },
+
+{
     path: '/management/dashboard',
     name: 'ManagementDashboard',
     meta: { authorization: ['admin'] },
@@ -92,17 +194,17 @@ const routes = [
     component: ManagementCustomer
   },
   {
+    path: '/management/customercompany',
+    name: 'ManagementCustomercompany',
+    meta: { authorization: ['admin'] },
+    component: ManagementCustomercompany
+  },
+  {
     path: '/management/billing',
     name: 'ManagementBilling',
     meta: { authorization: ['admin'] },
     component: ManagementBilling
-  },
-  {
-    path: '/building/:id/facility',
-    name: 'BuildingFacility',
-    meta: { authorization: ['admin'] },
-    component: BuildingFacility
-  },
+  },  
   {
     path: '/management/report',
     name: 'ManagementReport',
@@ -110,11 +212,17 @@ const routes = [
     component: ManagementReport
   },
   {
-    path: '/management/statistics',
-    name: 'ManagementStatistics',
+    path: '/management/contract',
+    name: 'ManagementContract',
     meta: { authorization: ['admin'] },
-    component: ManagementStatistics
+    component: ManagementContract
   },
+  {
+    path: '/management/payment',
+    name: 'ManagementPayment',
+    meta: { authorization: ['admin'] },
+    component: ManagementPayment
+  }
 ]
 
 const router = createRouter({
@@ -151,7 +259,7 @@ router.beforeEach(function (to, from, next) {
     } else if (user.level != 4) {
         next(`/management/dashboard`)
     } else {
-      next('/management/company')
+      next('/admin/company')
     }
   } else {
     next()

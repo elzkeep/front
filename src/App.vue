@@ -2,7 +2,8 @@
   <BaseHeader v-if="store.state.token != null && store.state.token != ''" />
 
   <div style="display:flex;">
-    <ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />
+    <!--<ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />-->
+    <CheckMenu v-if="data.menu == 'management' || data.menu == 'building'" />
     <div style="flex:1;">
       <div style="padding: 10px 10px;">
         <router-view />

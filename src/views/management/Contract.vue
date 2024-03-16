@@ -1,5 +1,5 @@
 <template>
-  <Title title="건물별 현황" />
+  <Title title="계약 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
@@ -24,24 +24,17 @@
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
     
     <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
-      <el-button size="small" type="success" @click="clickInsert">등록</el-button>
+
     </div>
   </div>  
 
   
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
-    <el-table-column type="selection" width="40" align="center" />    
+  <el-table :data="data.items" border :height="height(170)">
     <el-table-column label="건물명" align="left" width="200">
       <template #default="scope">
         {{getBuilding(scope.row.building)}}
       </template>
-    </el-table-column>
-    <el-table-column label="주소" align="left">
-      <template #default="scope">
-        {{scope.row.extra.building.address}} {{scope.row.extra.building.addressetc}}
-      </template>
-    </el-table-column>
+    </el-table-column>    
     <el-table-column label="소유고객" align="left" width="200">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
@@ -52,18 +45,25 @@
         <span v-if="scope.row.type==1">직영</span>
         <span v-if="scope.row.type==2">위탁관리</span>
       </template>
-    </el-table-column>
-    <el-table-column label="점검자" align="left">
+    </el-table-column>    
+    <el-table-column label="계약기간" align="center" width="180">
       <template #default="scope">
-        {{getUser(scope.row.user)}}
+        {{scope.row.contractstartdate}} ~ {{scope.row.contractenddate}}
       </template>
     </el-table-column>
-    <el-table-column prop="contractstartdate" label="계약일" align="center" width="100" />
     <el-table-column label="계약금액" align="right" width="120">
       <template #default="scope">
         {{util.money(scope.row.contractprice)}} 원
       </template>
     </el-table-column>
+    <el-table-column prop="billingname" label="청구일" align="center" width="80">
+      <template #default="scope">
+        <span v-if="scope.row.billingdate != 0">매월 {{scope.row.billingdate}} 일</span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="billingname" label="담당자" align="left" width="80" />
+    <el-table-column prop="billingtel" label="담당자 연락처" align="left" />
+    <el-table-column prop="billingemail" label="담당자 이메일" align="left" />    
     <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>  
 

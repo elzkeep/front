@@ -1,9 +1,9 @@
 <template>
-  <Title title="매출 보고서" />
+  <Title title="매출" />
 
 
   <Chart
-    :size="{ width: util.getInt(width(300).replace('px', '')), height: 200 }"
+    :size="{ width: util.getInt(width(160).replace('px', '')), height: 200 }"
     :data="data.charts"
     :margin="{top: 5, bottom: 20}"
     :direction="'horizontal'">

@@ -16,6 +16,9 @@ interface Report {
     checkdate: string
     checktime: string
     content: string
+    image: string
+    sign1: string
+    sign2: string
     status: report.Status
     company: int64
     user: int64

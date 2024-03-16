@@ -18,29 +18,27 @@
           <y-tr>
             <y-th>
               <div>계약 고객수</div>
-              <div class="info"><span class="cnt">{{info.newcustomers}}</span> <span class="sep">/</span> {{info.customers}}</div>
+              <div class="info"><span class="cnt">10</span> <span class="sep">/</span> 10</div>
             </y-th>
             <y-th>
               <div>계약 금액</div>
-              <div class="info"><span class="cnt">{{util.money(info.avgprice)}}</span> <span class="sep">/</span> {{util.money(info.totalprice)}}</div>
+              <div class="info"><span class="cnt">10</span> <span class="sep">/</span> 10</div>
             </y-th>
             <y-th>
               <div>전체 직원수</div>
-              <div class="info">{{info.users}}</div>
+              <div class="info"><span class="cnt">10</span> <span class="sep">/</span> 10</div>
             </y-th>
-          </y-tr>
-          <y-tr>
             <y-th>
               <div>오늘<span style="font-size:8px;">의 점검 건수</span></div>
-              <div class="info"><span class="cnt">{{info.today}}</span> <span class="sep">/</span> {{info.todaytotal}}</div>
+              <div class="info"><span class="cnt">10</span> <span class="sep">/</span> 10</div>
             </y-th>
             <y-th>
               <div>금주<span style="font-size:8px;">의 점검 건수</span></div>
-              <div class="info"><span class="cnt">{{info.week}}</span> <span class="sep">/</span> {{info.weektotal}}</div>
+              <div class="info"><span class="cnt">10</span> <span class="sep">/</span> 10</div>
             </y-th>
             <y-th>
               <div>이달<span style="font-size:8px;">의 점검 건수</span></div>
-              <div class="info"><span class="cnt">{{info.month}}</span> <span class="sep">/</span> {{info.monthtotal}}</div>
+              <div class="info"><span class="cnt">10</span> <span class="sep">/</span> 10</div>
             </y-th>
           </y-tr>
         </y-table>
@@ -153,21 +151,8 @@ const data = reactive({
   buildingscore: 0
 });
 
-const info = reactive({
-  newcustomers: 0,
-  customers: 0,
-  avgprice: 0,
-  totalprice: 0,
-  users: 0,
-  today: 0,
-  todaytotal: 0,
-  week: 0,
-  weektotal: 0,
-  month: 0,
-  monthtotal: 0
-})
-
 const textContent = (date) => {
+  console.log(date)
   return data.calendars.filter((item) => {
     return date === item.day;
   });
@@ -198,9 +183,10 @@ async function initData() {
 
 async function readCalendar(day) {
   let res = await Calendarcompanylist.find({company: data.session.company, month: day})
-
+  console.log(res)
   let datas = {}
   res.items.forEach(item => {
+    console.log(item)
     if (!(item.day in datas)) {
       datas[item.day] = {
         day: item.day,
@@ -229,62 +215,28 @@ async function readCalendar(day) {
     items.push(datas[item])
   }
 
+  console.log(items)
   data.calendars = items
 }
 
 async function getItems() {
   let d = moment()
-  let day = d.format('YYYY-MM')
+  let today = d.format('YYYY-MM')
 
   data.date = new Date()
   
-  await readCalendar(day)
+  await readCalendar(today)
 
-  /*
-     let res = await Report.find({company: data.session.company, duration: today, orderby: 'r_checkdate'})
+  return
+  let res = await Report.find({company: data.session.company, duration: today, orderby: 'r_checkdate'})
 
-     let t = d.format('YYYY-MM-DD')
-     for (let i = 0; i < res.items.length; i++) {
-     let item = res.items[i]
-     if (item.checkdate == t) {
-     data.sales = item
-     }
-     }
-   */
-
-  let today = moment().format('YYYY-MM-DD 00:00:00')
-  let week = moment().subtract(7, 'day').format('YYYY-MM-DD 00:00:00')
-  let month = moment().subtract(1, 'month').format('YYYY-MM-DD 00:00:00')
-
-  console.log(today)
-  console.log(week)
-  console.log(month)
-  
-  let res = await User.find({company: data.session.company})
-  info.users = res.items.length
-
-  res = await Customer.find({company: data.session.company})  
-  let customer = res.items
-  
-  info.customers = customer.length
-  info.newcustomers = customer.filter(item => item.date > week).length
-
-  let totalscore = customer.reduce((acc, item, idx) => acc + item.extra.building.score, 0)
-  info.totalprice = customer.reduce((acc, item, idx) => acc + item.contractprice, 0)
-  if (totalscore > 0) {
-    info.avgprice = util.getInt(info.totalprice / totalscore)
-  }
-
-  res = await Report.find({company: data.session.company})
-  let report = res.items
-
-  info.todaytotal = report.filter(item => item.date > today).length
-  info.weektotal = report.filter(item => item.date > week).length
-  info.monthtotal = report.filter(item => item.date > month).length
-
-  info.today = report.filter(item => item.date > today && item.status == Report.status.complete).length
-  info.week = report.filter(item => item.date > week && item.status == Report.status.complete).length
-  info.month = report.filter(item => item.date > month && item.status == Report.status.complete).length
+  let t = d.format('YYYY-MM-DD')
+  for (let i = 0; i < res.items.length; i++) {
+    let item = res.items[i]
+    if (item.checkdate == t) {
+      data.sales = item
+    }
+  }  
 }
 
 onMounted(async () => {
@@ -349,7 +301,6 @@ function checkLimitdate(d) {
 .info {
   text-align: center;
   font-size: 24px;
-  padding: 6px 0px;
 }
 
 .cnt {

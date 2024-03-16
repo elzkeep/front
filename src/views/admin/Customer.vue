@@ -1,5 +1,5 @@
 <template>
-  <Title title="건물별 현황" />
+  <Title title="고객 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
@@ -31,20 +31,15 @@
 
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
-    <el-table-column type="selection" width="40" align="center" />    
-    <el-table-column label="건물명" align="left" width="200">
-      <template #default="scope">
-        {{getBuilding(scope.row.building)}}
-      </template>
-    </el-table-column>
-    <el-table-column label="주소" align="left">
-      <template #default="scope">
-        {{scope.row.extra.building.address}} {{scope.row.extra.building.addressetc}}
-      </template>
-    </el-table-column>
-    <el-table-column label="소유고객" align="left" width="200">
+    <el-table-column type="selection" width="40" align="center" />
+    <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
         {{getCompany(scope.row.company)}}
+      </template>
+    </el-table-column>
+    <el-table-column label="고객명" align="left" width="200">
+      <template #default="scope">
+        {{getBuilding(scope.row.building)}}
       </template>
     </el-table-column>
     <el-table-column label="관리형태" align="center" width="80">
@@ -53,17 +48,15 @@
         <span v-if="scope.row.type==2">위탁관리</span>
       </template>
     </el-table-column>
-    <el-table-column label="점검자" align="left">
+    <el-table-column label="점검 담당자" align="left">
       <template #default="scope">
         {{getUser(scope.row.user)}}
       </template>
     </el-table-column>
-    <el-table-column prop="contractstartdate" label="계약일" align="center" width="100" />
-    <el-table-column label="계약금액" align="right" width="120">
-      <template #default="scope">
-        {{util.money(scope.row.contractprice)}} 원
-      </template>
-    </el-table-column>
+    <el-table-column prop="extra.building.score" label="점수" align="right" width="80" />
+    <el-table-column prop="managername" label="담당자" align="left" width="80" />
+    <el-table-column prop="managertel" label="담당자 연락처" align="left" />
+    <el-table-column prop="manageremail" label="담당자 이메일" align="left" />    
     <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>  
 
@@ -88,9 +81,9 @@
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>건물명</y-th>
+          <y-th>고객명</y-th>
           <y-td>
-            <el-select v-model.number="data.item.building" placeholder="건물명" style="width:150px;">           
+            <el-select v-model.number="data.item.building" placeholder="고객명" style="width:150px;">           
               <el-option
                 v-for="item in data.buildings"
                 :key="item.id"
@@ -406,7 +399,7 @@ async function clickSubmit() {
   }
 
   if (item.building == 0) {
-    util.alert('건물명을 선택하세요')
+    util.alert('고객명을 선택하세요')
     return
   }
 

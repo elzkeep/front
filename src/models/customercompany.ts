@@ -1,41 +1,35 @@
 import request from '~/global/request'
 /*
-enum type {
-    work = 1,
-    building = 2
-}
 
 
-interface Company {
+interface Customercompany {
+    company: int64
     id: int
     name: string
     companyno: string
     ceo: string
     address: string
     addressetc: string
-    type: company.Type
+    type: int
+    status: int
     billingname: string
     billingtel: string
     billingemail: string
-    status: int
     date: string
+    buildingcount: int64
+    contractprice: int
+    score: Double
     
 }
 */
-export default class Company {
-    static readonly type = { work: 1, building: 2} as const 
-    static readonly types = ['', '점검', '건물']
+export default class Customercompany {
         
-    
-    static getType(value: number) {
-        return this.types[value]
-    }
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/company',
+            url: '/api/customercompany',
             data: item
         })
 
@@ -45,7 +39,7 @@ export default class Company {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/company/batch',
+            url: '/api/customercompany/batch',
             data: item
         })
 
@@ -55,7 +49,7 @@ export default class Company {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/company',
+            url: '/api/customercompany',
             data: item
         })
 
@@ -65,7 +59,7 @@ export default class Company {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/company',
+            url: '/api/customercompany',
             data: item
         })
 
@@ -75,7 +69,7 @@ export default class Company {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/company/batch',
+            url: '/api/customercompany/batch',
             data: item
         })
 
@@ -85,7 +79,7 @@ export default class Company {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/company',
+            url: '/api/customercompany',
             params: params
         })
 
@@ -98,7 +92,7 @@ export default class Company {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/company/${id}`
+            url: `/api/customercompany/${id}`
         })
 
         return res
@@ -107,7 +101,7 @@ export default class Company {
     static async sum(params: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/company/sum?${params}`
+            url: `/api/customercompany/sum?${params}`
         })
 
         return res

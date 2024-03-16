@@ -1,5 +1,5 @@
 <template>
-  <Title title="매출 관리" />
+  <Title title="청구서 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
 

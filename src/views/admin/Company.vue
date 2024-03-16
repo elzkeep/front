@@ -1,10 +1,11 @@
 <template>
-  <Title title="팀 관리" />
+  <Title title="업체 관리" />
 
-  <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
+  <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
+        
+    <el-select v-model.number="data.search.type" placeholder="분류" style="width:150px;">           
       <el-option
-        v-for="item in data.companys"
+        v-for="item in data.types"
         :key="item.id"
         :label="item.name"
         :value="item.id"
@@ -24,14 +25,20 @@
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
+    <el-table-column label="구분" align="center" width="100">
       <template #default="scope">
-        {{getCompany(scope.row.company)}}
+        <span v-if="scope.row.type==1">점검회사</span>
+        <span v-if="scope.row.type==2">건물</span>
       </template>
     </el-table-column>    
     <el-table-column prop="name" label="명칭" align="left" />
-    <el-table-column prop="order" label="순번" align="left" />
-    <el-table-column prop="date" label="등록일" align="center" width="150" />    
+    <el-table-column prop="remark" label="대표" align="left" width="100" />
+    <el-table-column prop="remark" label="주소" align="left">
+      <template #default="scope">
+        {{scope.row.address}} {{scope.row.addressetc}}
+      </template>      
+    </el-table-column>
+    <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>  
 
   
@@ -41,19 +48,15 @@
   >
 
       <y-table>
-        <y-tr v-if="data.session.level == User.level.rootadmin">
-          <y-th>업체</y-th>
+        <y-tr>
+          <y-th>구분</y-th>
           <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
-              <el-option
-                v-for="item in data.companys"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>            
+            <el-radio-group v-model.number="data.item.type">
+              <el-radio-button size="small" label="1">점검회사</el-radio-button>
+              <el-radio-button size="small" label="2">건물</el-radio-button>
+            </el-radio-group>
           </y-td>
-        </y-tr>        
+        </y-tr>
         <y-tr>
           <y-th>명칭</y-th>
           <y-td>
@@ -61,9 +64,27 @@
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>순번</y-th>
+          <y-th>사업자번호</y-th>
           <y-td>
-            <el-input v-model="data.item.order" />
+            <el-input v-model="data.item.companyno" />
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>대표자</y-th>
+          <y-td>
+            <el-input v-model="data.item.ceo" />
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>주소</y-th>
+          <y-td>
+            <el-input v-model="data.item.address" />
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>상세주소</y-th>
+          <y-td>
+            <el-input v-model="data.item.addressetc" />
           </y-td>
         </y-tr>
       </y-table>
@@ -82,7 +103,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, DepartmentManager, Department, Company } from "~/models"
+import { Company } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -92,21 +113,20 @@ const { width, height } = size()
 const store = useStore()
 const route = useRoute()
 
-const model = Department
+const model = Company
 
 const item = {
-  id: 0,  
+  id: 0,
   name: '',
-  order: 0,  
-  company: 0,
+  companyno: '',
+  ceo: '',
+  address: '',
+  addressetc: '',
+  type: 1,
   date: ''
 }
 
 const data = reactive({
-  session: {
-    level: 0,
-    company: 0
-  },
   id: 0,
   mode: 'normal',
   items: [],
@@ -117,23 +137,20 @@ const data = reactive({
   visible: false,
   search: {
     text: '',
-    company: 0
+    type: 0
   },
-  companys: []  
+  types: [
+    {id: 0, name: ' '},
+    {id: 1, name: '점검회사'},
+    {id: 2, name: '건물'}        
+  ]
 })
 
 async function clickSearch() {
   await getItems(true)
 }
 
-async function initData() {
-  let res = await Company.find({
-    page: data.page,
-    pagesize: data.pagesize,
-    orderby: 'c_name'
-  })
-  
-  data.companys = [{id: 0, name: ' '}, ...res.items]
+async function initData() {  
 }
 
 async function getItems() {
@@ -141,8 +158,8 @@ async function getItems() {
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    company: data.search.company,
-    orderby: 'de_id desc'
+    type: data.search.type,
+    orderby: 'c_id desc'
   })
 
   if (res.items == null) {
@@ -162,9 +179,8 @@ async function getItems() {
   data.items = items
 }
 
-function clickInsert() {
+function clickInsert() {  
   data.item = util.clone(item)
-
   data.visible = true  
 }
 
@@ -172,17 +188,14 @@ function clickUpdate(item, index) {
   if (index.no == 0) {
     return
   }
-  
-  data.item = util.clone(item)
 
+  data.item = util.clone(item)
   data.visible = true  
 }
 
 onMounted(async () => {
-  data.session = store.getters['getUser']
-
   util.loading(true)
-    
+  
   await initData()
   await getItems()
 
@@ -230,27 +243,12 @@ function clickDeleteMulti() {
   })
 }
 
-async function clickSubmit() {  
-  let item = util.clone(data.item)
-
-  if (data.session.level == User.level.rootadmin) {
-    if (item.company == 0) {
-      util.alert('업체를 선택하세요')
-      return
-    }
-  } else {
-    item.company = data.session.company
-  }
-  
-  if (item.name == '') {
-    util.alert('명칭을 입력하세요')
-    return
-  }
-
+async function clickSubmit() {
   util.loading(true)
 
-  item.company = util.getInt(item.company)
-  item.order = util.getInt(item.order)
+  let item = util.clone(data.item)
+  
+  item.type = util.getInt(item.type)
   
   if (item.id > 0) {
     await model.update(item)
@@ -264,16 +262,6 @@ async function clickSubmit() {
 
   data.visible = false  
   util.loading(false)  
-}
-
-function getCompany(id) {
-  let items = data.companys.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-}
-
-    return items[0].name
 }
 
 </script>
