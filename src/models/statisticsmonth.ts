@@ -1,17 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Statisticsmonth {
-    id: int
-    year: string
-    duration: string
-    total: int64
-    totalprice: int64
-    billdate: string
-    
-}
-*/
 export default class Statisticsmonth {
         
     
@@ -77,6 +65,29 @@ export default class Statisticsmonth {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/statisticsmonth',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/statisticsmonth/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

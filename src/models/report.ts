@@ -1,32 +1,5 @@
 import request from '~/global/request'
-/*
-enum status {
-    newer = 1,
-    ing = 2,
-    check = 3,
-    complete = 4
-}
 
-
-interface Report {
-    id: int64
-    title: string
-    period: int
-    number: int
-    checkdate: string
-    checktime: string
-    content: string
-    image: string
-    sign1: string
-    sign2: string
-    status: report.Status
-    company: int64
-    user: int64
-    building: int64
-    date: string
-    
-}
-*/
 export default class Report {
     static readonly status = { newer: 1, ing: 2, check: 3, complete: 4} as const 
     static readonly statuss = ['', '신규', '점검중', '점검완료', '작성완료']
@@ -98,6 +71,29 @@ export default class Report {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/report',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/report/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

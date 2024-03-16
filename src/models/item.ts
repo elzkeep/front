@@ -1,47 +1,5 @@
 import request from '~/global/request'
-/*
-enum type {
-    text = 1,
-    select = 2,
-    status = 3
-}
-enum status {
-    good = 1,
-    warning = 2,
-    danger = 3,
-    notuse = 4
-}
 
-
-interface Item {
-    id: int64
-    title: string
-    type: item.Type
-    value1: int
-    value2: int
-    value3: int
-    value4: int
-    value5: int
-    value6: int
-    value7: int
-    value8: int
-    value: int
-    content: string
-    unit: string
-    status: item.Status
-    reason: int
-    reasontext: string
-    action: int
-    actiontext: string
-    image: string
-    order: int
-    topcategory: int
-    data: int64
-    report: int64
-    date: string
-    
-}
-*/
 export default class Item {
     static readonly type = { text: 1, select: 2, status: 3} as const 
     static readonly types = ['', 'Text', 'Select', 'Status']
@@ -119,6 +77,29 @@ export default class Item {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/item',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/item/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

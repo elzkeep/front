@@ -1,18 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Calendarcompanylist {
-    id: int64
-    company: int64
-    month: string
-    day: string
-    status: int
-    count: int64
-    checkdate: string
-    
-}
-*/
 export default class Calendarcompanylist {
         
     
@@ -78,6 +65,29 @@ export default class Calendarcompanylist {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/calendarcompanylist',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/calendarcompanylist/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

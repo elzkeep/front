@@ -1,24 +1,5 @@
 import request from '~/global/request'
-/*
-enum type {
-    single = 1,
-    multi = 2
-}
 
-
-interface Data {
-    id: int
-    topcategory: int
-    title: string
-    type: data.Type
-    category: int
-    order: int
-    report: int64
-    company: int64
-    date: string
-    
-}
-*/
 export default class Data {
     static readonly type = { single: 1, multi: 2} as const 
     static readonly types = ['', 'Single', 'Multi']
@@ -90,6 +71,29 @@ export default class Data {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/data',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/data/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

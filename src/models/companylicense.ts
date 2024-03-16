@@ -1,16 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Companylicense {
-    id: int64
-    company: int64
-    licensecategory: int64
-    licenselevel: int64
-    date: string
-    
-}
-*/
 export default class Companylicense {
         
     
@@ -76,6 +65,29 @@ export default class Companylicense {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/companylicense',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/companylicense/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

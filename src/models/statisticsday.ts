@@ -1,17 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Statisticsday {
-    id: int
-    month: string
-    duration: string
-    total: int64
-    totalprice: int64
-    billdate: string
-    
-}
-*/
 export default class Statisticsday {
         
     
@@ -77,6 +65,29 @@ export default class Statisticsday {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/statisticsday',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/statisticsday/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

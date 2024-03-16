@@ -1,16 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Department {
-    id: int64
-    name: string
-    order: int
-    company: int64
-    date: string
-    
-}
-*/
 export default class Department {
         
     
@@ -76,6 +65,29 @@ export default class Department {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/department',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/department/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

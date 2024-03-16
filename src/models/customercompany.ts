@@ -1,27 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Customercompany {
-    company: int64
-    id: int
-    name: string
-    companyno: string
-    ceo: string
-    address: string
-    addressetc: string
-    type: int
-    status: int
-    billingname: string
-    billingtel: string
-    billingemail: string
-    date: string
-    buildingcount: int64
-    contractprice: int
-    score: Double
-    
-}
-*/
 export default class Customercompany {
         
     
@@ -87,6 +65,29 @@ export default class Customercompany {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/customercompany',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/customercompany/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

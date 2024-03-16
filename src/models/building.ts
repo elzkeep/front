@@ -1,21 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Building {
-    id: int
-    name: string
-    conpanyno: string
-    ceo: string
-    address: string
-    addressetc: string
-    score: Double
-    status: int
-    company: int64
-    date: string
-    
-}
-*/
 export default class Building {
         
     
@@ -81,6 +65,29 @@ export default class Building {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/building',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/building/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

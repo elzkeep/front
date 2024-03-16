@@ -1,29 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Userlist {
-    id: int64
-    loginid: string
-    passwd: string
-    name: string
-    email: string
-    tel: string
-    address: string
-    addressetc: string
-    joindate: string
-    careeryear: int
-    careermonth: int
-    level: int
-    score: Double
-    status: int
-    company: int64
-    department: int64
-    date: string
-    totalscore: Double
-    
-}
-*/
 export default class Userlist {
         
     
@@ -89,6 +65,29 @@ export default class Userlist {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/userlist',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/userlist/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

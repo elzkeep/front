@@ -1,34 +1,5 @@
 import request from '~/global/request'
-/*
-enum type {
-    direct = 1,
-    outsourcing = 2
-}
 
-
-interface Customer {
-    id: int
-    type: customer.Type
-    checkdate: int
-    managername: string
-    managertel: string
-    manageremail: string
-    contractstartdate: string
-    contractenddate: string
-    contractprice: int
-    contractday: int
-    billingdate: int
-    billingname: string
-    billingtel: string
-    billingemail: string
-    status: int
-    user: int64
-    company: int64
-    building: int64
-    date: string
-    
-}
-*/
 export default class Customer {
     static readonly type = { direct: 1, outsourcing: 2} as const 
     static readonly types = ['', '직영', '위탁관리']
@@ -100,6 +71,29 @@ export default class Customer {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/customer',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/customer/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

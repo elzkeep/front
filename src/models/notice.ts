@@ -1,15 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Notice {
-    id: int64
-    title: string
-    content: string
-    date: string
-    
-}
-*/
 export default class Notice {
         
     
@@ -75,6 +65,29 @@ export default class Notice {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/notice',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/notice/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

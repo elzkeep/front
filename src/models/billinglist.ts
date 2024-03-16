@@ -1,31 +1,5 @@
 import request from '~/global/request'
-/*
-enum status {
-    wait = 1,
-    complete = 2
-}
-enum giro {
-    wait = 1,
-    complete = 2
-}
 
-
-interface Billinglist {
-    id: int64
-    price: int
-    status: billinglist.Status
-    giro: billinglist.Giro
-    billdate: string
-    company: int64
-    building: int64
-    date: string
-    buildingname: string
-    billingname: string
-    billingtel: string
-    billingemail: string
-    
-}
-*/
 export default class Billinglist {
     static readonly status = { wait: 1, complete: 2} as const 
     static readonly statuss = ['', '입금대기', '입금완료']
@@ -103,6 +77,29 @@ export default class Billinglist {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/billinglist',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/billinglist/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {

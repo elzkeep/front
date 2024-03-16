@@ -1,15 +1,5 @@
 import request from '~/global/request'
-/*
 
-
-interface Licensecategory {
-    id: int64
-    name: string
-    order: int
-    date: string
-    
-}
-*/
 export default class Licensecategory {
         
     
@@ -75,6 +65,29 @@ export default class Licensecategory {
             res.items = []
         }
         return res
+    }
+
+    static async find(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/licensecategory',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async count(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/licensecategory/count',
+            params: params
+        })
+        
+        return res.total
     }
 
     static async get(id: number) {
