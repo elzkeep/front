@@ -33,6 +33,7 @@
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
 
     <div style="flex:1;text-align:right;gap:5;">
+      <el-button size="small" type="primary" @click="clickSetting" style="margin-right:20px;">출력설정</el-button>
       <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right:-5px;">입금대기</el-button>
       <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right:-5px;">입금완료</el-button>
       <el-button size="small" type="success" @click="clickGiroMulti">지로발행</el-button>
@@ -78,129 +79,101 @@
 
   
   <el-dialog
-    v-model="data.visible"
+    v-model="data.visibleSetting"
     width="800px"
   >
 
       <y-table>
-        <y-tr v-if="data.session.level == User.level.rootadmin">
-          <y-th>업체</y-th>
+        <y-tr>
+          <y-th style="width:80px;">소식란</y-th>
           <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
-              <el-option
-                v-for="item in data.companys"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>                      
+            <el-input :rows="5" type="textarea" v-model="setting.content" />                      
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>빌딩</y-th>
+          <y-th>주소위치</y-th>
           <y-td>
-            <el-select v-model.number="data.item.building" placeholder="빌딩" style="width:150px;">           
-              <el-option
-                v-for="item in data.buildings"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>            
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>관리형태</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.type">
-              <el-radio-button size="small" label="1">직영</el-radio-button>
-              <el-radio-button size="small" label="2">위탁관리</el-radio-button>
-            </el-radio-group>
+            X : <el-input v-model="setting.x1" style="width:50px;" /> Y : <el-input v-model="setting.y1" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>점검일</y-th>
+          <y-th>금액</y-th>
           <y-td>
-            매월 <el-input v-model="data.item.companyno" style="width:50px;" /> 일
+            X : <el-input v-model="setting.x2" style="width:50px;" /> Y : <el-input v-model="setting.y2" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>담당자</y-th>
+          <y-th>공급가액</y-th>
           <y-td>
-            <el-input v-model="data.item.managername" />
+            X : <el-input v-model="setting.x3" style="width:50px;" /> Y : <el-input v-model="setting.y3" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>담당자 연락처</y-th>
+          <y-th>세액</y-th>
           <y-td>
-            <el-input v-model="data.item.managertel" />
+            X : <el-input v-model="setting.x4" style="width:50px;" /> Y : <el-input v-model="setting.y4" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>담당자 이메일</y-th>
+          <y-th>등록번호</y-th>
           <y-td>
-            <el-input v-model="data.item.manageremail" />
+            X : <el-input v-model="setting.x5" style="width:50px;" /> Y : <el-input v-model="setting.y5" style="width:50px;" /> 
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>수용가명</y-th>
+          <y-td>
+            X : <el-input v-model="setting.x6" style="width:50px;" /> Y : <el-input v-model="setting.y6" style="width:50px;" /> 
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>작성년월일</y-th>
+          <y-td>
+            X : <el-input v-model="setting.x7" style="width:50px;" /> Y : <el-input v-model="setting.y7" style="width:50px;" /> 
           </y-td>
         </y-tr>
 
         <y-tr>
-          <y-th>계악일</y-th>
-          <y-td>            
-            <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractstartdate" /> ~ <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractenddate" /> 
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계약금액</y-th>
+          <y-th>소식란</y-th>
           <y-td>
-            <el-input v-model="data.item.contractprice" />
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>청구일</y-th>
-          <y-td>
-            매월 <el-input v-model="data.item.contractday" style="width:50px;" /> 일
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계약담당자</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingname" />
+            X : <el-input v-model="setting.x8" style="width:50px;" /> Y : <el-input v-model="setting.y8" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>계약담당자 연락처</y-th>
+          <y-th>금액</y-th>
           <y-td>
-            <el-input v-model="data.item.billingtel" />
+            X : <el-input v-model="setting.x9" style="width:50px;" /> Y : <el-input v-model="setting.y9" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>계약담당자 이메일</y-th>
+          <y-th>고객코드</y-th>
           <y-td>
-            <el-input v-model="data.item.billingemail" />
+            X : <el-input v-model="setting.x10" style="width:50px;" /> Y : <el-input v-model="setting.y10" style="width:50px;" /> 
           </y-td>
         </y-tr>
         <y-tr>
-          <y-th>점검 담당자</y-th>
+          <y-th>상호</y-th>
           <y-td>
-            <el-select v-model.number="data.item.user" placeholder="점검 담당자" style="width:150px;">
-              <el-option
-                v-for="item in data.users"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
+            X : <el-input v-model="setting.x11" style="width:50px;" /> Y : <el-input v-model="setting.y11" style="width:50px;" /> 
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>성명</y-th>
+          <y-td>
+            X : <el-input v-model="setting.x12" style="width:50px;" /> Y : <el-input v-model="setting.y12" style="width:50px;" /> 
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>항목</y-th>
+          <y-td>
+            X : <el-input v-model="setting.x13" style="width:50px;" /> Y : <el-input v-model="setting.y13" style="width:50px;" /> 
           </y-td>
         </y-tr>
       </y-table>
 
       <template #footer>
-        <el-button size="small" @click="clickCancel">취소</el-button>
-        <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
+        <el-button size="small" @click="clickCancelSetting">취소</el-button>
+        <el-button size="small" type="primary" @click="clickSubmitSetting">등록</el-button>
       </template>
   </el-dialog>
 
@@ -213,9 +186,12 @@ import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
 import { User, Customer, Building, Billinglist, Company, Billing } from "~/models"
+import Extra from "~/models/extra"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
+import axios from 'axios'
+import moment from 'moment'
 
 const { width, height } = size()
 
@@ -247,6 +223,7 @@ const data = reactive({
   pagesize: 0,
   item: util.clone(item),
   visible: false,
+  visibleSetting: false,
   search: {
     company: 0,
     building: 0,
@@ -259,6 +236,36 @@ const data = reactive({
     {id: 1, name: '입금대기'},
     {id: 2, name: '입금완료'}
   ]
+})
+
+const setting = reactive({
+  contennt: '',
+  x1: 0,
+  y1: 0,
+  x2: 0,
+  y2: 0,
+  x3: 0,
+  y3: 0,
+  x4: 0,
+  y4: 0,
+  x5: 0,
+  y5: 0,
+  x6: 0,
+  y6: 0,
+  x7: 0,
+  y7: 0,
+  x8: 0,
+  y8: 0,
+  x9: 0,
+  y9: 0,
+  x10: 0,
+  y10: 0,
+  x11: 0,
+  y11: 0,
+  x12: 0,
+  y12: 0,
+  x13: 0,
+  y13: 0,
 })
 
 async function clickSearch() {
@@ -278,7 +285,15 @@ async function initData() {
 
   if (data.session.level != User.level.rootadmin) {
     company = data.session.company
-  }  
+  }
+
+  res = await Company.get(data.session.company)
+  let item = res.item
+  setting.content = item.content
+    for (let i = 1; i <= 13; i++) {
+      setting[`x${i}`] = item[`x${i}`]
+      setting[`y${i}`] = item[`y${i}`]
+    }
 }
 
 async function getItems() {
@@ -469,7 +484,7 @@ function clickStatusMulti(status) {
   }
   
   util.confirm(title, async function() {
-      util.loading(true)
+    util.loading(true)
     
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
@@ -489,21 +504,48 @@ function clickStatusMulti(status) {
 function clickGiroMulti() {
   util.confirm('지로 출력하시겠습니까', async function() {
     util.loading(true)
-    
-    for (let i = 0; i < listSelection.value.length; i++) {
-      let value = listSelection.value[i]
 
-      let res = await Billing.get(value.id)
-      res.item.giro = Billing.giro.complete
-      await Billing.update(res.item)
-    }
+    let ids = listSelection.value.map(item => item.id)    
 
-    //util.info('삭제되었습니다')
     await getItems()
 
     util.loading(false)
+
+    const url = '/api/download/giro/' + ids.join(',')
+    const date = moment().format('YYYYMMDDhhmmss')
+    const filename = `지로출력-${date}.pdf`
+
+    util.download(store, url, filename)
   })
 }
 
+function clickSetting() {
+  data.visibleSetting = true
+}
 
+function clickCancelSetting() {
+  data.visibleSetting = false
+}
+
+async function clickSubmitSetting() {
+  util.loading(true)
+
+  let res = await Company.get(data.session.company)
+  let item = util.clone(res.item)
+  
+  for (let i = 1; i <= 13; i++) {
+    item[`x${i}`] = util.getFloat(setting[`x${i}`])
+    item[`y${i}`] = util.getFloat(setting[`y${i}`])    
+  }
+  
+  await Company.update(item)
+  
+
+  //util.info('등록되었습니다')
+  
+  await getItems()
+
+  data.visibleSetting = false  
+  util.loading(false)  
+}
 </script>

@@ -40,6 +40,18 @@
             <el-input v-model="data.item.addressetc" />
           </y-td>
         </y-tr>
+        <y-tr>
+          <y-th>은행명</y-th>
+          <y-td>
+            <el-input v-model="data.item.bankname" />
+          </y-td>
+        </y-tr>
+        <y-tr>
+          <y-th>계좌번호</y-th>
+          <y-td>
+            <el-input v-model="data.item.bankno" />
+          </y-td>
+                        </y-tr>
       </y-table>
 
       <div style="margin-top:10px;text-align:left;">

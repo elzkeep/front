@@ -32,6 +32,7 @@ import ManagementStatistics from '~/views/management/Statistics.vue'
 import ManagementCustomercompany from '~/views/management/Customercompany.vue'
 import ManagementContract from '~/views/management/Contract.vue'
 import ManagementPayment from '~/views/management/Payment.vue'
+import ManagementFacility from '~/views/management/Facility.vue'
 
 import BuildingFacility from '~/views/building/Facility.vue'
 
@@ -222,6 +223,12 @@ const routes = [
     name: 'ManagementPayment',
     meta: { authorization: ['admin'] },
     component: ManagementPayment
+  },
+  {
+    path: '/management/facility/:id',
+    name: 'ManagementFacility',
+    meta: { authorization: ['admin'] },
+    component: ManagementFacility
   }
 ]
 

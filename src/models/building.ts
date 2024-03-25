@@ -67,25 +67,14 @@ export default class Building {
         return res
     }
 
-    static async find(params: any) {
-        const res = await request({
-            method: 'GET',
-            url: '/api/building',
-            params: params
-        })
-
-        if (res.items == null) {
-            res.items = []
-        }
-        return res
-    }
-
     static async count(params: any) {
         const res = await request({
             method: 'GET',
             url: '/api/building/count',
             params: params
         })
+
+        console.log(res)
         
         return res.total
     }

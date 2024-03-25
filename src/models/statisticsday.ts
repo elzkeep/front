@@ -67,19 +67,6 @@ export default class Statisticsday {
         return res
     }
 
-    static async find(params: any) {
-        const res = await request({
-            method: 'GET',
-            url: '/api/statisticsday',
-            params: params
-        })
-
-        if (res.items == null) {
-            res.items = []
-        }
-        return res
-    }
-
     static async count(params: any) {
         const res = await request({
             method: 'GET',

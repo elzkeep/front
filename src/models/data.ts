@@ -73,19 +73,6 @@ export default class Data {
         return res
     }
 
-    static async find(params: any) {
-        const res = await request({
-            method: 'GET',
-            url: '/api/data',
-            params: params
-        })
-
-        if (res.items == null) {
-            res.items = []
-        }
-        return res
-    }
-
     static async count(params: any) {
         const res = await request({
             method: 'GET',

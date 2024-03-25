@@ -67,19 +67,6 @@ export default class Facility {
         return res
     }
 
-    static async find(params: any) {
-        const res = await request({
-            method: 'GET',
-            url: '/api/facility',
-            params: params
-        })
-
-        if (res.items == null) {
-            res.items = []
-        }
-        return res
-    }
-
     static async count(params: any) {
         const res = await request({
             method: 'GET',

@@ -28,11 +28,14 @@ watchEffect(() => {
   var s = route.path.split('/')
 
   if (s[1] == 'management') {
-    if (s.length == 3) {
-      data.menu = s[1]
-    } else {
-      data.menu = `${s[1]}/${s[2]}`
-    }
+    /*
+       if (s.length == 3) {
+       data.menu = s[1]
+       } else {
+       data.menu = `${s[1]}/${s[2]}`
+       }
+     */
+    data.menu = s[1]
   } else if (s[1] == 'building') {
     data.menu = s[1]
   } else {

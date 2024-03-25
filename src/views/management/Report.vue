@@ -1,6 +1,27 @@
 <template>
   <Title title="점검 관리" />
 
+  <y-table style="margin-bottom:20px;">
+          <y-tr>
+            <y-th>
+              <div>전체</div>
+              <div class="info"><span class="cnt">{{info.status}}</span></div>
+            </y-th>
+            <y-th>
+              <div>대기</div>
+              <div class="info"><span class="cnt">{{info.status1}}</span></div>
+            </y-th>
+            <y-th>
+              <div>진행</div>
+              <div class="info"><span class="cnt">{{info.status2}}</span></div>              
+            </y-th>
+            <y-th>
+              <div>완료</div>
+              <div class="info"><span class="cnt">{{info.status3}}</span></div>              
+            </y-th>
+          </y-tr>
+  </y-table>
+
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
     <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
@@ -47,7 +68,7 @@
   </div>
 
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(245)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column prop="id" label="ID" align="center" width="80" />
     <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
@@ -252,6 +273,13 @@ const item = {
   date: ''
 }
 
+const info = reactive({
+  status: 0,
+  status1: 0,
+  status2: 0,
+  status3: 0
+})
+
 const data = reactive({
   session: {
     level: 0,
@@ -319,6 +347,34 @@ async function initData() {
   })
 
   data.users = [{id: 0, name: ' '}, ...res.items]
+
+
+  res = await model.find({
+    company: data.search.company
+  })
+
+  let status = 0
+  let status1 = 0
+  let status2 = 0
+  let status3 = 0
+  
+  for (let i = 0; i < res.items.length; i++) {
+    let item = res.items[i]
+    if (item.status == 1) {
+      status1++
+    } else if (item.status == 3) {
+      status2++
+    } else if (item.status == 3 || item.status == 4) {
+      status3++      
+    }
+
+    status++
+  }
+
+  info.status = status
+  info.status1 = status1
+  info.status2 = status2
+  info.status3 = status3
 }
 
 async function getItems() {
@@ -505,3 +561,19 @@ function getPeriod(item) {
   return titles[item.period] + ' ' + item.number + '차'
 }
 </script>
+<style>
+
+.info {
+  text-align: center;
+  font-size: 24px;
+  padding: 6px 0px;
+}
+
+.cnt {
+  color:#f56c6c;
+}
+
+.sep {
+  font-size: 18px;
+}
+</style>

@@ -44,7 +44,7 @@
     </el-table-column>
     <el-table-column label="소유고객" align="left" width="200">
       <template #default="scope">
-        {{getCompany(scope.row.company)}}
+        {{getCompany(scope.row.extra.building.company)}}
       </template>
     </el-table-column>
     <el-table-column label="관리형태" align="center" width="80">
@@ -65,6 +65,11 @@
       </template>
     </el-table-column>
     <el-table-column prop="date" label="등록일" align="center" width="150" />
+    <el-table-column label="설비 관리" align="center" width="90">
+      <template #default="scope">
+        <el-button size="small" type="primary" @click="clickFacility(scope.row)">설비 관리</el-button>        
+      </template>
+    </el-table-column>
   </el-table>  
 
   
@@ -195,6 +200,12 @@
       </template>
   </el-dialog>
 
+  <el-dialog
+    v-model="data.visibleFacility"
+    :width="width(100)"
+  >
+    <FacilityInsert />
+  </el-dialog>
 </template>
 
 
@@ -249,6 +260,7 @@ const data = reactive({
   pagesize: 0,
   item: util.clone(item),
   visible: false,
+  visibleFacility: false,
   search: {
     company: 0,
     building: 0,
@@ -270,7 +282,7 @@ async function clickSearch() {
 
 async function initData() {
   let res = await Company.find({
-    type: Company.type.work,
+    type: Company.type.building,
     orderby: 'c_name'
   })
   
@@ -333,7 +345,15 @@ function clickInsert() {
 }
 
 function clickUpdate(item, index) {
+  if (index == null) {
+    return
+  }
+  
   if (index.no == 0) {
+    return
+  }
+
+  if (index.no == 9) {
     return
   }
 
@@ -468,6 +488,11 @@ function getUser(id) {
   }
 
   return items[0].name
+}
+
+function clickFacility(item) {
+  router.push(`/management/facility/${item.id}`)
+  //data.visibleFacility = true
 }
 
 </script>

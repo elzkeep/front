@@ -27,9 +27,8 @@
             <el-icon><Files /></el-icon>
             <div>점검기록</div>
           </template>
-
-          <el-menu-item index="2-1">점검현황</el-menu-item>
-          <el-menu-item index="2-2">점검기록</el-menu-item>
+          
+          <el-menu-item index="2-2">점검현황</el-menu-item>
           <el-menu-item index="2-3">점검 보고서</el-menu-item>
           <el-menu-item index="2-4">적합/부적합 결과</el-menu-item>
 

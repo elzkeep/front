@@ -24,12 +24,14 @@
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
     
     <div style="flex:1;text-align:right;gap:5;">
-
+      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
+      <el-button size="small" type="success" @click="clickInsert">등록</el-button>
     </div>
   </div>  
 
   
-  <el-table :data="data.items" border :height="height(170)">
+  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
+    <el-table-column type="selection" width="40" align="center" />    
     <el-table-column label="건물명" align="left" width="200">
       <template #default="scope">
         {{getBuilding(scope.row.building)}}
