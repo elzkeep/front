@@ -69,16 +69,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from "vue";
-import router from "~/router";
-import { util, size } from "~/global";
-import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import router from '~/router'
+import { util, size } from '~/global'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 
-const { width, height } = size();
+const { width, height } = size()
 
-const store = useStore();
-const route = useRoute();
+const store = useStore()
+const route = useRoute()
 
 const data = reactive({
   id: 0,
@@ -86,11 +86,11 @@ const data = reactive({
     level: 0,
     company: 0,
   },
-  menu: "low",
-});
+  menu: 'low',
+})
 
 async function clickSearch() {
-  await getItems(true);
+  await getItems(true)
 }
 
 async function initData() {}
@@ -98,16 +98,16 @@ async function initData() {}
 async function getItems() {}
 
 onMounted(async () => {
-  data.session = store.getters["getUser"];
-  data.id = util.getInt(route.params.id);
+  data.session = store.getters['getUser']
+  data.id = util.getInt(route.params.id)
 
-  util.loading(true);
+  util.loading(true)
 
-  await initData();
-  await getItems();
+  await initData()
+  await getItems()
 
-  util.loading(false);
-});
+  util.loading(false)
+})
 
 function clickTab() {}
 </script>
