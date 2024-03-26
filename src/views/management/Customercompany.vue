@@ -334,7 +334,7 @@ function clickDeleteMulti() {
   util.confirm("삭제하시겠습니까", async function () {
     util.loading(true)
 
-    for (let i = 0l i < listSelection.value.lengthl i++) {
+    for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
       let item = {
