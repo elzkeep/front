@@ -216,16 +216,16 @@ async function getItems() {
 
   let items = []
 
-  for (let i = 0 i < res.items.length i++) {
+  for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
     let res2 = await Building.find({ company: item.id })
     item.price = 0
 
-    for (let j = 0 j < res2.items.length j++) {
+    for (let j = 0; j < res2.items.length; j++) {
       let res3 = await Customer.find({ company: data.session.company, building: res2.items[j].id })
 
-      for (let k = 0 k < res3.items.length k++) {
+      for (let k = 0; k < res3.items.length; k++) {
         item.price += res3.items[k].contractprice
       }
     }
@@ -334,7 +334,7 @@ function clickDeleteMulti() {
   util.confirm("삭제하시겠습니까", async function () {
     util.loading(true)
 
-    for (let i = 0 i < listSelection.value.length i++) {
+    for (let i = 0l i < listSelection.value.lengthl i++) {
       let value = listSelection.value[i]
 
       let item = {
