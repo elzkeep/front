@@ -44,6 +44,7 @@ declare module 'vue' {
     Fuel: typeof import('./components/building/Fuel.vue')['default']
     Generator: typeof import('./components/building/Generator.vue')['default']
     InquiryInsert: typeof import('./components/management/InquiryInsert.vue')['default']
+    Low: typeof import('./components/report/Low.vue')['default']
     ManagementMenu: typeof import('./components/layouts/ManagementMenu.vue')['default']
     PageTitle: typeof import('./components/PageTitle.vue')['default']
     Sunlight: typeof import('./components/building/Sunlight.vue')['default']
