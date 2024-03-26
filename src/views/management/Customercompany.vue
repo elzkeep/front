@@ -49,8 +49,8 @@
         <y-td>
           <el-row>
             <el-col :span="12">
-              <div><b>설정대상</b> <br /><br /></div>
-              <div>
+              <el-text tag="b"> 설정대상 <br /><br /></el-text>
+              <el-text>
                 A열 = 사업자명<br />
                 B열 = 대표자<br />
                 C열 = 사업자번호<br />
@@ -59,7 +59,7 @@
                 F열 = 이메일<br />
                 <br />
                 *CSV 파일 형태로 업로드 해주세요.<br />
-              </div>
+              </el-text>
             </el-col>
             <el-col :span="12">
               <div style="flex: 1; text-align: right; gap: 5">
@@ -127,13 +127,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import router from '~/router'
-import { util, size } from '~/global'
-import { User, Customer, Building, Company, Customercompany, Uploadfile } from '~/models'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { ElTable } from 'element-plus'
+import { ref, reactive, onMounted, onUnmounted } from "vue"
+import router from "~/router"
+import { util, size } from "~/global"
+import { User, Customer, Building, Company, Customercompany, Uploadfile } from "~/models"
+import { useStore } from "vuex"
+import { useRoute } from "vue-router"
+import { ElTable } from "element-plus"
 //import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
 
 const { width, height } = size()
@@ -145,13 +145,13 @@ const model = Customercompany
 
 const item = {
   id: 0,
-  name: '',
-  companyno: '',
-  ceo: '',
-  address: '',
-  addressetc: '',
+  name: "",
+  companyno: "",
+  ceo: "",
+  address: "",
+  addressetc: "",
   type: 2,
-  date: '',
+  date: "",
 }
 
 const data = reactive({
@@ -160,7 +160,7 @@ const data = reactive({
     company: 0,
   },
   id: 0,
-  mode: 'normal',
+  mode: "normal",
   items: [],
   total: 0,
   page: 1,
@@ -173,15 +173,15 @@ const data = reactive({
     company: 0,
     building: 0,
     type: 0,
-    text: '',
+    text: "",
   },
   companys: [],
   users: [],
   buildings: [],
   types: [
-    { id: 0, name: ' ' },
-    { id: 1, name: '직영' },
-    { id: 2, name: '위탁관리' },
+    { id: 0, name: " " },
+    { id: 1, name: "직영" },
+    { id: 2, name: "위탁관리" },
   ],
   filelist: [],
 })
@@ -207,7 +207,7 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    orderby: 'c_name',
+    orderby: "c_name",
   })
 
   if (res.items == null) {
@@ -274,7 +274,7 @@ async function clickSubmit() {
     await modelCustomer.insert(item)
   }
 
-  util.alert('저장되었습니다')
+  util.alert("저장되었습니다")
 
   util.loading(false)
 }
@@ -298,7 +298,7 @@ function clickUpdate(item, index) {
 }
 
 onMounted(async () => {
-  data.session = store.getters['getUser']
+  data.session = store.getters["getUser"]
 
   util.loading(true)
 
@@ -331,7 +331,7 @@ const changeList = val => {
 }
 
 function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function () {
+  util.confirm("삭제하시겠습니까", async function () {
     util.loading(true)
 
     for (let i = 0; i < listSelection.value.length; i++) {
@@ -352,13 +352,13 @@ function clickDeleteMulti() {
 }
 
 async function clickSubmitSingle() {
-  console.log('clickSubmit')
+  console.log("clickSubmit")
   let item = util.clone(data.item)
 
   console.log(item)
 
-  if (item.name == '') {
-    util.alert('고객명을 입력하세요')
+  if (item.name == "") {
+    util.alert("고객명을 입력하세요")
     return
   }
 
@@ -384,8 +384,8 @@ async function clickSubmitMulti() {
   for (let tmp of data.filelist) {
     console.log(tmp)
     const body = new FormData()
-    body.append('title', tmp.name)
-    body.append('excel', tmp.raw)
+    body.append("title", tmp.name)
+    body.append("excel", tmp.raw)
     console.log(body)
     console.log(tmp.name)
     console.log(tmp.raw)
