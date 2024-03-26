@@ -127,21 +127,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from "vue";
-import router from "~/router";
-import { util, size } from "~/global";
-import { User, Customer, Building, Company, Customercompany, Uploadfile } from "~/models";
-import { useStore } from "vuex";
-import { useRoute } from "vue-router";
-import { ElTable } from "element-plus";
-import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { ref, reactive, onMounted, onUnmounted } from "vue"
+import router from "~/router"
+import { util, size } from "~/global"
+import { User, Customer, Building, Company, Customercompany, Uploadfile } from "~/models"
+import { useStore } from "vuex"
+import { useRoute } from "vue-router"
+import { ElTable } from "element-plus"
+//import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
 
-const { width, height } = size();
+const { width, height } = size()
 
-const store = useStore();
-const route = useRoute();
+const store = useStore()
+const route = useRoute()
 
-const model = Customercompany;
+const model = Customercompany
 
 const item = {
   id: 0,
@@ -152,7 +152,7 @@ const item = {
   addressetc: "",
   type: 2,
   date: "",
-};
+}
 
 const data = reactive({
   session: {
@@ -184,15 +184,15 @@ const data = reactive({
     { id: 2, name: "위탁관리" },
   ],
   filelist: [],
-});
+})
 
 // const handleExceed: UploadProps["onExceed"] = files => {
-//   data.filelist = [];
-//   data.filelist = files;
-// };
+//   data.filelist = []
+//   data.filelist = files
+// }
 
 async function clickSearch() {
-  await getItems(true);
+  await getItems(true)
 }
 
 async function initData() {}
@@ -208,190 +208,190 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     orderby: "c_name",
-  });
+  })
 
   if (res.items == null) {
-    res.items = [];
+    res.items = []
   }
 
-  let items = [];
+  let items = []
 
-  for (let i = 0; i < res.items.length; i++) {
-    let item = res.items[i];
+  for (let i = 0 i < res.items.length i++) {
+    let item = res.items[i]
 
-    let res2 = await Building.find({ company: item.id });
-    item.price = 0;
+    let res2 = await Building.find({ company: item.id })
+    item.price = 0
 
-    for (let j = 0; j < res2.items.length; j++) {
-      let res3 = await Customer.find({ company: data.session.company, building: res2.items[j].id });
+    for (let j = 0 j < res2.items.length j++) {
+      let res3 = await Customer.find({ company: data.session.company, building: res2.items[j].id })
 
-      for (let k = 0; k < res3.items.length; k++) {
-        item.price += res3.items[k].contractprice;
+      for (let k = 0 k < res3.items.length k++) {
+        item.price += res3.items[k].contractprice
       }
     }
 
-    item.buildingcount = res2.items.length;
+    item.buildingcount = res2.items.length
 
-    item.index = i + 1;
-    items.push(item);
+    item.index = i + 1
+    items.push(item)
   }
 
-  data.total = res.total;
-  data.items = res.items;
+  data.total = res.total
+  data.items = res.items
 }
 
 function clickSingle() {
-  data.item = util.clone(item);
+  data.item = util.clone(item)
 
-  data.single = true;
-  data.visible = false;
+  data.single = true
+  data.visible = false
 }
 
 function clickMulti() {
-  data.multi = true;
-  data.visible = false;
+  data.multi = true
+  data.visible = false
 }
 
 function clickInsert() {
-  data.visible = true;
+  data.visible = true
 }
 
 // function clickInsert() {
-//   data.item = util.clone(item);
-//   data.visible = true;
+//   data.item = util.clone(item)
+//   data.visible = true
 // }
 
 function clickdowunload() {}
 
 async function clickSubmit() {
-  util.loading(true);
+  util.loading(true)
 
-  let item = util.clone(data.item);
+  let item = util.clone(data.item)
 
   if (item.id > 0) {
-    await modelCustomer.update(item);
+    await modelCustomer.update(item)
   } else {
-    await modelCustomer.insert(item);
+    await modelCustomer.insert(item)
   }
 
-  util.alert("저장되었습니다");
+  util.alert("저장되었습니다")
 
-  util.loading(false);
+  util.loading(false)
 }
 
 function clickUpdate(item, index) {
   if (index == null) {
-    return;
+    return
   }
 
   if (index.no == 0) {
-    return;
+    return
   }
 
   if (index.no == 9) {
-    return;
+    return
   }
 
-  data.item = util.clone(item);
-  // data.visible = true;
-  data.single = true;
+  data.item = util.clone(item)
+  // data.visible = true
+  data.single = true
 }
 
 onMounted(async () => {
-  data.session = store.getters["getUser"];
+  data.session = store.getters["getUser"]
 
-  util.loading(true);
+  util.loading(true)
 
-  await initData();
-  await getItems();
+  await initData()
+  await getItems()
 
-  data.visible = false;
-  util.loading(false);
-});
+  data.visible = false
+  util.loading(false)
+})
 
 function clickCancel() {
-  data.visible = false;
-  data.single = false;
-  data.multi = false;
+  data.visible = false
+  data.single = false
+  data.multi = false
 }
 
-const listRef = ref<InstanceType<typeof ElTable>>();
-const listSelection = ref([]);
+const listRef = ref<InstanceType<typeof ElTable>>()
+const listSelection = ref([])
 const toggleListSelection = rows => {
   if (rows) {
     rows.forEach(row => {
-      listRef.value!.toggleRowSelection(row, undefined);
-    });
+      listRef.value!.toggleRowSelection(row, undefined)
+    })
   } else {
-    listRef.value!.clearSelection();
+    listRef.value!.clearSelection()
   }
-};
+}
 const changeList = val => {
-  listSelection.value = val;
-};
+  listSelection.value = val
+}
 
 function clickDeleteMulti() {
   util.confirm("삭제하시겠습니까", async function () {
-    util.loading(true);
+    util.loading(true)
 
-    for (let i = 0; i < listSelection.value.length; i++) {
-      let value = listSelection.value[i];
+    for (let i = 0 i < listSelection.value.length i++) {
+      let value = listSelection.value[i]
 
       let item = {
         id: value.id,
-      };
+      }
 
-      await Company.remove(item);
+      await Company.remove(item)
     }
 
     //util.info('삭제되었습니다')
-    await getItems();
+    await getItems()
 
-    util.loading(false);
-  });
+    util.loading(false)
+  })
 }
 
 async function clickSubmitSingle() {
-  console.log("clickSubmit");
-  let item = util.clone(data.item);
+  console.log("clickSubmit")
+  let item = util.clone(data.item)
 
-  console.log(item);
+  console.log(item)
 
   if (item.name == "") {
-    util.alert("고객명을 입력하세요");
-    return;
+    util.alert("고객명을 입력하세요")
+    return
   }
 
-  util.loading(true);
+  util.loading(true)
 
   if (item.id > 0) {
-    await Company.update(item);
+    await Company.update(item)
   } else {
-    await Company.insert(item);
+    await Company.insert(item)
   }
 
   //util.info('등록되었습니다')
 
-  await getItems();
+  await getItems()
 
-  data.visible = false;
-  data.single = false;
-  util.loading(false);
+  data.visible = false
+  data.single = false
+  util.loading(false)
 }
 
 async function clickSubmitMulti() {
-  console.log(data.filelist);
+  console.log(data.filelist)
   for (let tmp of data.filelist) {
-    console.log(tmp);
-    const body = new FormData();
-    body.append("title", tmp.name);
-    body.append("excel", tmp.raw);
-    console.log(body);
-    console.log(tmp.name);
-    console.log(tmp.raw);
+    console.log(tmp)
+    const body = new FormData()
+    body.append("title", tmp.name)
+    body.append("excel", tmp.raw)
+    console.log(body)
+    console.log(tmp.name)
+    console.log(tmp.raw)
 
-    // const res = await Uploadfile.insert(tmp);
+    // const res = await Uploadfile.insert(tmp)
   }
-  data.filelist = [];
+  data.filelist = []
 }
 </script>
