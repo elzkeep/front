@@ -526,7 +526,7 @@ const imageUrl = ref("");
 
 const handleFileSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
   //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
-
+  
   console.log(response.filename);
   console.log(response.originalfilename);
   data.filename = response.filename;

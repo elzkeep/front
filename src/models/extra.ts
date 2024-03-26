@@ -12,4 +12,15 @@ export default class Extra {
 
         return res
     }
+
+    static async external(type: number, params: any) {
+        const filenames = params.join(',')
+        
+        const res = await request({
+            method: 'GET',
+            url: `/api/external?type=${type}&filenames=${filenames}`
+        })
+
+        return res
+    }
 }

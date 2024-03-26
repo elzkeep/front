@@ -73,8 +73,6 @@ export default class Building {
             url: '/api/building/count',
             params: params
         })
-
-        console.log(res)
         
         return res.total
     }
@@ -97,5 +95,7 @@ export default class Building {
         return res
     }
 
+
+    
 
 }
