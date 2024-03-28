@@ -169,8 +169,8 @@
           <y-th>상태</y-th>
           <y-td>
             <el-radio-group v-model.number="data.item.status">
-              <el-radio-button size="small" label="1">사용</el-radio-button>
-              <el-radio-button size="small" label="2">사용중지</el-radio-button>
+              <el-radio-button size="small" value="1">사용</el-radio-button>
+              <el-radio-button size="small" value="2">사용중지</el-radio-button>
             </el-radio-group>
           </y-td>
         </y-tr>
@@ -199,8 +199,8 @@
         <y-th>구분</y-th>
         <y-td>
           <el-radio-group v-model.number="external.type">
-            <el-radio-button size="small" label="1">계약업체</el-radio-button>
-            <el-radio-button size="small" label="2">해지업체</el-radio-button>
+            <el-radio-button size="small" value="1">계약업체</el-radio-button>
+            <el-radio-button size="small" value="2">해지업체</el-radio-button>
           </el-radio-group>
         </y-td>
       </y-tr>
