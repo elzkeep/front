@@ -195,6 +195,7 @@
   </el-dialog>
 
   <el-dialog v-model="data.approval.visibleView" width="800px">
+    <Title title="기본정보" />
     <y-table>
       <y-tr>
         <y-th>로그인아이디</y-th>
@@ -233,6 +234,54 @@
         </y-td>
       </y-tr>
     </y-table>
+    <Title title="자격정보" />
+    <y-table>
+      <y-tr>
+        <y-th>기술자격증명</y-th>
+        <y-td>
+          <!-- {{ data.approval.item.loginid }} -->
+          {{ licenseText() }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>등록번호</y-th>
+        <y-td>
+          <!-- {{ data.approval.item.name }} -->
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>기술자격등급</y-th>
+        <y-td>
+          {{ licenseText() }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>기술자격취득일자</y-th>
+        <y-td>
+          <!-- {{ data.approval.item.tel }} -->
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>법정교육일자</y-th>
+        <y-td>
+          <!-- {{ data.approval.item.address }} -->
+        </y-td>
+        <!-- <y-th>법정교육기관</y-th>
+        <y-td>
+          {{ data.approval.item.address }}
+        </y-td> -->
+      </y-tr>
+      <y-tr>
+        <y-th>특별교육일자</y-th>
+        <y-td>
+          <!-- {{ data.approval.item.addressetc }} -->
+        </y-td>
+        <!-- <y-th>특별교육기관</y-th>
+        <y-td>
+          {{ data.approval.item.addressetc }}
+        </y-td> -->
+      </y-tr>
+    </y-table>
 
     <template #footer>
       <!-- <el-button size="small" @click="clickCancel">취소</el-button> -->
@@ -245,7 +294,7 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, Userlist, Company, Department, Customer } from '~/models'
+import { User, Userlist, Company, Department, Customer, License } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -330,6 +379,10 @@ const data = reactive({
     item: util.clone(approvalItem),
     visible: false,
     visibleView: false,
+    items: [],
+    total: 0,
+  },
+  license: {
     items: [],
     total: 0,
   },
@@ -424,6 +477,39 @@ async function getApproval() {
   data.approval.items = items
 }
 
+async function getLicense(id) {
+  let res = await License.find({
+    // page: data.approval.page,
+    // pagesize: data.approval.pagesize,
+    user: id,
+  })
+
+  if (res.items == null) {
+    res.items = []
+  }
+
+  let items = []
+
+  for (let i = 0; i < res.items.length; i++) {
+    let item = res.items[i]
+
+    item.index = i + 1
+    items.push(item)
+  }
+
+  data.license.total = res.total
+  data.license.items = items
+}
+
+function licenseText() {
+  let text = ''
+  for (let i = 0; i < data.license.items.length; i++) {
+    text += data.license.items[i].extra.licensecategory.name + ', '
+  }
+
+  return text
+}
+
 function clickApproval(item, index) {
   // if (index.no == 0) {
   //   return
@@ -432,6 +518,8 @@ function clickApproval(item, index) {
   if (index.no == 5) {
     return
   }
+
+  getLicense(item.id)
 
   data.approval.item = util.clone(item)
   data.approval.visibleView = true
