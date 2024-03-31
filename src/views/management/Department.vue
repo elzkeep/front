@@ -3,7 +3,17 @@
   <div style="display: flex">
     <div style="flex-grow: 0; margin-right: 10px; border: 1px solid #ddd">
       <el-input v-model="name" style="width: 240px" placeholder="Filter keyword" />
-      <el-tree ref="treeRef" style="max-width: 600px" class="filter-tree" :data="data.items" :props="defaultProps" default-expand-all :filter-node-method="filterNode" @node-click="handleNodeClick" />
+      <el-tree
+        ref="treeRef"
+        style="max-width: 600px"
+        class="filter-tree"
+        :data="data.items"
+        :props="defaultProps"
+        default-expand-all
+        :filter-node-method="filterNode"
+        :expand-on-click-node="false"
+        @node-click="handleNodeClick"
+      />
     </div>
 
     <div style="flex-grow: 1">
@@ -44,12 +54,14 @@
           <el-input v-model="data.item.name"/>
         </y-td>
       </y-tr> -->
-      <!-- <y-tr>
+      <y-tr>
         <y-th>상위 팀/그룹</y-th>
         <y-td>
-          <el-input v-model="data.item.parent" />
+          <el-select v-model.number="data.item.department" placeholder="팀" style="width: 150px">
+            <el-option v-for="item in data.departments" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </y-td>
-      </y-tr> -->
+      </y-tr>
       <y-tr>
         <y-th>순번</y-th>
         <y-td>
@@ -110,6 +122,7 @@ const data = reactive({
   userpage: 1,
   userpagesize: 20,
   department: 0,
+  departments: [],
   status: 0,
   item: util.clone(item),
   visible: false,
@@ -161,7 +174,7 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    orderby: 'de_parent desc',
+    orderby: 'de_parent desc, de_name',
   })
 
   if (res.items == null) {
@@ -192,6 +205,9 @@ async function getItems() {
 
   data.total = res.total
   data.items = items
+
+  let reverseItem = res.items.reverse()
+  data.departments = [{ id: 0, name: ' ' }, ...reverseItem]
 
   data.department = 0
 }
@@ -224,7 +240,7 @@ async function getUsers() {
 
 function clickInsert() {
   data.item = util.clone(item)
-
+  data.item.department = data.department
   data.visible = true
 }
 

@@ -179,7 +179,11 @@
   </el-dialog>
 
   <el-dialog v-model="data.approval.visible" width="800px">
-    <el-table :data="data.approval.items" border :height="'500px'" @row-click="clickApproval">
+    <el-radio-group v-model.number="data.approval.status" style="display: flex; margin-bottom: 10px">
+      <el-radio-button size="small" label="1" @click="getApproval(1)">거래처 신청</el-radio-button>
+      <el-radio-button size="small" label="2" @click="getApproval(2)">거절</el-radio-button>
+    </el-radio-group>
+    <el-table v-if="data.approval.status == 1" :data="data.approval.items" border :height="'500px'" @row-click="clickApproval">
       <el-table-column prop="joindate" label="신청일시" align="left" width="100" />
       <el-table-column prop="loginid" label="ID" align="left" width="100" />
       <el-table-column prop="name" label="이름" align="left" />
@@ -187,8 +191,22 @@
       <el-table-column prop="email" label="이메일" align="right" />
       <el-table-column label="승인" align="center" width="160">
         <template #default="scope">
-          <el-button size="small" type="primary" @click="clickApprovalOk(scope.row.id)" style="margin-right: -5px">승인</el-button>
+          <el-button size="small" type="primary" @click="clickApprovalOk(scope.row)" style="margin-right: -5px">승인</el-button>
           <el-button size="small" type="danger" @click="clickApprovalCancle(scope.row.id)" style="margin-right: -5px">거절</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-table v-if="data.approval.status == 2" :data="data.approval.items" border :height="'500px'" @row-click="clickApproval">
+      <el-table-column prop="joindate" label="신청일시" align="left" width="100" />
+      <el-table-column prop="loginid" label="ID" align="left" width="100" />
+      <el-table-column prop="name" label="이름" align="left" />
+      <el-table-column prop="tel" label="휴대폰번호" align="left" />
+      <el-table-column prop="email" label="이메일" align="right" />
+      <el-table-column label="처리내역" align="center" width="160">
+        <template #default="scope">
+          <span v-if="scope.row.approval == 3">승인</span>
+          <span v-if="scope.row.approval == 2">거절</span>
         </template>
       </el-table-column>
     </el-table>
@@ -200,37 +218,37 @@
       <y-tr>
         <y-th>로그인아이디</y-th>
         <y-td>
-          {{ data.approval.item.loginid }}
+          {{ data.item.loginid }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>이름</y-th>
         <y-td>
-          {{ data.approval.item.name }}
+          {{ data.item.name }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>이메일</y-th>
         <y-td>
-          {{ data.approval.item.email }}
+          {{ data.item.email }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>연락처</y-th>
         <y-td>
-          {{ data.approval.item.tel }}
+          {{ data.item.tel }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>주소</y-th>
         <y-td>
-          {{ data.approval.item.address }}
+          {{ data.item.address }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>상세주소</y-th>
         <y-td>
-          {{ data.approval.item.addressetc }}
+          {{ data.item.addressetc }}
         </y-td>
       </y-tr>
     </y-table>
@@ -239,46 +257,45 @@
       <y-tr>
         <y-th>기술자격증명</y-th>
         <y-td>
-          <!-- {{ data.approval.item.loginid }} -->
-          {{ licenseText() }}
+          {{ licenseText('category') }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>등록번호</y-th>
         <y-td>
-          <!-- {{ data.approval.item.name }} -->
+          {{ licenseText('number') }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>기술자격등급</y-th>
         <y-td>
-          {{ licenseText() }}
+          {{ licenseText('level') }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>기술자격취득일자</y-th>
         <y-td>
-          <!-- {{ data.approval.item.tel }} -->
+          {{ licenseText('takingdate') }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
-          <!-- {{ data.approval.item.address }} -->
+          <!-- {{ data.item.address }} -->
         </y-td>
         <!-- <y-th>법정교육기관</y-th>
         <y-td>
-          {{ data.approval.item.address }}
+          {{ data.item.address }}
         </y-td> -->
       </y-tr>
       <y-tr>
         <y-th>특별교육일자</y-th>
         <y-td>
-          <!-- {{ data.approval.item.addressetc }} -->
+          <!-- {{ data.item.addressetc }} -->
         </y-td>
         <!-- <y-th>특별교육기관</y-th>
         <y-td>
-          {{ data.approval.item.addressetc }}
+          {{ data.item.addressetc }}
         </y-td> -->
       </y-tr>
     </y-table>
@@ -286,6 +303,139 @@
     <template #footer>
       <!-- <el-button size="small" @click="clickCancel">취소</el-button> -->
       <!-- <el-button size="small" type="primary" @click="clickSubmit">등록</el-button> -->
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.approval.visibleOk" width="800px">
+    <Title title="기본정보" />
+    <y-table>
+      <y-tr>
+        <y-th>로그인아이디</y-th>
+        <y-td>
+          {{ data.item.loginid }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>이름</y-th>
+        <y-td>
+          {{ data.item.name }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>이메일</y-th>
+        <y-td>
+          {{ data.item.email }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>연락처</y-th>
+        <y-td>
+          {{ data.item.tel }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>주소</y-th>
+        <y-td>
+          {{ data.item.address }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상세주소</y-th>
+        <y-td>
+          {{ data.item.addressetc }}
+        </y-td>
+      </y-tr>
+    </y-table>
+    <Title title="자격정보" />
+    <y-table>
+      <y-tr>
+        <y-th>기술자격증명</y-th>
+        <y-td>
+          {{ licenseText('category') }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>등록번호</y-th>
+        <y-td>
+          {{ licenseText('number') }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>기술자격등급</y-th>
+        <y-td>
+          {{ licenseText('level') }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>기술자격취득일자</y-th>
+        <y-td>
+          {{ licenseText('takingdate') }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>법정교육일자</y-th>
+        <y-td>
+          <!-- {{ data.item.address }} -->
+        </y-td>
+        <!-- <y-th>법정교육기관</y-th>
+        <y-td>
+          {{ data.item.address }}
+        </y-td> -->
+      </y-tr>
+      <y-tr>
+        <y-th>특별교육일자</y-th>
+        <y-td>
+          <!-- {{ data.item.addressetc }} -->
+        </y-td>
+        <!-- <y-th>특별교육기관</y-th>
+        <y-td>
+          {{ data.item.addressetc }}
+        </y-td> -->
+      </y-tr>
+    </y-table>
+
+    <Title title="처리정보" />
+    <y-table>
+      <y-tr>
+        <y-th>팀</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.department" placeholder="팀" style="width: 150px">
+            <el-option v-for="item in data.departments" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>경력</y-th>
+        <y-td> <el-input v-model="data.item.careeryear" style="width: 50px" /> 년 <el-input v-model="data.item.careermonth" style="width: 50px" /> 월 </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>권한</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.level" placeholder="권한" style="width: 150px">
+            <el-option v-for="item in data.levels" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상태</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.status">
+            <el-radio-button size="small" label="1">사용</el-radio-button>
+            <el-radio-button size="small" label="2">사용중지</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>점수</y-th>
+        <y-td>
+          <el-input v-model="data.item.score" />
+        </y-td>
+      </y-tr>
+    </y-table>
+
+    <template #footer>
+      <!-- <el-button size="small" @click="clickCancel">취소</el-button> -->
+      <el-button size="small" type="primary" @click="clickApprovalRealOk">승인</el-button>
     </template>
   </el-dialog>
 </template>
@@ -315,29 +465,12 @@ const item = {
   tel: '',
   address: '',
   addressetc: '',
+  joindate: '',
   careeryear: 0,
   careermonth: 0,
   level: 1,
   approval: 1,
-  status: 1,
-  company: 0,
-  department: 0,
-  date: '',
-}
-
-const approvalItem = {
-  id: 0,
-  loginid: '',
-  passwd: '',
-  name: '',
-  email: '',
-  tel: '',
-  address: '',
-  addressetc: '',
-  careeryear: 0,
-  careermonth: 0,
-  level: 1,
-  approval: 1,
+  rejectreason: '',
   status: 1,
   company: 0,
   department: 0,
@@ -374,11 +507,13 @@ const data = reactive({
   ],
   customers: [],
   approval: {
+    status: 1,
     page: 1,
     pagesize: 20,
-    item: util.clone(approvalItem),
+    // item: util.clone(item),
     visible: false,
     visibleView: false,
+    visibleOk: false,
     items: [],
     total: 0,
   },
@@ -451,12 +586,12 @@ async function getItems() {
   data.items = items
 }
 
-async function getApproval() {
+async function getApproval(id) {
   let res = await User.find({
     page: data.approval.page,
     pagesize: data.approval.pagesize,
     company: data.search.company,
-    approval: 1,
+    approval: id,
     orderby: 'u_id',
   })
 
@@ -501,10 +636,21 @@ async function getLicense(id) {
   data.license.items = items
 }
 
-function licenseText() {
+function licenseText(item) {
   let text = ''
   for (let i = 0; i < data.license.items.length; i++) {
-    text += data.license.items[i].extra.licensecategory.name + ', '
+    if (item == 'category') {
+      text += data.license.items[i].extra.licensecategory.name + ', '
+    }
+    if (item == 'level') {
+      text += data.license.items[i].extra.licenselevel.name + ', '
+    }
+    if (item == 'number') {
+      text += data.license.items[i].number + ', '
+    }
+    if (item == 'takingdate') {
+      text += data.license.items[i].takingdate + ', '
+    }
   }
 
   return text
@@ -515,13 +661,18 @@ function clickApproval(item, index) {
   //   return
   // }
 
+  if (data.approval.status == 2 && index.no == 5) {
+    util.messagebox('거절사유', item.rejectreason, function () {})
+    return
+  }
+
   if (index.no == 5) {
     return
   }
 
   getLicense(item.id)
 
-  data.approval.item = util.clone(item)
+  data.item = util.clone(item)
   data.approval.visibleView = true
 }
 
@@ -536,26 +687,47 @@ function clickInsert() {
 }
 
 function clickApprovalManage() {
-  getApproval()
+  data.approval.status = 1
+  getApproval(1)
   data.approval.visible = true
 }
 
-function clickApprovalOk(id) {
-  console.log(id)
+async function clickApprovalOk(item) {
+  data.item = util.clone(item)
+  data.approval.visibleOk = true
+  data.item.status = 1
+}
+
+async function clickApprovalRealOk() {
+  let item = data.item
   util.confirm('승인하시겠습니까?', async function () {
     util.loading(true)
-    let item = { id: id, approval: 3 }
-    model.updateApproval(item)
+    data.item.approval = 3
+    item.company = util.getInt(item.company)
+    item.department = util.getInt(item.department)
+    item.careeryear = util.getInt(item.careeryear)
+    item.careermonth = util.getInt(item.careermonth)
+    item.joindate = util.convertDBDate(item.joindate)
+    item.level = util.getInt(item.level)
+    item.status = util.getInt(item.status)
+    item.score = util.getFloat(item.score)
+
+    model.update(data.item)
+    data.approval.visibleOk = false
+    await getApproval(1)
     util.loading(false)
   })
 }
 
-function clickApprovalCancle(id) {
+async function clickApprovalCancle(id) {
   console.log(id)
-  util.confirm('거절하시겠습니까?', async function () {
+  util.prompt('거절하시겠습니까?', async function (value) {
     util.loading(true)
     let item = { id: id, approval: 2 }
     model.updateApproval(item)
+    let item1 = { id: id, rejectreason: value }
+    model.updateRejectreason(item1)
+    await getApproval(1)
     util.loading(false)
   })
 }
