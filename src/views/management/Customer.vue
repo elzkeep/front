@@ -1,5 +1,5 @@
 <template>
-  <Title title="건물별 현황" />
+  <Title title="건물 및 계약 관리" />
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
@@ -32,17 +32,12 @@
   
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />    
-    <el-table-column label="건물명" align="left" width="200">
+    <el-table-column label="건물명" align="left">
       <template #default="scope">
         {{getBuilding(scope.row.building)}}
       </template>
-    </el-table-column>
-    <el-table-column label="주소" align="left">
-      <template #default="scope">
-        {{scope.row.extra.building.address}} {{scope.row.extra.building.addressetc}}
-      </template>
-    </el-table-column>
-    <el-table-column label="소유고객" align="left" width="200">
+    </el-table-column>    
+    <el-table-column label="사업자명" align="left" width="200">
       <template #default="scope">
         {{getCompany(scope.row.extra.building.company)}}
       </template>
@@ -53,23 +48,30 @@
         <span v-if="scope.row.type==2">위탁관리</span>
       </template>
     </el-table-column>
-    <el-table-column label="점검자" align="left">
+    <!--<el-table-column label="점검자" align="left">
       <template #default="scope">
         {{getUser(scope.row.user)}}
       </template>
     </el-table-column>
-    <el-table-column prop="contractstartdate" label="계약일" align="center" width="100" />
+    -->
+    <el-table-column label="계약기간" align="right" width="250">
+      <template #default="scope">
+        {{scope.row.contractstartdate}} ~ {{scope.row.contractenddate}}
+      </template>
+    </el-table-column>
     <el-table-column label="계약금액" align="right" width="120">
       <template #default="scope">
         {{util.money(scope.row.contractprice)}} 원
       </template>
     </el-table-column>
     <el-table-column prop="date" label="등록일" align="center" width="150" />
+    <!--
     <el-table-column label="설비 관리" align="center" width="90">
       <template #default="scope">
         <el-button size="small" type="primary" @click="clickFacility(scope.row)">설비 관리</el-button>        
       </template>
     </el-table-column>
+    -->
   </el-table>  
 
   

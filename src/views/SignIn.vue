@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { util } from '~/global'
 import { Login, Company, User } from "~/models"
@@ -27,6 +27,9 @@ const store = useStore()
 const item = reactive({
   loginid: '',
   passwd: ''
+})
+
+onMounted(async () => {  
 })
 
 async function clickSignin() {

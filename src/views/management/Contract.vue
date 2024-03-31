@@ -5,7 +5,7 @@
 
     <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
-        v-for="item in data.companys"
+        v-for="item in data.workcompanys"
         :key="item.id"
         :label="item.name"
         :value="item.id"
@@ -34,12 +34,12 @@
     <el-table-column type="selection" width="40" align="center" />    
     <el-table-column label="건물명" align="left" width="200">
       <template #default="scope">
-        {{getBuilding(scope.row.building)}}
+        {{scope.row.extra.building.name}}        
       </template>
     </el-table-column>    
     <el-table-column label="소유고객" align="left" width="200">
       <template #default="scope">
-        {{getCompany(scope.row.company)}}
+        {{scope.row.extra.company.name}}        
       </template>
     </el-table-column>
     <el-table-column label="관리형태" align="center" width="80">
@@ -60,7 +60,11 @@
     </el-table-column>
     <el-table-column prop="billingname" label="청구일" align="center" width="80">
       <template #default="scope">
-        <span v-if="scope.row.billingdate != 0">매월 {{scope.row.billingdate}} 일</span>
+        <span v-if="scope.row.collectmonth == 1">당월</span>
+        <span v-else>차월</span>
+        <span v-if="scope.row.collectday > 0">
+        {{scope.row.collectday}} 일
+        </span>
       </template>
     </el-table-column>
     <el-table-column prop="billingname" label="담당자" align="left" width="80" />
@@ -81,7 +85,7 @@
           <y-td>
             <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
               <el-option
-                v-for="item in data.companys"
+                v-for="item in data.workcompanys"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
@@ -256,7 +260,8 @@ const data = reactive({
     building: 0,
     type: 0
   },
-  companys: [],
+  workcompanys: [],
+  companys: [],  
   users: [],
   buildings: [],
   types: [
@@ -276,8 +281,6 @@ async function initData() {
     orderby: 'c_name'
   })
   
-  data.companys = [{id: 0, name: ' '}, ...res.items]
-
   res = await Building.find({
     orderby: 'b_name'
   })

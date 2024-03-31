@@ -240,9 +240,9 @@ const router = createRouter({
 
 router.beforeEach(function (to, from, next) {
   const { authorization } = to.meta
-  
+
   if (store.state.token == '') {
-    if (to.path === '/signin') {
+    if (to.path === '/signin') {      
       next()
     } else {
       next('/signin')

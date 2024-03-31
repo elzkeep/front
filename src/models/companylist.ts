@@ -1,13 +1,13 @@
 import request from '~/global/request'
 
-export default class Customercompany {
+export default class Companylist {
         
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/customercompany',
+            url: '/api/companylist',
             data: item
         })
 
@@ -17,7 +17,7 @@ export default class Customercompany {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/customercompany/batch',
+            url: '/api/companylist/batch',
             data: item
         })
 
@@ -27,7 +27,7 @@ export default class Customercompany {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/customercompany',
+            url: '/api/companylist',
             data: item
         })
 
@@ -37,7 +37,7 @@ export default class Customercompany {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/customercompany',
+            url: '/api/companylist',
             data: item
         })
 
@@ -47,7 +47,7 @@ export default class Customercompany {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/customercompany/batch',
+            url: '/api/companylist/batch',
             data: item
         })
 
@@ -57,7 +57,7 @@ export default class Customercompany {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/customercompany',
+            url: '/api/companylist',
             params: params
         })
 
@@ -70,7 +70,7 @@ export default class Customercompany {
     static async count(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/customercompany/count',
+            url: '/api/companylist/count',
             params: params
         })
         
@@ -80,7 +80,7 @@ export default class Customercompany {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/customercompany/${id}`
+            url: `/api/companylist/${id}`
         })
 
         return res
@@ -89,13 +89,11 @@ export default class Customercompany {
     static async sum(params: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/customercompany/sum?${params}`
+            url: `/api/companylist/sum?${params}`
         })
 
         return res
     }
 
-
-    
 
 }

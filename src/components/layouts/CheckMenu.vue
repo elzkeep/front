@@ -41,9 +41,8 @@
             <div>고객</div>
           </template>
 
-          <el-menu-item index="3-1">고객별 현황</el-menu-item>
-          <el-menu-item index="3-2">건물별 현황</el-menu-item>
-          <el-menu-item index="3-3">계약관리</el-menu-item>
+          <el-menu-item index="3-1">고객 현황</el-menu-item>
+          <el-menu-item index="3-2">건물 및 계약 관리</el-menu-item>          
 
 
         </el-sub-menu>
