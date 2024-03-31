@@ -120,4 +120,14 @@ export default class User {
 
     return res
   }
+
+  static async updateRejectreason(item: any) {
+    const res = await request({
+      method: 'PUT',
+      url: '/api/user/rejectreason',
+      data: item,
+    })
+
+    return res
+  }
 }
