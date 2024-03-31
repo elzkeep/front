@@ -63,7 +63,17 @@
             </el-col>
             <el-col :span="12">
               <div style="flex: 1; text-align: right; gap: 5">
-                <el-upload v-model:file-list="data.filelist" class="upload" action="#" :limit="1" :auto-upload="false">
+                <el-upload
+                  class="upload"
+                  :action="external.upload"
+                  :headers="headers"
+                  :show-file-list="true"
+                  :on-success="handleFileSuccess"
+                  :auto-upload="true"
+                  :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                  v-model:file-list="external.files"
+                  :limit="1"
+                >
                   <template #trigger>
                     <el-button type="success" style="margin-right: 10px">
                       Upload<el-icon class="el-icon--right"><Upload /></el-icon>
@@ -81,7 +91,7 @@
     </y-table>
     <template #footer>
       <el-button size="small" @click="clickCancel">취소</el-button>
-      <el-button size="small" @click="clickSubmitMulti">등록</el-button>
+      <el-button size="small" @click="clickDataSubmit">등록</el-button>
     </template>
   </el-dialog>
 
@@ -127,32 +137,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from "vue"
-import router from "~/router"
-import { util, size } from "~/global"
-import { User, Customer, Building, Company, Customercompany, Uploadfile } from "~/models"
-import { useStore } from "vuex"
-import { useRoute } from "vue-router"
-import { ElTable } from "element-plus"
-//import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import router from '~/router'
+import { util, size } from '~/global'
+import { User, Customer, Building, Company, Customercompany, Uploadfile } from '~/models'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ElTable } from 'element-plus'
+import type { UploadProps } from 'element-plus'
+import Extra from '~/models/extra'
 
 const { width, height } = size()
 
 const store = useStore()
 const route = useRoute()
 
+const headers = {
+  Authorization: 'Bearer ' + store.state.token,
+}
+
 const model = Customercompany
 
 const item = {
   id: 0,
-  name: "",
-  companyno: "",
-  ceo: "",
-  address: "",
-  addressetc: "",
+  name: '',
+  companyno: '',
+  ceo: '',
+  address: '',
+  addressetc: '',
   type: 2,
-  date: "",
+  date: '',
 }
+
+const external = reactive({
+  type: 1,
+  filename: '',
+  originalfilename: '',
+  upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
+  files: [],
+})
 
 const data = reactive({
   session: {
@@ -160,7 +183,7 @@ const data = reactive({
     company: 0,
   },
   id: 0,
-  mode: "normal",
+  mode: 'normal',
   items: [],
   total: 0,
   page: 1,
@@ -173,15 +196,15 @@ const data = reactive({
     company: 0,
     building: 0,
     type: 0,
-    text: "",
+    text: '',
   },
   companys: [],
   users: [],
   buildings: [],
   types: [
-    { id: 0, name: " " },
-    { id: 1, name: "직영" },
-    { id: 2, name: "위탁관리" },
+    { id: 0, name: ' ' },
+    { id: 1, name: '직영' },
+    { id: 2, name: '위탁관리' },
   ],
   filelist: [],
 })
@@ -207,7 +230,7 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    orderby: "c_name",
+    orderby: 'c_name',
   })
 
   if (res.items == null) {
@@ -274,9 +297,19 @@ async function clickSubmit() {
     await modelCustomer.insert(item)
   }
 
-  util.alert("저장되었습니다")
+  util.alert('저장되었습니다')
 
   util.loading(false)
+}
+
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+
+  console.log(response)
+  console.log(response.filename)
+  console.log(response.originalfilename)
+  external.filename = response.filename
+  external.originalfilename = response.originalfilename
 }
 
 function clickUpdate(item, index) {
@@ -298,7 +331,7 @@ function clickUpdate(item, index) {
 }
 
 onMounted(async () => {
-  data.session = store.getters["getUser"]
+  data.session = store.getters['getUser']
 
   util.loading(true)
 
@@ -331,7 +364,7 @@ const changeList = val => {
 }
 
 function clickDeleteMulti() {
-  util.confirm("삭제하시겠습니까", async function () {
+  util.confirm('삭제하시겠습니까', async function () {
     util.loading(true)
 
     for (let i = 0; i < listSelection.value.length; i++) {
@@ -352,13 +385,13 @@ function clickDeleteMulti() {
 }
 
 async function clickSubmitSingle() {
-  console.log("clickSubmit")
+  console.log('clickSubmit')
   let item = util.clone(data.item)
 
   console.log(item)
 
-  if (item.name == "") {
-    util.alert("고객명을 입력하세요")
+  if (item.name == '') {
+    util.alert('고객명을 입력하세요')
     return
   }
 
@@ -379,19 +412,15 @@ async function clickSubmitSingle() {
   util.loading(false)
 }
 
-async function clickSubmitMulti() {
-  console.log(data.filelist)
-  for (let tmp of data.filelist) {
-    console.log(tmp)
-    const body = new FormData()
-    body.append("title", tmp.name)
-    body.append("excel", tmp.raw)
-    console.log(body)
-    console.log(tmp.name)
-    console.log(tmp.raw)
+async function clickDataSubmit() {
+  util.loading(true)
 
-    // const res = await Uploadfile.insert(tmp)
-  }
-  data.filelist = []
+  // let filenames = external.files.map(item => item.response.filename)
+  // await Extra.external(external.type, filenames)
+  clickCancel()
+
+  util.alert('저장되었습니다')
+
+  util.loading(false)
 }
 </script>

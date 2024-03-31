@@ -143,10 +143,6 @@ const handleNodeClick = (tree: Tree) => {
   getUsers()
 }
 
-async function clickSearch() {
-  await getItems(true)
-}
-
 async function initData() {
   let res = await Company.find({
     page: data.page,
@@ -196,6 +192,8 @@ async function getItems() {
 
   data.total = res.total
   data.items = items
+
+  data.department = 0
 }
 
 async function getUsers() {
@@ -223,8 +221,6 @@ async function getUsers() {
   data.userTotal = res.total
   data.users = items
 }
-
-function clickTeamLeader() {}
 
 function clickInsert() {
   data.item = util.clone(item)
@@ -275,27 +271,6 @@ const changeList = val => {
   listSelection.value = val
 }
 
-function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function () {
-    util.loading(true)
-
-    for (let i = 0; i < listSelection.value.length; i++) {
-      let value = listSelection.value[i]
-
-      let item = {
-        id: value.id,
-      }
-
-      await model.remove(item)
-    }
-
-    //util.info('삭제되었습니다')
-    await getItems()
-
-    util.loading(false)
-  })
-}
-
 async function clickSubmit() {
   let item = util.clone(data.item)
 
@@ -336,16 +311,6 @@ async function clickSubmit() {
 
   data.visible = false
   util.loading(false)
-}
-
-function getCompany(id) {
-  let items = data.companys.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
 }
 
 function getLevel(id) {
