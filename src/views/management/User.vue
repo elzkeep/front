@@ -255,48 +255,48 @@
     <Title title="자격정보" />
     <y-table>
       <y-tr>
-        <y-th>기술자격증명</y-th>
-        <y-td>
+        <y-th colspan="1">기술자격증명</y-th>
+        <y-td colspan="3">
           {{ licenseText('category') }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>등록번호</y-th>
-        <y-td>
+        <y-th colspan="1">등록번호</y-th>
+        <y-td colspan="3">
           {{ licenseText('number') }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>기술자격등급</y-th>
-        <y-td>
+        <y-th colspan="1">기술자격등급</y-th>
+        <y-td colspan="3">
           {{ licenseText('level') }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>기술자격취득일자</y-th>
-        <y-td>
+        <y-th colspan="1">기술자격취득일자</y-th>
+        <y-td colspan="3">
           {{ licenseText('takingdate') }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
-          <!-- {{ data.item.address }} -->
+          {{ data.item.address }}
         </y-td>
-        <!-- <y-th>법정교육기관</y-th>
+        <y-th>법정교육기관</y-th>
         <y-td>
           {{ data.item.address }}
-        </y-td> -->
+        </y-td>
       </y-tr>
       <y-tr>
         <y-th>특별교육일자</y-th>
         <y-td>
-          <!-- {{ data.item.addressetc }} -->
+          {{ data.item.addressetc }}
         </y-td>
-        <!-- <y-th>특별교육기관</y-th>
+        <y-th>특별교육기관</y-th>
         <y-td>
           {{ data.item.addressetc }}
-        </y-td> -->
+        </y-td>
       </y-tr>
     </y-table>
 
@@ -349,48 +349,48 @@
     <Title title="자격정보" />
     <y-table>
       <y-tr>
-        <y-th>기술자격증명</y-th>
-        <y-td>
+        <y-th colspan="1">기술자격증명</y-th>
+        <y-td colspan="3">
           {{ licenseText('category') }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>등록번호</y-th>
-        <y-td>
+        <y-th colspan="1">등록번호</y-th>
+        <y-td colspan="3">
           {{ licenseText('number') }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>기술자격등급</y-th>
-        <y-td>
+        <y-th colspan="1">기술자격등급</y-th>
+        <y-td colspan="3">
           {{ licenseText('level') }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>기술자격취득일자</y-th>
-        <y-td>
+        <y-th colspan="1">기술자격취득일자</y-th>
+        <y-td colspan="3">
           {{ licenseText('takingdate') }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
-          <!-- {{ data.item.address }} -->
+          {{ data.item.address }}
         </y-td>
-        <!-- <y-th>법정교육기관</y-th>
+        <y-th>법정교육기관</y-th>
         <y-td>
           {{ data.item.address }}
-        </y-td> -->
+        </y-td>
       </y-tr>
       <y-tr>
         <y-th>특별교육일자</y-th>
         <y-td>
-          <!-- {{ data.item.addressetc }} -->
+          {{ data.item.addressetc }}
         </y-td>
-        <!-- <y-th>특별교육기관</y-th>
+        <y-th>특별교육기관</y-th>
         <y-td>
           {{ data.item.addressetc }}
-        </y-td> -->
+        </y-td>
       </y-tr>
     </y-table>
 
@@ -565,7 +565,7 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    department: data.search.department,
+    // department: data.search.department,
     orderby: 'u_id',
   })
 
@@ -821,7 +821,7 @@ async function clickSubmit() {
   }
 
   let res = await User.find({ loginid: item.loginid })
-  if ((item.id == 0 && res.items.length > 0) || (item.id != 0 && res.items.length != 1)) {
+  if ((item.id == 0 && res.items.length > 0) || (item.id != 0 && res.items.length > 1)) {
     util.alert('이미 등록된 로그인아이디 입니다')
     return
   }

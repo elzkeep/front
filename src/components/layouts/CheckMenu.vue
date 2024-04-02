@@ -1,75 +1,60 @@
 <template>
-
-
-  <el-menu  @select="clickMenu"
-  >
-
-    <el-menu-item index="5" style="width:160px;overflow:hidden; padding: 0px 10px 0px 14px !important;font-size:14px;">
+  <el-menu @select="clickMenu">
+    <el-menu-item index="5" style="width: 160px; overflow: hidden; padding: 0px 10px 0px 14px !important; font-size: 14px">
       <el-icon><Menu /></el-icon>
       <span>대시보드</span>
     </el-menu-item>
 
-    <el-sub-menu index="1" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
+    <el-sub-menu index="3" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
+      <template #title>
+        <el-icon><User /></el-icon>
+        <div>고객</div>
+      </template>
+
+      <el-menu-item index="3-1">고객 현황</el-menu-item>
+      <el-menu-item index="3-2">건물 및 계약 관리</el-menu-item>
+    </el-sub-menu>
+
+    <el-sub-menu index="4" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
+      <template #title>
+        <el-icon><Money /></el-icon>
+        <div>매출</div>
+      </template>
+
+      <el-menu-item index="4-1">매출 보고서</el-menu-item>
+      <el-menu-item index="4-2">청구서 관리</el-menu-item>
+      <el-menu-item index="4-3">결제 기록</el-menu-item>
+    </el-sub-menu>
+
+    <el-sub-menu index="2" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
+      <template #title>
+        <el-icon><Files /></el-icon>
+        <div>점검기록</div>
+      </template>
+
+      <el-menu-item index="2-2">점검현황</el-menu-item>
+      <el-menu-item index="2-3">점검 보고서</el-menu-item>
+      <el-menu-item index="2-4">적합/부적합 결과</el-menu-item>
+    </el-sub-menu>
+
+    <el-sub-menu index="1" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
       <template #title>
         <el-icon><Document /></el-icon>
-            <div>사업자정보</div>
-          </template>
+        <div>사업자정보</div>
+      </template>
 
-          <el-menu-item index="1-1">기본정보 관리</el-menu-item>
-          <el-menu-item index="1-2">보유먼허 관리</el-menu-item>
-          <el-menu-item index="1-3">소속회원 관리</el-menu-item>
-          <el-menu-item index="1-4">팀 관리</el-menu-item>
-
-        </el-sub-menu>
-
-        <el-sub-menu index="2" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-          <template #title>
-            <el-icon><Files /></el-icon>
-            <div>점검기록</div>
-          </template>
-          
-          <el-menu-item index="2-2">점검현황</el-menu-item>
-          <el-menu-item index="2-3">점검 보고서</el-menu-item>
-          <el-menu-item index="2-4">적합/부적합 결과</el-menu-item>
-
-        </el-sub-menu>
-
-
-        <el-sub-menu index="3" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-          <template #title>
-            <el-icon><User /></el-icon>
-            <div>고객</div>
-          </template>
-
-          <el-menu-item index="3-1">고객 현황</el-menu-item>
-          <el-menu-item index="3-2">건물 및 계약 관리</el-menu-item>          
-
-
-        </el-sub-menu>
-
-        <el-sub-menu index="4" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-          <template #title>
-            <el-icon><Money /></el-icon>
-            <div>매출</div>
-          </template>
-
-          <el-menu-item index="4-1">매출 보고서</el-menu-item>
-          <el-menu-item index="4-2">청구서 관리</el-menu-item>
-          <el-menu-item index="4-3">결제 기록</el-menu-item>
-
-
-        </el-sub-menu>
-
-      </el-menu>
-
-
-
+      <el-menu-item index="1-1">기본정보 관리</el-menu-item>
+      <el-menu-item index="1-2">보유먼허 관리</el-menu-item>
+      <el-menu-item index="1-3">소속회원 관리</el-menu-item>
+      <el-menu-item index="1-4">팀 관리</el-menu-item>
+    </el-sub-menu>
+  </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { Company } from "~/models"
+import { Company } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
@@ -79,11 +64,11 @@ const route = useRoute()
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   company: {
-    type: 0
-  }
+    type: 0,
+  },
 })
 
 onMounted(async () => {
@@ -110,7 +95,7 @@ const clickMenu = async (key: string, keyPath: string[]) => {
   } else if (key == '3-2') {
     router.push('/management/customer')
   } else if (key == '3-3') {
-    router.push('/management/contract')    
+    router.push('/management/contract')
   } else if (key == '3-1') {
     router.push('/management/customercompany')
   } else if (key == '4-1') {
@@ -118,7 +103,7 @@ const clickMenu = async (key: string, keyPath: string[]) => {
   } else if (key == '4-2') {
     router.push('/management/billing')
   } else if (key == '4-3') {
-      router.push('/management/payment')    
+    router.push('/management/payment')
   } else if (key == '1-1') {
     router.push('/management/companyinfo')
   } else if (key == '10') {
@@ -127,7 +112,6 @@ const clickMenu = async (key: string, keyPath: string[]) => {
     router.push('/management/report')
   }
 }
-
 </script>
 <style>
 .el-sub-menu {
