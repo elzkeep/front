@@ -112,23 +112,16 @@ export default class User {
 
         return res
     }
+
+
     
-	static async countByLoginid(id: string) {
-        const res = await request({
-            method: 'GET',
-            url: `/api/user/count/loginid/${id}`
-        })
 
-        return res.count
-    }
+    
 
-  static async updateRejectreason(item: any) {
-    const res = await request({
-      method: 'PUT',
-      url: '/api/user/rejectreason',
-      data: item,
-    })
+    
 
-    return res
-  }
+    
+
+    
+
 }

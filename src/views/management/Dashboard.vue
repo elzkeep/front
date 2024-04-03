@@ -263,7 +263,7 @@ async function getItems() {
   let res = await User.find({company: data.session.company})
   info.users = res.items.length
 
-  res = await Customer.find({company: data.session.company})  
+  res = await Customer.find({company: data.session.company, type: 1})  
   let customer = res.items
   
   info.customers = customer.length

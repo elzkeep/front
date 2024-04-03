@@ -436,6 +436,8 @@ async function clickDataSubmit() {
 
   util.alert('저장되었습니다')
 
+  external.files = []
+
   util.loading(false)
 }
 </script>
