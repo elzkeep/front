@@ -150,7 +150,7 @@
         <y-tr>
           <y-th>점검일</y-th>
           <y-td>
-            매월 <el-input v-model="data.item.companyno" style="width:50px;" /> 일
+            매월 <el-input v-model="data.item.checkdate" style="width:50px;" /> 일
           </y-td>
         </y-tr>
         <y-tr>

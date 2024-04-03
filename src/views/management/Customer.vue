@@ -3,24 +3,51 @@
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
+    <el-date-picker
+      v-model="data.search.startdate"
+      type="date"
+      size="small"
+      style="width:120px;"
+    />
+    ~ 
+    <el-date-picker
+      v-model="data.search.enddate"
+      type="date"
+      size="small"
+      style="width:120px;"
+    />
+
+    <el-select v-model.number="data.search.status" placeholder="상태" size="small" style="margin-left:5px;width:100px;">
       <el-option
-        v-for="item in data.companys"
+        v-for="item in data.statuss"
         :key="item.id"
         :label="item.name"
         :value="item.id"
       />
     </el-select>
 
-    <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">           
-      <el-option
-        v-for="item in data.buildings"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-
+    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left:5px;width: 300px" @keypress.enter.native="clickSearch" />
+    
+    <!--
+         <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
+         <el-option
+         v-for="item in data.companys"
+         :key="item.id"
+         :label="item.name"
+         :value="item.id"
+         />
+         </el-select>
+         
+         <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">           
+         <el-option
+         v-for="item in data.buildings"
+         :key="item.id"
+         :label="item.name"
+         :value="item.id"
+         />
+         </el-select>
+    -->
+    
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
     
     <div style="flex:1;text-align:right;gap:5;">
@@ -30,19 +57,19 @@
   </div>  
 
   
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />    
     <el-table-column label="건물명" align="left">
       <template #default="scope">
-        {{getBuilding(scope.row.building)}}
+        {{scope.row.extra.building.name}}
       </template>
     </el-table-column>    
-    <el-table-column label="사업자명" align="left" width="200">
+    <el-table-column label="사업자명" align="left">
       <template #default="scope">
-        {{getCompany(scope.row.extra.building.company)}}
+        {{scope.row.extra.company.name}}
       </template>
     </el-table-column>
-    <el-table-column label="관리형태" align="center" width="80">
+    <el-table-column label="관리형태" align="center" width="70">
       <template #default="scope">
         <span v-if="scope.row.type==1">직영</span>
         <span v-if="scope.row.type==2">위탁관리</span>
@@ -54,17 +81,52 @@
       </template>
     </el-table-column>
     -->
-    <el-table-column label="계약기간" align="right" width="250">
+    <el-table-column label="계약기간" align="center" width="160">
       <template #default="scope">
         {{scope.row.contractstartdate}} ~ {{scope.row.contractenddate}}
       </template>
     </el-table-column>
-    <el-table-column label="계약금액" align="right" width="120">
+    <el-table-column label="계약금액" align="right" width="80">
       <template #default="scope">
         {{util.money(scope.row.contractprice)}} 원
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="150" />
+    <el-table-column label="상태" align="center" width="50">
+      <template #default="scope">
+        <span v-if="scope.row.status==1">진행</span>
+        <span v-if="scope.row.status==2">종료</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="청구일" align="center" width="70">
+      <template #default="scope">
+        <span v-if="scope.row.collectday > 0">
+          <span v-if="scope.row.collecmonth==1">당월</span>
+          <span v-else>차월</span>
+          {{scope.row.collectday}} 일
+        </span>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="담당자명" align="center" width="60">
+      <template #default="scope">
+        {{getUser(scope.row.user).name}}
+      </template>
+    </el-table-column>
+
+    <el-table-column label="담당자연락처" align="center" width="100">
+      <template #default="scope">
+        {{getUser(scope.row.user).tel}}
+      </template>
+    </el-table-column>
+
+    <el-table-column label="담당자이메일" align="left">
+      <template #default="scope">
+        {{getUser(scope.row.user).email}}
+      </template>
+    </el-table-column>
+    
+    <el-table-column prop="date" label="등록일" align="center" width="130" />
     <!--
     <el-table-column label="설비 관리" align="center" width="90">
       <template #default="scope">
@@ -81,10 +143,10 @@
   >
 
       <y-table>
-        <y-tr v-if="data.session.level == User.level.rootadmin">
-          <y-th>업체</y-th>
+        <y-tr>
+          <y-th>사업자명</y-th>
           <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">           
+            <el-select v-model.number="data.item.extra.company.id" placeholder="사업자명" style="width:250px;" @change="changeCompany">           
               <el-option
                 v-for="item in data.companys"
                 :key="item.id"
@@ -97,7 +159,7 @@
         <y-tr>
           <y-th>건물명</y-th>
           <y-td>
-            <el-select v-model.number="data.item.building" placeholder="건물명" style="width:150px;">           
+            <el-select v-model.number="data.item.extra.building.id" placeholder="건물명" style="width:250px;">           
               <el-option
                 v-for="item in data.buildings"
                 :key="item.id"
@@ -112,8 +174,8 @@
           <y-th>관리형태</y-th>
           <y-td>
             <el-radio-group v-model.number="data.item.type">
-              <el-radio-button size="small" label="1">직영</el-radio-button>
-              <el-radio-button size="small" label="2">위탁관리</el-radio-button>
+              <el-radio-button size="small" value="1">직영</el-radio-button>
+              <el-radio-button size="small" value="2">위탁관리</el-radio-button>
             </el-radio-group>
           </y-td>
         </y-tr>
@@ -152,14 +214,29 @@
         <y-tr>
           <y-th>계약금액</y-th>
           <y-td>
-            <el-input v-model="data.item.contractprice" />
+            <el-input v-model="data.item.contractprice" style="width:100px;" /> 원, VAT <el-input v-model="data.item.contractvat" style="width:100px;" /> 원
           </y-td>
         </y-tr>
 
         <y-tr>
+          <y-th>관리형태</y-th>
+          <y-td>
+            <el-radio-group v-model.number="data.item.billingtype">
+              <el-radio-button size="small" value="1">지로</el-radio-button>
+              <el-radio-button size="small" value="2">계산서</el-radio-button>
+            </el-radio-group>
+          </y-td>
+        </y-tr>
+        
+        <y-tr>
           <y-th>청구일</y-th>
           <y-td>
-            매월 <el-input v-model="data.item.contractday" style="width:50px;" /> 일
+            <el-radio-group v-model.number="data.item.collectmonth">
+              <el-radio-button size="small" value="1">당월</el-radio-button>
+              <el-radio-button size="small" value="2">차월</el-radio-button>
+            </el-radio-group>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <el-input v-model="data.item.collectday" style="width:50px;" /> 일
           </y-td>
         </y-tr>
 
@@ -181,6 +258,17 @@
             <el-input v-model="data.item.billingemail" />
           </y-td>
         </y-tr>
+        <y-tr>
+          <y-th>상태</y-th>
+          <y-td>
+            <el-radio-group v-model.number="data.item.status">
+              <el-radio-button size="small" value="1">진행</el-radio-button>
+              <el-radio-button size="small" value="2">종료</el-radio-button>
+            </el-radio-group>
+          </y-td>
+        </y-tr>
+
+        
         <y-tr>
           <y-th>점검 담당자</y-th>
           <y-td>
@@ -216,7 +304,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { User, Customer, Building, Company } from "~/models"
+import { User, Customer, Building, Company, Companylist } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -242,6 +330,7 @@ const item = {
   billingname: '',
   billingtel: '',
   billingemail: '',
+  billingtype: 2,
   status: 1,
   company: 0,
   building: 0,
@@ -259,14 +348,18 @@ const data = reactive({
   items: [],
   total: 0,
   page: 1,
-  pagesize: 0,
+  pagesize: 50,
   item: util.clone(item),
   visible: false,
   visibleFacility: false,
   search: {
+    name: '',
     company: 0,
     building: 0,
-    type: 0
+    type: 0,
+    startdate: '',
+    status: 0,
+    enddate: ''
   },
   companys: [],
   users: [],
@@ -275,6 +368,11 @@ const data = reactive({
     {id: 0, name: ' '},
     {id: 1, name: '직영'},
     {id: 2, name: '위탁관리'}        
+  ],
+  statuss: [
+    {id: 0, name: '상태'},
+    {id: 1, name: '진행'},
+    {id: 2, name: '종료'}        
   ]
 })
 
@@ -283,18 +381,21 @@ async function clickSearch() {
 }
 
 async function initData() {
-  let res = await Company.find({
+  let res = await Companylist.find({
+    company: data.session.company,
     type: Company.type.building,
     orderby: 'c_name'
   })
   
   data.companys = [{id: 0, name: ' '}, ...res.items]
 
-  res = await Building.find({
-    orderby: 'b_name'
-  })
-  
-  data.buildings = [{id: 0, name: ' '}, ...res.items]
+  /*
+     res = await Building.find({
+     orderby: 'b_name'
+     })
+     
+     data.buildings = [{id: 0, name: ' '}, ...res.items]
+   */
 
   let company = 0
 
@@ -310,7 +411,12 @@ async function initData() {
   data.users = [{id: 0, name: ' '}, ...res.items]
 }
 
-async function getItems() {
+async function getItems(reset) {
+  if (reset == true) {
+    data.page = 1
+    data.items = []
+  }
+  
   if (data.session.level != User.level.rootadmin) {
     data.search.company = data.session.company
   }
@@ -321,32 +427,34 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
+    status: data.search.status,
+    startdate: data.search.startdate,
+    enddate: data.search.enddate,    
     orderby: 'cu_id desc'
   })
-
-  if (res.items == null) {
-    res.items = []
-  }
 
   let items = []
   
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
-    item.index = i + 1
+    item.index = ((data.page - 1) * data.pagesize) + i    
     items.push(item)
   }
 
   data.total = res.total
-  data.items = items
+  data.items = data.items.concat(items)  
+
+  data.page++
 }
 
 function clickInsert() {  
   data.item = util.clone(item)
+  data.buildings = []
   data.visible = true  
 }
 
-function clickUpdate(item, index) {
+async function clickUpdate(item, index) {
   if (index == null) {
     return
   }
@@ -359,7 +467,20 @@ function clickUpdate(item, index) {
     return
   }
 
+  let res = await Building.find({
+    company: item.company.id,
+    orderby: 'b_name'
+  })
+
+  console.log(item)
+  console.log(res.items)
+  
+  data.buildings = [{id: 0, name: ' '}, ...res.items]
+
+  
   data.item = util.clone(item)
+
+  
   data.visible = true  
 }
 
@@ -438,6 +559,7 @@ async function clickSubmit() {
   item.company = util.getInt(item.company)
   item.building = util.getInt(item.building)
   item.type = util.getInt(item.type)
+  item.billingtype = util.getInt(item.billingtype)
   item.checkdate = util.getInt(item.checkdate)
 
   item.contractstartdate = util.convertDBDate(item.contractstartdate)
@@ -486,10 +608,14 @@ function getUser(id) {
   let items = data.users.filter(item => item.id == id)
 
   if (items.length == 0) {
-    return ''
+    return {
+      name: '',
+      tel: '',
+      email: ''
+      }
   }
 
-  return items[0].name
+  return items[0]
 }
 
 function clickFacility(item) {
@@ -497,4 +623,15 @@ function clickFacility(item) {
   //data.visibleFacility = true
 }
 
+async function changeCompany(item) {
+  console.log(item)
+  console.log('changeCompany')
+
+  let res = await Building.find({
+    company: item,
+    orderby: 'b_name'
+  })
+  
+  data.buildings = [{id: 0, name: ' '}, ...res.items]
+}
 </script>

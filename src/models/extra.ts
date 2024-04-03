@@ -23,4 +23,13 @@ export default class Extra {
 
         return res
     }
+
+    static async company(filename: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/company/upload/${filename}`
+        })
+
+        return res
+    }
 }
