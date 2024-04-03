@@ -30,7 +30,7 @@
           </template>
           <div style="display: flex; justify-content: space-between">
             <el-radio-group v-model="data.status">
-              <el-radio label="3">사용</el-radio>
+              <el-radio label="1">사용</el-radio>
               <el-radio label="2">미사용</el-radio>
             </el-radio-group>
             <div style="flex: 1; display: flex; align-items: center; justify-content: right">
@@ -178,7 +178,7 @@ const model = Department
 const item = {
   id: 0,
   name: '',
-  // master: 0,
+  master: 0,
   order: 0,
   parent: 0,
   company: 0,
@@ -229,7 +229,7 @@ const data = reactive({
   masterpagesize: 20,
   departmentItem: util.clone(item),
   departments: [],
-  status: '3',
+  status: '1',
   item: util.clone(item),
   visible: false,
   visibleMaster: false,
@@ -333,6 +333,7 @@ async function getUsers() {
     pagesize: data.userpagesize,
     company: data.session.company,
     department: data.departmentItem.id,
+    approval: 3,
     status: util.getInt(data.status),
     orderby: 'u_id desc',
   })
@@ -359,7 +360,8 @@ async function getMasters() {
     page: data.masterpage,
     pagesize: data.masterpagesize,
     company: data.session.company,
-    status: 3,
+    approval: 3,
+    status: 1,
     orderby: 'u_id desc',
   })
 
@@ -391,8 +393,10 @@ async function clickUpdate() {
     return
   }
   data.item = util.clone(data.departmentItem)
-  // let res = await User.get(data.item.master)
-  // data.master = res
+  util.loading(true)
+  let res = await User.get(data.item.master)
+  data.master = res.item
+  util.loading(false)
   data.visible = true
 }
 
@@ -458,6 +462,11 @@ async function clickSubmit() {
     return
   }
 
+  if (data.master.id == 0) {
+    util.alert('팀/그룹 장을 선택하세요')
+    return
+  }
+
   if (item.order == '') {
     util.alert('순번을 입력하세요')
     return
@@ -466,6 +475,7 @@ async function clickSubmit() {
   util.loading(true)
 
   item.company = data.session.company
+  item.master = data.master.id
   item.order = util.getInt(item.order)
 
   if (item.id > 0) {
