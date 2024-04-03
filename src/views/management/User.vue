@@ -192,7 +192,7 @@
       <el-table-column label="승인" align="center" width="160">
         <template #default="scope">
           <el-button size="small" type="primary" @click="clickApprovalOk(scope.row)" style="margin-right: -5px">승인</el-button>
-          <el-button size="small" type="danger" @click="clickApprovalCancle(scope.row.id)" style="margin-right: -5px">거절</el-button>
+          <el-button size="small" type="danger" @click="clickApprovalCancle(scope.row)" style="margin-right: -5px">거절</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -281,21 +281,21 @@
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
-          {{ data.item.address }}
+          {{ data.item.educationdate }}
         </y-td>
         <y-th>법정교육기관</y-th>
         <y-td>
-          {{ data.item.address }}
+          {{ data.item.educationinstitution }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>특별교육일자</y-th>
         <y-td>
-          {{ data.item.addressetc }}
+          {{ data.item.specialeducationdate }}
         </y-td>
         <y-th>특별교육기관</y-th>
         <y-td>
-          {{ data.item.addressetc }}
+          {{ data.item.specialeducationinstitution }}
         </y-td>
       </y-tr>
     </y-table>
@@ -375,21 +375,21 @@
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
-          {{ data.item.address }}
+          {{ data.item.educationdate }}
         </y-td>
         <y-th>법정교육기관</y-th>
         <y-td>
-          {{ data.item.address }}
+          {{ data.item.educationinstitution }}
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>특별교육일자</y-th>
         <y-td>
-          {{ data.item.addressetc }}
+          {{ data.item.specialeducationdate }}
         </y-td>
         <y-th>특별교육기관</y-th>
         <y-td>
-          {{ data.item.addressetc }}
+          {{ data.item.specialeducationinstitution }}
         </y-td>
       </y-tr>
     </y-table>
@@ -538,7 +538,7 @@ async function initData() {
 
   if (data.session.level != User.level.rootadmin) {
     let res = await Department.find({
-      page: data.page,
+      page: 0,
       pagesize: data.pagesize,
       company: data.session.company,
       orderby: 'de_order,de_name',
@@ -565,7 +565,7 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    // department: data.search.department,
+    // approval: 3,
     orderby: 'u_id',
   })
 
@@ -695,14 +695,13 @@ function clickApprovalManage() {
 async function clickApprovalOk(item) {
   data.item = util.clone(item)
   data.approval.visibleOk = true
-  data.item.status = 1
 }
 
 async function clickApprovalRealOk() {
   let item = data.item
   util.confirm('승인하시겠습니까?', async function () {
     util.loading(true)
-    data.item.approval = 3
+    item.approval = 3
     item.company = util.getInt(item.company)
     item.department = util.getInt(item.department)
     item.careeryear = util.getInt(item.careeryear)
@@ -712,21 +711,20 @@ async function clickApprovalRealOk() {
     item.status = util.getInt(item.status)
     item.score = util.getFloat(item.score)
 
-    model.update(data.item)
-    data.approval.visibleOk = false
+    await model.update(data.item)
     await getApproval(1)
     util.loading(false)
   })
 }
 
-async function clickApprovalCancle(id) {
-  console.log(id)
+async function clickApprovalCancle(item) {
   util.prompt('거절하시겠습니까?', async function (value) {
+    console.log(value)
     util.loading(true)
-    let item = { id: id, approval: 2 }
-    model.updateApproval(item)
-    let item1 = { id: id, rejectreason: value }
-    model.updateRejectreason(item1)
+    let item1 = util.clone(item)
+    item1.approval = 2
+    item1.rejectreason = value
+    await model.update(item1)
     await getApproval(1)
     util.loading(false)
   })
@@ -846,8 +844,33 @@ async function clickSubmit() {
     return
   }
 
-  if (item.passwd != item.passwd) {
+  if (item.tel == '') {
+    util.alert('연락처를 입력하세요')
+    return
+  }
+
+  if (item.address == '') {
+    util.alert('주소를 입력하세요')
+    return
+  }
+
+  if (item.address == '') {
+    util.alert('주소를 입력하세요')
+    return
+  }
+
+  if (item.passwd != item.passwd2) {
     util.alert('비밀번호가 정확하지 않습니다')
+    return
+  }
+
+  if (item.joindate == '') {
+    util.alert('입사일을 입력하세요')
+    return
+  }
+
+  if (item.level == 0) {
+    util.alert('권한을 선택하세요')
     return
   }
 
