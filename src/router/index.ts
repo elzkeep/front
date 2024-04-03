@@ -1,8 +1,9 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import { useStore } from "vuex"
+import { useStore } from 'vuex'
 
 import SignIn from '~/views/SignIn.vue'
 import SignUp from '~/views/SignUp.vue'
+import FindId from '~/views/FindId.vue'
 
 import AdminDashboard from '~/views/admin/Dashboard.vue'
 import AdminCompany from '~/views/admin/Company.vue'
@@ -42,212 +43,216 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: SignIn
-  },  
+    component: SignIn,
+  },
   {
     path: '/signin',
     name: 'SignIn',
-    component: SignIn
+    component: SignIn,
   },
   {
     path: '/signup',
     name: 'SignUp',
-    component: SignUp
+    component: SignUp,
   },
-  
+  {
+    path: '/findid',
+    name: 'FindId',
+    component: FindId,
+  },
+
   {
     path: '/management/statistics',
     name: 'ManagementStatistics',
     meta: { authorization: ['admin'] },
-    component: ManagementStatistics
+    component: ManagementStatistics,
   },
   {
     path: '/admin/dashboard',
     name: 'AdminDashboard',
     meta: { authorization: ['admin'] },
-    component: AdminDashboard
+    component: AdminDashboard,
   },
   {
     path: '/admin/company',
     name: 'AdminCompany',
     meta: { authorization: ['admin'] },
-    component: AdminCompany
+    component: AdminCompany,
   },
   {
     path: '/admin/companyinfo',
     name: 'AdminCompanyinfo',
     meta: { authorization: ['admin'] },
-    component: AdminCompanyinfo
+    component: AdminCompanyinfo,
   },
   {
     path: '/admin/department',
     name: 'AdminDepartment',
     meta: { authorization: ['admin'] },
-    component: AdminDepartment
+    component: AdminDepartment,
   },
   {
     path: '/admin/user',
     name: 'AdminUser',
     meta: { authorization: ['admin'] },
-    component: AdminUser
+    component: AdminUser,
   },
   {
     path: '/admin/license',
     name: 'AdminLicene',
     meta: { authorization: ['admin'] },
-    component: AdminLicense
+    component: AdminLicense,
   },
   {
     path: '/admin/companylicense',
     name: 'AdminCompanylicene',
     meta: { authorization: ['admin'] },
-    component: AdminCompanylicense
+    component: AdminCompanylicense,
   },
   {
     path: '/admin/building',
     name: 'AdminBuilding',
     meta: { authorization: ['admin'] },
-    component: AdminBuilding
+    component: AdminBuilding,
   },
   {
     path: '/admin/customer',
     name: 'AdminCustomer',
     meta: { authorization: ['admin'] },
-    component: AdminCustomer
+    component: AdminCustomer,
   },
   {
     path: '/admin/billing',
     name: 'AdminBilling',
     meta: { authorization: ['admin'] },
-    component: AdminBilling
+    component: AdminBilling,
   },
   {
     path: '/admin/report',
     name: 'AdminReport',
     meta: { authorization: ['admin'] },
-    component: AdminReport
+    component: AdminReport,
   },
   {
     path: '/admin/statistics',
     name: 'AdminStatistics',
     meta: { authorization: ['admin'] },
-    component: AdminStatistics
-  },    
+    component: AdminStatistics,
+  },
   {
     path: '/building/:id/facility',
     name: 'BuildingFacility',
     meta: { authorization: ['admin'] },
-    component: BuildingFacility
+    component: BuildingFacility,
   },
 
-{
+  {
     path: '/management/dashboard',
     name: 'ManagementDashboard',
     meta: { authorization: ['admin'] },
-    component: ManagementDashboard
+    component: ManagementDashboard,
   },
   {
     path: '/management/company',
     name: 'ManagementCompany',
     meta: { authorization: ['admin'] },
-    component: ManagementCompany
+    component: ManagementCompany,
   },
   {
     path: '/management/companyinfo',
     name: 'ManagementCompanyinfo',
     meta: { authorization: ['admin'] },
-    component: ManagementCompanyinfo
+    component: ManagementCompanyinfo,
   },
   {
     path: '/management/department',
     name: 'ManagementDepartment',
     meta: { authorization: ['admin'] },
-    component: ManagementDepartment
+    component: ManagementDepartment,
   },
   {
     path: '/management/user',
     name: 'ManagementUser',
     meta: { authorization: ['admin'] },
-    component: ManagementUser
+    component: ManagementUser,
   },
   {
     path: '/management/license',
     name: 'ManagementLicene',
     meta: { authorization: ['admin'] },
-    component: ManagementLicense
+    component: ManagementLicense,
   },
   {
     path: '/management/companylicense',
     name: 'ManagementCompanylicene',
     meta: { authorization: ['admin'] },
-    component: ManagementCompanylicense
+    component: ManagementCompanylicense,
   },
   {
     path: '/management/building',
     name: 'ManagementBuilding',
     meta: { authorization: ['admin'] },
-    component: ManagementBuilding
+    component: ManagementBuilding,
   },
   {
     path: '/management/customer',
     name: 'ManagementCustomer',
     meta: { authorization: ['admin'] },
-    component: ManagementCustomer
+    component: ManagementCustomer,
   },
   {
     path: '/management/customercompany',
     name: 'ManagementCustomercompany',
     meta: { authorization: ['admin'] },
-    component: ManagementCustomercompany
+    component: ManagementCustomercompany,
   },
   {
     path: '/management/billing',
     name: 'ManagementBilling',
     meta: { authorization: ['admin'] },
-    component: ManagementBilling
-  },  
+    component: ManagementBilling,
+  },
   {
     path: '/management/report',
     name: 'ManagementReport',
     meta: { authorization: ['admin'] },
-    component: ManagementReport
+    component: ManagementReport,
   },
   {
     path: '/management/contract',
     name: 'ManagementContract',
     meta: { authorization: ['admin'] },
-    component: ManagementContract
+    component: ManagementContract,
   },
   {
     path: '/management/payment',
     name: 'ManagementPayment',
     meta: { authorization: ['admin'] },
-    component: ManagementPayment
+    component: ManagementPayment,
   },
   {
     path: '/management/facility/:id',
     name: 'ManagementFacility',
     meta: { authorization: ['admin'] },
-    component: ManagementFacility
-  }
+    component: ManagementFacility,
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 })
-
 
 router.beforeEach(function (to, from, next) {
   const { authorization } = to.meta
 
   if (store.state.token == '') {
-    if (to.path === '/signin') {      
+    if (to.path === '/signin' || to.path == '/signup' || to.path == '/findid' || to.path == '/findpasswd') {
       next()
     } else {
       next('/signin')
     }
-    
+
     return
   }
 
@@ -255,16 +260,16 @@ router.beforeEach(function (to, from, next) {
 
   if (authorization != undefined && !authorization.includes(level)) {
     next('/not-found')
-    
+
     return
   }
-  
+
   if (to.path === '/signin' || to.path == '/') {
     const user = store.getters['getUser']
     if (user == undefined) {
-        next('/signin')
+      next('/signin')
     } else if (user.level != 4) {
-        next(`/management/dashboard`)
+      next(`/management/dashboard`)
     } else {
       next('/admin/company')
     }

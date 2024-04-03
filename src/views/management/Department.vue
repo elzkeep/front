@@ -1,8 +1,7 @@
 <template>
   <Title title="팀 관리" />
   <div style="display: flex">
-    <div style="flex-grow: 0; margin-right: 10px; border: 1px solid #ddd">
-      <el-input v-model="name" style="width: 240px" placeholder="Filter keyword" />
+    <div style="flex-grow: 0; margin-right: 10px; border: 1px solid #ddd; width: 300px">
       <el-tree
         ref="treeRef"
         style="max-width: 600px"
@@ -17,14 +16,31 @@
     </div>
 
     <div style="flex-grow: 1">
-      <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-        <!-- <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickSearch" /> -->
-        <!-- <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button> -->
-        <div style="flex: 1; text-align: right; gap: 5">
-          <!-- <el-button size="small" type="info" @click="clickShareUrl" style="margin-right: -5px">가입 URL 공유</el-button> -->
-          <el-button size="small" type="success" @click="clickInsert">등록</el-button>
-        </div>
-      </div>
+      <el-descriptions class="margin-top" :column="3" border>
+        <el-descriptions-item>
+          <template #label>
+            <div style="text-align: center">팀/그룹 명</div>
+          </template>
+          <!-- <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickSearch" /> -->
+          <el-input v-model="name" style="width: 300px" placeholder="검색할 팀/그룹 명을 입력해 주세요" />
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div style="text-align: center">상태</div>
+          </template>
+          <div style="display: flex; justify-content: space-between">
+            <el-radio-group v-model="data.status">
+              <el-radio label="3">사용</el-radio>
+              <el-radio label="2">미사용</el-radio>
+            </el-radio-group>
+            <div style="flex: 1; display: flex; align-items: center; justify-content: right">
+              <el-button size="small" type="info" @click="clickShareUrl">가입 URL 공유</el-button>
+              <el-button size="small" type="success" @click="clickInsert">등록</el-button>
+              <el-button size="small" type="success" @click="clickUpdate">수정</el-button>
+            </div>
+          </div>
+        </el-descriptions-item>
+      </el-descriptions>
 
       <el-table :data="data.users" border :height="height(170)" ref="listRef">
         <el-table-column prop="index" label="번호" align="left" />
@@ -32,6 +48,11 @@
         <el-table-column label="직책/직급" align="left">
           <template #default="scope">
             {{ User.levels[scope.row.level] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="팀" align="left" width="100">
+          <template #default="scope">
+            {{ getDepartment(scope.row.department) }}
           </template>
         </el-table-column>
         <el-table-column prop="email" label="이메일" align="center" width="150" />
@@ -48,16 +69,16 @@
           <el-input v-model="data.item.name" />
         </y-td>
       </y-tr>
-      <!-- <y-tr>
+      <y-tr>
         <y-th>팀/그룹 장</y-th>
-        <y-td @click="clickTeamLeader">
-          <el-input v-model="data.item.name"/>
+        <y-td>
+          <el-input v-model="data.master.name" readonly @click="clickMaster" />
         </y-td>
-      </y-tr> -->
+      </y-tr>
       <y-tr>
         <y-th>상위 팀/그룹</y-th>
         <y-td>
-          <el-select v-model.number="data.item.department" placeholder="팀" style="width: 150px">
+          <el-select v-model.number="data.item.parent" placeholder="팀" style="width: 150px">
             <el-option v-for="item in data.departments" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
@@ -73,6 +94,63 @@
     <template #footer>
       <el-button size="small" @click="clickCancel">취소</el-button>
       <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.visibleMaster" width="800px">
+    <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+      <el-input v-model="data.searchMaster.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickSearch" />
+      <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+    </div>
+    <el-table :data="data.masters" highlight-current-row border :height="height(170)" ref="listRef" @current-change="changeMasterList" style="height: 600px">
+      <el-table-column prop="loginid" label="로그인아이디" align="left" />
+      <el-table-column prop="name" label="이름" align="left" width="80" />
+      <el-table-column label="팀" align="left" width="100">
+        <template #default="scope">
+          {{ getDepartment(scope.row.department) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="email" label="이메일" align="left" />
+      <el-table-column prop="tel" label="연락처" align="left" width="100" />
+      <el-table-column label="주소" align="left">
+        <template #default="scope"> {{ scope.row.address }} {{ scope.row.addressetc }} </template>
+      </el-table-column>
+      <el-table-column label="권한" align="center" width="70">
+        <template #default="scope">
+          {{ getLevel(scope.row.level) }}
+        </template>
+      </el-table-column>
+    </el-table>
+    <template #footer>
+      <el-button size="small" @click="clickCancelMaster">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitMaster">등록</el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.visibleView" width="600px">
+    <el-card shadow="never">
+      <p class="text item">URL: http://dev.zkeep.space/signup</p>
+    </el-card>
+    <div style="margin: 10px">
+      <el-button> URL 복사 </el-button>
+    </div>
+    <y-table>
+      <y-tr>
+        <y-th>휴대폰번호</y-th>
+        <y-td>
+          <el-input v-model="data.item.tel" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>발송내용</y-th>
+        <y-td>
+          <el-input v-model="data.item.text" :rows="2" type="textarea" />
+        </y-td>
+      </y-tr>
+    </y-table>
+    <template #footer>
+      <el-button size="small" @click="clickCancel">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSNS">등록</el-button>
     </template>
   </el-dialog>
 </template>
@@ -100,9 +178,31 @@ const model = Department
 const item = {
   id: 0,
   name: '',
+  // master: 0,
   order: 0,
   parent: 0,
   company: 0,
+  date: '',
+}
+
+const user = {
+  id: 0,
+  loginid: '',
+  passwd: '',
+  name: '',
+  email: '',
+  tel: '',
+  address: '',
+  addressetc: '',
+  joindate: '',
+  careeryear: 0,
+  careermonth: 0,
+  level: 1,
+  approval: 1,
+  rejectreason: '',
+  status: 1,
+  company: 0,
+  department: 0,
   date: '',
 }
 
@@ -121,16 +221,28 @@ const data = reactive({
   userTotal: 0,
   userpage: 1,
   userpagesize: 20,
-  department: 0,
+  master: util.clone(user),
+  dummyMaster: util.clone(user),
+  masters: [],
+  masterTotal: 0,
+  masterpage: 1,
+  masterpagesize: 20,
+  departmentItem: util.clone(item),
   departments: [],
-  status: 0,
+  status: '3',
   item: util.clone(item),
   visible: false,
+  visibleMaster: false,
+  visibleView: false,
   search: {
     text: '',
     company: 0,
   },
+  searchMaster: {
+    text: '',
+  },
   companys: [],
+  company: {},
 })
 
 const name = ref('')
@@ -152,18 +264,16 @@ const filterNode = (value: string, data: Tree) => {
 }
 
 const handleNodeClick = (tree: Tree) => {
-  data.department = tree.id
+  data.departmentItem = tree
+  if (data.departmentItem.id == 0) {
+    return
+  }
   getUsers()
 }
 
 async function initData() {
-  let res = await Company.find({
-    page: data.page,
-    pagesize: data.pagesize,
-    orderby: 'c_name',
-  })
-
-  data.companys = [{ id: 0, name: ' ' }, ...res.items]
+  let res = await Company.get(data.session.company)
+  data.company = res.item
 }
 
 async function getItems() {
@@ -173,8 +283,8 @@ async function getItems() {
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    company: data.search.company,
-    orderby: 'de_parent desc, de_name',
+    company: data.session.company,
+    orderby: 'de_parent desc, de_order, de_name',
   })
 
   if (res.items == null) {
@@ -203,22 +313,27 @@ async function getItems() {
     }
   }
 
+  let item = { label: '', children: [] }
+  item.id = 0
+  item.label = data.company.name
+  item.children = items
+
   data.total = res.total
-  data.items = items
+  data.items = [item]
 
   let reverseItem = res.items.reverse()
-  data.departments = [{ id: 0, name: ' ' }, ...reverseItem]
+  data.departments = [{ id: 0, name: data.company.name }, ...reverseItem]
 
-  data.department = 0
+  data.departmentItem = util.clone(item)
 }
 
 async function getUsers() {
   let res = await User.find({
     page: data.userpage,
     pagesize: data.userpagesize,
-    company: data.search.company,
-    department: data.department,
-    status: data.status,
+    company: data.session.company,
+    department: data.departmentItem.id,
+    status: util.getInt(data.status),
     orderby: 'u_id desc',
   })
 
@@ -238,23 +353,57 @@ async function getUsers() {
   data.users = items
 }
 
-function clickInsert() {
-  data.item = util.clone(item)
-  data.item.department = data.department
-  data.visible = true
-}
+async function getMasters() {
+  let res = await User.find({
+    name: data.searchMaster.text,
+    page: data.masterpage,
+    pagesize: data.masterpagesize,
+    company: data.session.company,
+    status: 3,
+    orderby: 'u_id desc',
+  })
 
-function clickUpdate(item, index) {
-  if (index.no == 0) {
-    return
+  if (res.items == null) {
+    res.items = []
   }
 
-  data.item = util.clone(item)
+  let items = []
 
+  for (let i = 0; i < res.items.length; i++) {
+    let item = res.items[i]
+    item.index = i + 1
+    items.push(item)
+  }
+
+  data.masterTotal = res.total
+  data.masters = items
+}
+
+function clickInsert() {
+  data.item = util.clone(item)
+  data.master = util.clone(user)
+  data.item.parent = data.departmentItem.id
   data.visible = true
 }
 
-function clickShareUrl() {}
+async function clickUpdate() {
+  if (data.departmentItem.id == 0) {
+    return
+  }
+  data.item = util.clone(data.departmentItem)
+  // let res = await User.get(data.item.master)
+  // data.master = res
+  data.visible = true
+}
+
+function clickMaster() {
+  getMasters()
+  data.visibleMaster = true
+}
+
+function clickShareUrl() {
+  data.visibleView = true
+}
 
 onMounted(async () => {
   data.session = store.getters['getUser']
@@ -268,8 +417,18 @@ onMounted(async () => {
   util.loading(false)
 })
 
+function clickSearch() {
+  getMasters()
+}
+
 function clickCancel() {
   data.visible = false
+  data.visibleView = false
+  data.master = util.clone(user)
+}
+
+function clickCancelMaster() {
+  data.visibleMaster = false
 }
 
 const listRef = ref<InstanceType<typeof ElTable>>()
@@ -287,17 +446,12 @@ const changeList = val => {
   listSelection.value = val
 }
 
+const changeMasterList = val => {
+  data.dummyMaster = val
+}
+
 async function clickSubmit() {
   let item = util.clone(data.item)
-
-  // if (data.session.level == User.level.rootadmin) {
-  //   if (item.company == 0) {
-  //     util.alert('업체를 선택하세요')
-  //     return
-  //   }
-  // } else {
-  //   item.company = data.session.company
-  // }
 
   if (item.name == '') {
     util.alert('명칭을 입력하세요')
@@ -313,7 +467,6 @@ async function clickSubmit() {
 
   item.company = data.session.company
   item.order = util.getInt(item.order)
-  item.parent = data.department
 
   if (item.id > 0) {
     await model.update(item)
@@ -327,7 +480,19 @@ async function clickSubmit() {
 
   data.visible = false
   util.loading(false)
+  data.master = util.clone(user)
 }
+
+function clickSubmitMaster() {
+  if (data.dummyMaster == null) {
+    return
+  }
+  data.master = data.dummyMaster
+  data.visibleMaster = false
+  data.dummyMaster = util.clone(user)
+}
+
+async function clickSNS() {}
 
 function getLevel(id) {
   if (id > 5) {
@@ -335,5 +500,15 @@ function getLevel(id) {
   }
 
   return User.levels[id]
+}
+
+function getDepartment(id) {
+  let items = data.departments.filter(item => item.id == id)
+
+  if (items.length == 0) {
+    return ''
+  }
+
+  return items[0].name
 }
 </script>
