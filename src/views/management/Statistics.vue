@@ -1,62 +1,90 @@
 <template>
   <Title title="매출 보고서" />
 
+  <div style="display: flex; gap: 5px; margin-bottom: 10px">
+    <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.startdate" />
+    <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.enddate" />
+    <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+  </div>
 
-  <Chart
-    :size="{ width: util.getInt(width(300).replace('px', '')), height: 200 }"
-    :data="data.charts"
-    :margin="{top: 5, bottom: 20}"
-    :direction="'horizontal'">
+  <div style="margin-top: 10px; margin-bottom: 20px; display: flex; justify-content: space-evenly">
+    <el-card style="float: left; width: 480px; padding-top: 0px" shadow="never">
+      <p style="float: left; font-weight: 700; font-size: 16px">점검 수</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ data.total }}</p>
+    </el-card>
+    <el-card style="float: left; width: 480px" shadow="never">
+      <p style="float: left; font-weight: 700; font-size: 16px">계약 금액</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ util.money(data.totalprice) }}</p>
+    </el-card>
+  </div>
 
+  <Chart :size="{ width: util.getInt(width(300).replace('px', '')), height: 200 }" :data="data.charts" :margin="{ top: 5, bottom: 20 }" :direction="'horizontal'">
     <template #layers>
       <Line :dataKeys="['title', 'value']" />
+      <bar :dataKeys="['title', 'total']" />
     </template>
-
   </Chart>
 
-
-  <el-table :data="data.items" border style="width: 100%;"  @row-click="clickRow" :summary-method="getSummary" show-summary>
-    <el-table-column label="기간" align="center">
+  <div style="display: flex; justify-content: end; gap: 5px; margin-bottom: 10px">
+    <div style="flex: 1; text-align: right; gap: 5">
+      <el-button size="small" type="success" @click="clickDownload">엑셀 다운로드</el-button>
+    </div>
+  </div>
+  <!-- <el-table :data="data.items" border style="width: 100%" @row-click="clickRow"  :summary-method="getSummary" show-summary> -->
+  <el-table :data="data.items" border style="width: 100%">
+    <!-- <el-table-column label="기간" align="center">
       <template #default="scope">
         <span v-if="scope.row.duration == undefined">전체</span>
-        <span v-else>{{scope.row.duration}}</span>
+        <span v-else>{{ scope.row.duration }}</span>
       </template>
     </el-table-column>
     <el-table-column prop="total" label="점검건수" align="right">
       <template #default="scope">
-        {{util.money(scope.row.total)}}
+        {{ util.money(scope.row.total) }}
       </template>
-    </el-table-column>
+    </el-table-column> 
     <el-table-column prop="totalprice" label="금액" align="right">
       <template #default="scope">
-        {{util.money(scope.row.totalprice)}}
+        {{ util.money(scope.row.totalprice) }}
+      </template>
+    </el-table-column> -->
+    <el-table-column prop="index" label="번호" width="100" align="center" />
+    <el-table-column prop="billdate" label="기간" align="center" />
+    <el-table-column label="건물명" align="right">
+      <template #default="scope">
+        {{ scope.row.extra.building.name }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="price" label="금액" align="right">
+      <template #default="scope">
+        {{ util.money(scope.row.price) }}
+      </template>
+    </el-table-column>
+    <el-table-column label="담당자" align="right">
+      <template #default="scope">
+        {{ scope.row.extra.company.billingname }}
       </template>
     </el-table-column>
   </el-table>
 
-  <div style="margin-top:10px;display:flex;justify-content: space-between;">
+  <div style="margin-top: 10px; display: flex; justify-content: space-between">
     <el-button v-if="data.mode == 'month'" size="small" type="success" @click="clickBackMonth">뒤로</el-button>
     <el-button v-if="data.mode == 'day'" size="small" type="success" @click="clickBackDay">뒤로</el-button>
-    <div style="flex:0;"></div>
+    <div style="flex: 0"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-
-import { reactive, onMounted } from "vue"
+import { reactive, onMounted } from 'vue'
 import router from '~/router'
-import { util, size }  from "~/global"
-import { Statistics, Statisticsyear, Statisticsmonth, Statisticsday } from "~/models"
-import { Chart, Grid, Line } from 'vue3-charts'
+import { util, size } from '~/global'
+import { Statistics, Statisticsyear, Statisticsmonth, Statisticsday, Billing } from '~/models'
+import { Chart, Grid, Line, Bar } from 'vue3-charts'
 import { useStore } from 'vuex'
 
 const { width, height } = size()
 
 const store = useStore()
-
-const search = reactive({
-  text: ''
-})
 
 const item = {
   id: 0,
@@ -64,42 +92,100 @@ const item = {
   number: '',
   tel: '',
   email: '',
-  personname: ''
+  personname: '',
 }
 
 const data = reactive({
   items: [],
   total: 0,
+  totalprice: 0,
   page: 1,
   pagesize: 10,
   item: util.clone(item),
   visible: false,
-  mode: 'year',
+  mode: 'month',
   duration: '',
   company: 0,
-  charts: []
+  search: {
+    text: '',
+    startdate: '2023-03-01',
+    enddate: '2024-04-04',
+  },
+  charts: [],
 })
 
 async function getItems() {
-  let res;
+  let res
 
   if (data.mode == 'year') {
-    res = await Statisticsyear.find({company: store.getters.getUser.company, orderby: 'bi_duration'})
+    res = await Statisticsyear.find({ company: store.getters.getUser.company, orderby: 'bi_duration' })
   } else if (data.mode == 'month') {
-    res = await Statisticsmonth.find({company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration'})
+    // res = await Statisticsmonth.find({
+    //   company: store.getters.getUser.company,
+    //   startbilldate: data.search.startdate,
+    //   endbilldate: data.search.enddate,
+    //   duration: data.duration,
+    //   orderby: 'bi_duration',
+    // })
+    res = await Statisticsmonth.find({
+      company: store.getters.getUser.company,
+      duration: data.duration,
+      orderby: 'bi_duration',
+    })
   } else if (data.mode == 'day') {
-    res = await Statisticsday.find({company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration'})
+    res = await Statisticsday.find({ company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration' })
   }
 
+  await getBills()
+  data.totalprice = 0
   data.charts = res.items.map(item => {
+    data.totalprice += item.totalprice
     return {
       title: data.mode == 'company' ? '전체' : item.duration,
-      value: item.totalprice
+      value: item.totalprice,
+      total: item.total,
     }
   })
 
+  console.log(data.totalprice)
+
+  // data.total = res.total
+  // data.items = res.items
+}
+
+async function getBills() {
+  // if (data.session.level != User.level.rootadmin) {
+  //   data.search.company = data.session.company
+  // }
+
+  let res = await Billing.find({
+    // page: data.page,
+    // pagesize: data.pagesize,
+    company: store.getters.getUser.company,
+    startbilldate: data.search.startdate,
+    endbilldate: data.search.enddate,
+    // orderby: 'u_id',
+  })
+
+  if (res.items == null) {
+    res.items = []
+  }
+
+  let items = []
+
+  for (let i = 0; i < res.items.length; i++) {
+    let item = res.items[i]
+
+    item.index = i + 1
+    items.push(item)
+  }
+
   data.total = res.total
-  data.items = res.items
+  data.items = items
+}
+
+function clickSearch() {
+  getItems()
 }
 
 function clickInsert() {
@@ -113,7 +199,7 @@ function clickUpdate(pos, item) {
 }
 
 function clickDelete(pos, item) {
-  util.confirm('삭제하시겠습니까', async function() {
+  util.confirm('삭제하시겠습니까', async function () {
     let res = await Company.remove(item)
     if (res.code === 'ok') {
       util.info('삭제되었습니다')
@@ -134,7 +220,7 @@ async function clickSubmit() {
     return
   }
 
-  let res;
+  let res
 
   if (item.id === 0) {
     res = await Company.insert(item)
@@ -152,7 +238,7 @@ async function clickSubmit() {
 }
 
 const handleClose = (done: () => void) => {
-  util.confirm('팝업창을 닫으시겠습니까', function() {
+  util.confirm('팝업창을 닫으시겠습니까', function () {
     done()
   })
 }
@@ -200,6 +286,8 @@ function clickBackDay() {
   getItems()
 }
 
+function clickDownload() {}
+
 const getSummary = (param: SummaryMethodProps) => {
   const { columns, data } = param
   const sums: string[] = []
@@ -209,7 +297,7 @@ const getSummary = (param: SummaryMethodProps) => {
     } else if (index == 1) {
       let total = 0
       if (data != null) {
-        data.forEach((item) => {
+        data.forEach(item => {
           total += util.getInt(item.total)
         })
       }
@@ -218,7 +306,7 @@ const getSummary = (param: SummaryMethodProps) => {
     } else if (index == 2) {
       let total = 0
       if (data != null) {
-        data.forEach((item) => {
+        data.forEach(item => {
           total += util.getInt(item.totalprice)
         })
       }
@@ -229,5 +317,4 @@ const getSummary = (param: SummaryMethodProps) => {
 
   return sums
 }
-
 </script>

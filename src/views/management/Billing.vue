@@ -1,192 +1,150 @@
 <template>
   <Title title="청구서 관리" />
 
-  <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">    
+  <el-descriptions class="margin-top" :column="3" border style="margin-bottom: 10px">
+    <el-descriptions-item>
+      <template #label>
+        <div style="text-align: center">청구일</div>
+      </template>
+      <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.startbilldate" />
+      <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.endbilldate" />
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div style="text-align: center">상태</div>
+      </template>
+      <div style="display: flex; justify-content: space-between">
+        <el-radio-group v-model="data.search.status">
+          <el-radio label="0">전체</el-radio>
+          <el-radio label="1">입금대기</el-radio>
+          <el-radio label="2">입금완료</el-radio>
+        </el-radio-group>
+        <div style="flex: 1; display: flex; align-items: center; justify-content: right">
+          <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+        </div>
+      </div>
+    </el-descriptions-item>
+  </el-descriptions>
 
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
-      <el-option
-        v-for="item in data.companys"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-
-    <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">           
-      <el-option
-        v-for="item in data.buildings"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-
-    <el-select v-model.number="data.search.status" placeholder="상태" style="width:150px;">           
-      <el-option
-        v-for="item in data.statuss"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-
-    <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
-
-    <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="primary" @click="clickSetting" style="margin-right:20px;">출력설정</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right:-5px;">입금대기</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right:-5px;">입금완료</el-button>
+  <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+    <div style="flex: 1; text-align: right; gap: 5">
+      <el-button size="small" type="primary" @click="clickSetting" style="margin-right: 20px">출력설정</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">입금대기</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right: -5px">입금완료</el-button>
       <el-button size="small" type="success" @click="clickGiroMulti">지로발행</el-button>
-    </div>    
-  </div>  
+    </div>
+  </div>
 
-  
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
-        {{getCompany(scope.row.company)}}
+        {{ getCompany(scope.row.company) }}
       </template>
     </el-table-column>
     <el-table-column label="고객명" align="left" width="200">
       <template #default="scope">
-        {{getBuilding(scope.row.building)}}
+        {{ getBuilding(scope.row.building) }}
       </template>
     </el-table-column>
     <el-table-column label="금액" align="right" width="100">
-      <template #default="scope">
-        {{util.money(scope.row.price)}} 원
-      </template>
+      <template #default="scope"> {{ util.money(scope.row.price) }} 원 </template>
     </el-table-column>
     <el-table-column label="상태" align="center" width="80">
       <template #default="scope">
-        <span v-if="scope.row.status==1">입금대기</span>
-        <span v-if="scope.row.status==2">입금완료</span>
+        <span v-if="scope.row.status == 1">입금대기</span>
+        <span v-if="scope.row.status == 2">입금완료</span>
       </template>
     </el-table-column>
     <el-table-column label="지로" align="center" width="80">
       <template #default="scope">
-        <span v-if="scope.row.giro==1">미발행</span>
-        <span v-if="scope.row.giro==2">발행완료</span>
+        <span v-if="scope.row.giro == 1">미발행</span>
+        <span v-if="scope.row.giro == 2">발행완료</span>
       </template>
     </el-table-column>
     <el-table-column prop="billingname" label="계약담당자" align="left" width="80" />
     <el-table-column prop="billingtel" label="계약담당자 연락처" align="left" />
     <el-table-column prop="billingemail" label="계약담당자 이메일" align="left" />
-    <el-table-column prop="billdate" label="청구일" align="center" width="100" />    
+    <el-table-column prop="billdate" label="청구일" align="center" width="100" />
     <el-table-column prop="date" label="등록일" align="center" width="150" />
-  </el-table>  
+  </el-table>
 
-  
-  <el-dialog
-    v-model="data.visibleSetting"
-    width="800px"
-  >
+  <el-dialog v-model="data.visibleSetting" width="800px">
+    <y-table>
+      <y-tr>
+        <y-th style="width: 80px">소식란</y-th>
+        <y-td>
+          <el-input :rows="5" type="textarea" v-model="setting.content" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>주소위치</y-th>
+        <y-td> X : <el-input v-model="setting.x1" style="width: 50px" /> Y : <el-input v-model="setting.y1" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>금액</y-th>
+        <y-td> X : <el-input v-model="setting.x2" style="width: 50px" /> Y : <el-input v-model="setting.y2" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>공급가액</y-th>
+        <y-td> X : <el-input v-model="setting.x3" style="width: 50px" /> Y : <el-input v-model="setting.y3" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>세액</y-th>
+        <y-td> X : <el-input v-model="setting.x4" style="width: 50px" /> Y : <el-input v-model="setting.y4" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>등록번호</y-th>
+        <y-td> X : <el-input v-model="setting.x5" style="width: 50px" /> Y : <el-input v-model="setting.y5" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>수용가명</y-th>
+        <y-td> X : <el-input v-model="setting.x6" style="width: 50px" /> Y : <el-input v-model="setting.y6" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>작성년월일</y-th>
+        <y-td> X : <el-input v-model="setting.x7" style="width: 50px" /> Y : <el-input v-model="setting.y7" style="width: 50px" /> </y-td>
+      </y-tr>
 
-      <y-table>
-        <y-tr>
-          <y-th style="width:80px;">소식란</y-th>
-          <y-td>
-            <el-input :rows="5" type="textarea" v-model="setting.content" />                      
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>주소위치</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x1" style="width:50px;" /> Y : <el-input v-model="setting.y1" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>금액</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x2" style="width:50px;" /> Y : <el-input v-model="setting.y2" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>공급가액</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x3" style="width:50px;" /> Y : <el-input v-model="setting.y3" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>세액</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x4" style="width:50px;" /> Y : <el-input v-model="setting.y4" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>등록번호</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x5" style="width:50px;" /> Y : <el-input v-model="setting.y5" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>수용가명</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x6" style="width:50px;" /> Y : <el-input v-model="setting.y6" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>작성년월일</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x7" style="width:50px;" /> Y : <el-input v-model="setting.y7" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
+      <y-tr>
+        <y-th>소식란</y-th>
+        <y-td> X : <el-input v-model="setting.x8" style="width: 50px" /> Y : <el-input v-model="setting.y8" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>금액</y-th>
+        <y-td> X : <el-input v-model="setting.x9" style="width: 50px" /> Y : <el-input v-model="setting.y9" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>고객코드</y-th>
+        <y-td> X : <el-input v-model="setting.x10" style="width: 50px" /> Y : <el-input v-model="setting.y10" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상호</y-th>
+        <y-td> X : <el-input v-model="setting.x11" style="width: 50px" /> Y : <el-input v-model="setting.y11" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>성명</y-th>
+        <y-td> X : <el-input v-model="setting.x12" style="width: 50px" /> Y : <el-input v-model="setting.y12" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>항목</y-th>
+        <y-td> X : <el-input v-model="setting.x13" style="width: 50px" /> Y : <el-input v-model="setting.y13" style="width: 50px" /> </y-td>
+      </y-tr>
+    </y-table>
 
-        <y-tr>
-          <y-th>소식란</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x8" style="width:50px;" /> Y : <el-input v-model="setting.y8" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>금액</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x9" style="width:50px;" /> Y : <el-input v-model="setting.y9" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>고객코드</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x10" style="width:50px;" /> Y : <el-input v-model="setting.y10" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>상호</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x11" style="width:50px;" /> Y : <el-input v-model="setting.y11" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>성명</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x12" style="width:50px;" /> Y : <el-input v-model="setting.y12" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>항목</y-th>
-          <y-td>
-            X : <el-input v-model="setting.x13" style="width:50px;" /> Y : <el-input v-model="setting.y13" style="width:50px;" /> 
-          </y-td>
-        </y-tr>
-      </y-table>
-
-      <template #footer>
-        <el-button size="small" @click="clickCancelSetting">취소</el-button>
-        <el-button size="small" type="primary" @click="clickSubmitSetting">등록</el-button>
-      </template>
+    <template #footer>
+      <el-button size="small" @click="clickCancelSetting">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitSetting">등록</el-button>
+    </template>
   </el-dialog>
-
 </template>
 
-
 <script setup lang="ts">
-
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { util, size }  from "~/global"
-import { User, Customer, Building, Billinglist, Company, Billing } from "~/models"
-import Extra from "~/models/extra"
+import { util, size } from '~/global'
+import { User, Customer, Building, Billinglist, Company, Billing } from '~/models'
+import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -206,14 +164,14 @@ const item = {
   status: 1,
   billdate: '',
   company: 0,
-  building: 0,  
-  date: ''
+  building: 0,
+  date: '',
 }
 
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   id: 0,
   mode: 'normal',
@@ -227,15 +185,17 @@ const data = reactive({
   search: {
     company: 0,
     building: 0,
-    status: 0,
-    type: 0
+    status: '0',
+    type: 0,
+    startbilldate: '',
+    endbilldate: '',
   },
   buildings: [],
   statuss: [
-    {id: 0, name: ' '},
-    {id: 1, name: '입금대기'},
-    {id: 2, name: '입금완료'}
-  ]
+    { id: 0, name: ' ' },
+    { id: 1, name: '입금대기' },
+    { id: 2, name: '입금완료' },
+  ],
 })
 
 const setting = reactive({
@@ -275,11 +235,11 @@ async function clickSearch() {
 async function initData() {
   let res = await Customer.find({
     company: data.session.company,
-    orderby: 'b_name'
+    orderby: 'b_name',
   })
 
   let items = res.items.map(item => item.extra.building)
-  data.buildings = [{id: 0, name: ' '}, ...items]  
+  data.buildings = [{ id: 0, name: ' ' }, ...items]
 
   let company = 0
 
@@ -290,10 +250,10 @@ async function initData() {
   res = await Company.get(data.session.company)
   let item = res.item
   setting.content = item.content
-    for (let i = 1; i <= 13; i++) {
-      setting[`x${i}`] = item[`x${i}`]
-      setting[`y${i}`] = item[`y${i}`]
-    }
+  for (let i = 1; i <= 13; i++) {
+    setting[`x${i}`] = item[`x${i}`]
+    setting[`y${i}`] = item[`y${i}`]
+  }
 }
 
 async function getItems() {
@@ -307,8 +267,10 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
-    status: data.search.status,
-    orderby: 'bi_id desc'
+    status: util.getInt(data.search.status),
+    startbilldate: data.search.startbilldate,
+    endbilldate: data.search.endbilldate,
+    orderby: 'bi_id desc',
   })
 
   console.log(res.items)
@@ -318,7 +280,7 @@ async function getItems() {
   }
 
   let items = []
-  
+
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
@@ -330,27 +292,20 @@ async function getItems() {
   data.items = items
 }
 
-function clickInsert() {  
+function clickInsert() {
   data.item = util.clone(item)
-  data.visible = true  
+  data.visible = true
 }
 
 function clickUpdate(item, index) {
   return
-  
-  if (index.no == 0) {
-    return
-  }
-
-  data.item = util.clone(item)
-  data.visible = true  
 }
 
 onMounted(async () => {
   data.session = store.getters['getUser']
 
   util.loading(true)
-  
+
   await initData()
   await getItems()
 
@@ -364,28 +319,28 @@ function clickCancel() {
 
 const listRef = ref<InstanceType<typeof ElTable>>()
 const listSelection = ref([])
-const toggleListSelection = (rows) => {
+const toggleListSelection = rows => {
   if (rows) {
-    rows.forEach((row) => {
+    rows.forEach(row => {
       listRef.value!.toggleRowSelection(row, undefined)
     })
   } else {
     listRef.value!.clearSelection()
   }
 }
-const changeList = (val) => {
+const changeList = val => {
   listSelection.value = val
 }
 
 function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function() {
+  util.confirm('삭제하시겠습니까', async function () {
     util.loading(true)
-    
+
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
       let item = {
-        id: value.id
+        id: value.id,
       }
 
       await model.remove(item)
@@ -425,12 +380,12 @@ async function clickSubmit() {
 
   item.contractstartdate = util.convertDBDate(item.contractstartdate)
   item.contractenddate = util.convertDBDate(item.contractenddate)
-  
+
   item.contractprice = util.getInt(item.contractprice)
   item.contractday = util.getInt(item.contractday)
 
-  item.status = util.getInt(item.status)  
-  
+  item.status = util.getInt(item.status)
+
   if (item.id > 0) {
     await model.update(item)
   } else {
@@ -438,11 +393,11 @@ async function clickSubmit() {
   }
 
   //util.info('등록되었습니다')
-  
+
   await getItems()
 
-  data.visible = false  
-  util.loading(false)  
+  data.visible = false
+  util.loading(false)
 }
 
 function getCompany(id) {
@@ -480,16 +435,16 @@ function clickStatusMulti(status) {
   if (status == 1) {
     title = '입금완료 처리하시겠습니까'
   } else {
-    title = '입금대기 처리하시겠습니까'    
+    title = '입금대기 처리하시겠습니까'
   }
-  
-  util.confirm(title, async function() {
+
+  util.confirm(title, async function () {
     util.loading(true)
-    
+
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
-      let res = await Billing.get(value.id)      
+      let res = await Billing.get(value.id)
       res.item.status = status
       await Billing.update(res.item)
     }
@@ -502,10 +457,10 @@ function clickStatusMulti(status) {
 }
 
 function clickGiroMulti() {
-  util.confirm('지로 출력하시겠습니까', async function() {
+  util.confirm('지로 출력하시겠습니까', async function () {
     util.loading(true)
 
-    let ids = listSelection.value.map(item => item.id)    
+    let ids = listSelection.value.map(item => item.id)
 
     await getItems()
 
@@ -532,20 +487,19 @@ async function clickSubmitSetting() {
 
   let res = await Company.get(data.session.company)
   let item = util.clone(res.item)
-  
+
   for (let i = 1; i <= 13; i++) {
     item[`x${i}`] = util.getFloat(setting[`x${i}`])
-    item[`y${i}`] = util.getFloat(setting[`y${i}`])    
+    item[`y${i}`] = util.getFloat(setting[`y${i}`])
   }
-  
+
   await Company.update(item)
-  
 
   //util.info('등록되었습니다')
-  
+
   await getItems()
 
-  data.visibleSetting = false  
-  util.loading(false)  
+  data.visibleSetting = false
+  util.loading(false)
 }
 </script>
