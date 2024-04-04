@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="업체" align="left" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
@@ -52,7 +52,9 @@
     </el-table-column>
     <el-table-column prop="date" label="등록일" align="center" width="140" />
     <el-table-column label="고객배치현황" align="center" width="80">
-      <el-button size="small" type="primary" @click="clickView" style="margin-right: -5px">보기</el-button>
+      <template #default="scope">
+        <el-button size="small" type="primary" @click="clickView(scope.row)" style="margin-right: -5px">보기</el-button>
+      </template>
     </el-table-column>
   </el-table>
 
@@ -555,7 +557,12 @@ async function initData() {
   }
 }
 
-async function getItems() {
+async function getItems(reset) {
+  if (reset == true) {
+    data.page = 1
+    data.items = []
+  }
+
   if (data.session.level != User.level.rootadmin) {
     data.search.company = data.session.company
   }
@@ -565,7 +572,7 @@ async function getItems() {
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
-    // approval: 3,
+    approval: 3,
     orderby: 'u_id',
   })
 
@@ -578,12 +585,14 @@ async function getItems() {
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
-    item.index = i + 1
+    item.index = (data.page - 1) * data.pagesize + i
     items.push(item)
   }
 
   data.total = res.total
-  data.items = items
+  data.items = data.items.concat(items)
+
+  data.page++
 }
 
 async function getApproval(id) {
@@ -943,10 +952,9 @@ async function changeCompany(item) {
   data.item.department = 0
 }
 
-async function clickView() {
-  console.log(data.session)
+async function clickView(item) {
   let res = await Customer.find({
-    user: data.session.id,
+    user: item.id,
     orderby: 'b_name',
   })
 

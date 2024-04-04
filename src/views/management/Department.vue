@@ -138,13 +138,13 @@
       <y-tr>
         <y-th>휴대폰번호</y-th>
         <y-td>
-          <el-input v-model="data.item.tel" />
+          <el-input v-model="data.sns.to" />
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>발송내용</y-th>
         <y-td>
-          <el-input v-model="data.item.text" :rows="2" type="textarea" />
+          <el-input v-model="data.sns.message" :rows="4" type="textarea" />
         </y-td>
       </y-tr>
     </y-table>
@@ -159,7 +159,7 @@
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, DepartmentManager, Department, Company } from '~/models'
+import { User, DepartmentManager, Department, Company, Sns } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable, ElTree } from 'element-plus'
@@ -206,6 +206,11 @@ const user = {
   date: '',
 }
 
+const sns = {
+  to: '',
+  message: '지킴E 가입 URL\n팀명: 서비스기획팀\nURL: http://dev.zkeep.space',
+}
+
 const data = reactive({
   session: {
     level: 0,
@@ -241,6 +246,7 @@ const data = reactive({
   searchMaster: {
     text: '',
   },
+  sns: util.clone(sns),
   companys: [],
   company: {},
 })
@@ -502,7 +508,18 @@ function clickSubmitMaster() {
   data.dummyMaster = util.clone(user)
 }
 
-async function clickSNS() {}
+async function clickSNS() {
+  let result = /^(01[016789]{1})-[0-9]{3,4}-[0-9]{4}$/
+  if (!result.test(data.sns.to)) {
+    util.alert('휴대폰 번호를 정확하게 입력하세요 (-을 넣어서 입력하세요)')
+    return
+  }
+  util.loading(true)
+  await Sns.sms(data.sns)
+  data.visibleView = false
+  data.sns = util.clone(sns)
+  util.loading(false)
+}
 
 function getLevel(id) {
   if (id > 5) {
