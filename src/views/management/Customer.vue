@@ -1,33 +1,17 @@
 <template>
   <Title title="건물 및 계약 관리" />
 
-  <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
+  <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+    <el-date-picker v-model="data.search.startdate" type="date" size="small" style="width: 120px" />
+    ~
+    <el-date-picker v-model="data.search.enddate" type="date" size="small" style="width: 120px" />
 
-    <el-date-picker
-      v-model="data.search.startdate"
-      type="date"
-      size="small"
-      style="width:120px;"
-    />
-    ~ 
-    <el-date-picker
-      v-model="data.search.enddate"
-      type="date"
-      size="small"
-      style="width:120px;"
-    />
-
-    <el-select v-model.number="data.search.status" placeholder="상태" size="small" style="margin-left:5px;width:100px;">
-      <el-option
-        v-for="item in data.statuss"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
+    <el-select v-model.number="data.search.status" placeholder="상태" size="small" style="margin-left: 5px; width: 100px">
+      <el-option v-for="item in data.statuss" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
 
-    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left:5px;width: 300px" @keypress.enter.native="clickSearch" />
-    
+    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left: 5px; width: 300px" @keypress.enter.native="clickSearch" />
+
     <!--
          <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
          <el-option
@@ -47,33 +31,32 @@
          />
          </el-select>
     -->
-    
+
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
-    
+
     <div style="flex:1;text-align:right;gap:5;">
       <el-button size="small" type="warning" @click="clickBill" style="margin-right:20px;">매출 실행</el-button>
       <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
       <el-button size="small" type="success" @click="clickInsert">등록</el-button>
     </div>
-  </div>  
+  </div>
 
-  
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
-    <el-table-column type="selection" width="40" align="center" />    
+    <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="건물명" align="left">
       <template #default="scope">
-        {{scope.row.extra.building.name}}
+        {{ scope.row.extra.building.name }}
       </template>
-    </el-table-column>    
+    </el-table-column>
     <el-table-column label="사업자명" align="left">
       <template #default="scope">
-        {{scope.row.extra.company.name}}
+        {{ scope.row.extra.company.name }}
       </template>
     </el-table-column>
     <el-table-column label="관리형태" align="center" width="70">
       <template #default="scope">
-        <span v-if="scope.row.type==1">직영</span>
-        <span v-if="scope.row.type==2">위탁관리</span>
+        <span v-if="scope.row.type == 1">직영</span>
+        <span v-if="scope.row.type == 2">위탁관리</span>
       </template>
     </el-table-column>
     <!--<el-table-column label="점검자" align="left">
@@ -83,50 +66,46 @@
     </el-table-column>
     -->
     <el-table-column label="계약기간" align="center" width="160">
-      <template #default="scope">
-        {{scope.row.contractstartdate}} ~ {{scope.row.contractenddate}}
-      </template>
+      <template #default="scope"> {{ scope.row.contractstartdate }} ~ {{ scope.row.contractenddate }} </template>
     </el-table-column>
     <el-table-column label="계약금액" align="right" width="80">
-      <template #default="scope">
-        {{util.money(scope.row.contractprice)}} 원
-      </template>
+      <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
     </el-table-column>
     <el-table-column label="상태" align="center" width="50">
       <template #default="scope">
-        <span v-if="scope.row.status==1">진행</span>
-        <span v-if="scope.row.status==2">종료</span>
+        <span v-if="scope.row.status == 1">진행</span>
+        <span v-if="scope.row.status == 2">종료</span>
       </template>
     </el-table-column>
 
     <el-table-column label="청구일" align="center" width="70">
       <template #default="scope">
         <span v-if="scope.row.collectday > 0">
-          <span v-if="scope.row.collecmonth==1">당월</span>
+          <span v-if="scope.row.collecmonth == 1">당월</span>
           <span v-else>차월</span>
-          {{scope.row.collectday}} 일
+          {{ scope.row.collectday }} 일
         </span>
       </template>
     </el-table-column>
 
     <el-table-column label="담당자명" align="center" width="60">
       <template #default="scope">
-        {{getUser(scope.row.user).name}}
+        {{ getUser(scope.row.user).name }}
       </template>
     </el-table-column>
 
     <el-table-column label="담당자연락처" align="center" width="100">
       <template #default="scope">
-        {{getUser(scope.row.user).tel}}
+        {{ getUser(scope.row.user).tel }}
       </template>
     </el-table-column>
 
     <el-table-column label="담당자이메일" align="left">
       <template #default="scope">
-        {{getUser(scope.row.user).email}}
+        {{ getUser(scope.row.user).email }}
       </template>
     </el-table-column>
-    
+
     <el-table-column prop="date" label="등록일" align="center" width="130" />
 
     <el-table-column label="설비 관리" align="center" width="90">
@@ -134,167 +113,196 @@
         <el-button size="small" type="primary" @click="clickFacility(scope.row)">설비 관리</el-button>        
       </template>
     </el-table-column>
-
   </el-table>  
 
-  
-  <el-dialog
-    v-model="data.visible"
-    width="800px"
-  >
+  <el-dialog v-model="data.visible" width="400px">
+    <div style="margin-top: 20px" />
+    <el-button size="large" type="success" @click="clickSingle">단건 등록</el-button>
+    <el-button size="large" type="success" @click="clickMulti">일괄 등록</el-button>
 
-      <y-table>
-        <y-tr>
-          <y-th>사업자명</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.extra.company.id" placeholder="사업자명" style="width:250px;" @change="changeCompany">           
-              <el-option
-                v-for="item in data.companys"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>                      
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>건물명</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.extra.building.id" placeholder="건물명" style="width:250px;">           
-              <el-option
-                v-for="item in data.buildings"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>            
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>관리형태</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.type">
-              <el-radio-button size="small" value="1">직영</el-radio-button>
-              <el-radio-button size="small" value="2">위탁관리</el-radio-button>
-            </el-radio-group>
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>점검일</y-th>
-          <y-td>
-            매월 <el-input v-model="data.item.companyno" style="width:50px;" /> 일
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>담당자</y-th>
-          <y-td>
-            <el-input v-model="data.item.managername" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>담당자 연락처</y-th>
-          <y-td>
-            <el-input v-model="data.item.managertel" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>담당자 이메일</y-th>
-          <y-td>
-            <el-input v-model="data.item.manageremail" />
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계악일</y-th>
-          <y-td>            
-            <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractstartdate" /> ~ <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractenddate" /> 
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계약금액</y-th>
-          <y-td>
-            <el-input v-model="data.item.contractprice" style="width:100px;" /> 원, VAT <el-input v-model="data.item.contractvat" style="width:100px;" /> 원
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>관리형태</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.billingtype">
-              <el-radio-button size="small" value="1">지로</el-radio-button>
-              <el-radio-button size="small" value="2">계산서</el-radio-button>
-            </el-radio-group>
-          </y-td>
-        </y-tr>
-        
-        <y-tr>
-          <y-th>청구일</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.collectmonth">
-              <el-radio-button size="small" value="1">당월</el-radio-button>
-              <el-radio-button size="small" value="2">차월</el-radio-button>
-            </el-radio-group>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <el-input v-model="data.item.collectday" style="width:50px;" /> 일
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계약담당자</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingname" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>계약담당자 연락처</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingtel" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>계약담당자 이메일</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingemail" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>상태</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.status">
-              <el-radio-button size="small" value="1">진행</el-radio-button>
-              <el-radio-button size="small" value="2">종료</el-radio-button>
-            </el-radio-group>
-          </y-td>
-        </y-tr>
-
-        
-        <y-tr>
-          <y-th>점검 담당자</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.user" placeholder="점검 담당자" style="width:150px;">
-              <el-option
-                v-for="item in data.users"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </y-td>
-        </y-tr>
-      </y-table>
-
-      <template #footer>
-        <el-button size="small" @click="clickCancel">취소</el-button>
-        <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
-      </template>
+    <template #footer>
+      <el-button size="small" @click="clickCancel">취소</el-button>
+    </template>
   </el-dialog>
 
-  <el-dialog
-    v-model="data.visibleFacility"
-    :width="width(100)"
-  >
+  <el-dialog v-model="data.multi" width="800px">
+    <y-table>
+      <y-tr>
+        <y-th>*파일등록</y-th>
+        <y-td>
+          <el-row>
+            <el-col :span="12">
+              <el-text tag="b"> 설정대상 <br /><br /></el-text>
+              <el-text style="font-size: 12px">
+                <br />
+                <!-- A열 = 건물명<br />
+                B열 = 대표자<br />
+                C열 = 사업자번호<br />
+                D열 = 주소<br />
+                E열 = 상세주소 -->
+              </el-text>
+            </el-col>
+            <el-col :span="12">
+              <div style="flex: 1; text-align: right; gap: 5">
+                <el-upload
+                  class="upload"
+                  :action="external.upload"
+                  :headers="headers"
+                  :show-file-list="true"
+                  :on-success="handleFileSuccess"
+                  :auto-upload="true"
+                  :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                  v-model:file-list="external.files"
+                  :limit="1"
+                >
+                  <template #trigger>
+                    <el-button type="success" style="margin-right: 10px"> 엑셀 등록 </el-button>
+                  </template>
+                  <el-button type="primary" @click="clickDownloadExcelExample"> 예제파일 다운로드 </el-button>
+                </el-upload>
+              </div>
+            </el-col>
+          </el-row>
+        </y-td>
+      </y-tr>
+    </y-table>
+    <template #footer>
+      <el-button size="small" @click="clickCancel">취소</el-button>
+      <el-button size="small" type="primary" @click="clickDataSubmit">등록</el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.single" width="800px">
+    <y-table>
+      <y-tr>
+        <y-th>사업자명</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.company" placeholder="사업자명" style="width: 250px" @change="changeCompany">
+            <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>건물명</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.building" placeholder="건물명" style="width: 250px">
+            <el-option v-for="item in data.buildings" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>관리형태</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.type">
+            <el-radio-button size="small" value="1">직영</el-radio-button>
+            <el-radio-button size="small" value="2">위탁관리</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>점검일</y-th>
+        <y-td> 매월 <el-input v-model="data.item.companyno" style="width: 50px" /> 일 </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>담당자</y-th>
+        <y-td>
+          <el-input v-model="data.item.managername" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>담당자 연락처</y-th>
+        <y-td>
+          <el-input v-model="data.item.managertel" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>담당자 이메일</y-th>
+        <y-td>
+          <el-input v-model="data.item.manageremail" />
+        </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>계악일</y-th>
+        <y-td>
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.contractstartdate" /> ~
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.contractenddate" />
+        </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>계약금액</y-th>
+        <y-td> <el-input v-model="data.item.contractprice" style="width: 100px" /> 원, VAT <el-input v-model="data.item.contractvat" style="width: 100px" /> 원 </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>관리형태</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.billingtype">
+            <el-radio-button size="small" value="1">지로</el-radio-button>
+            <el-radio-button size="small" value="2">계산서</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>청구일</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.collectmonth">
+            <el-radio-button size="small" value="1">당월</el-radio-button>
+            <el-radio-button size="small" value="2">차월</el-radio-button>
+          </el-radio-group>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <el-input v-model="data.item.collectday" style="width: 50px" /> 일
+        </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>계약담당자</y-th>
+        <y-td>
+          <el-input v-model="data.item.billingname" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>계약담당자 연락처</y-th>
+        <y-td>
+          <el-input v-model="data.item.billingtel" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>계약담당자 이메일</y-th>
+        <y-td>
+          <el-input v-model="data.item.billingemail" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상태</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.status">
+            <el-radio-button size="small" value="1">진행</el-radio-button>
+            <el-radio-button size="small" value="2">종료</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>점검 담당자</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.user" placeholder="점검 담당자" style="width: 150px">
+            <el-option v-for="item in data.users" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+    </y-table>
+
+    <template #footer>
+      <el-button size="small" @click="clickCancel">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.visibleFacility" :width="width(100)">
     <FacilityInsert />
   </el-dialog>
 
@@ -399,22 +407,25 @@
   </el-dialog>  
 </template>
 
-
 <script setup lang="ts">
-
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { util, size }  from "~/global"
-import { User, Customer, Building, Company, Companylist } from "~/models"
+import { util, size } from '~/global'
+import { User, Customer, Building, Company, Companylist } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
-import Extra from "~/models/extra"
+import type { UploadProps } from 'element-plus'
+import Extra from '~/models/extra'
 
 const { width, height } = size()
 
 const store = useStore()
 const route = useRoute()
+
+const headers = {
+  Authorization: 'Bearer ' + store.state.token,
+}
 
 const model = Customer
 
@@ -448,10 +459,18 @@ const item = {
   }
 }
 
+const external = reactive({
+  type: 1,
+  filename: '',
+  originalfilename: '',
+  upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
+  files: [],
+})
+
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   id: 0,
   mode: 'normal',
@@ -461,6 +480,8 @@ const data = reactive({
   pagesize: 50,
   item: util.clone(item),
   visible: false,
+  single: false,
+  multi: false,
   visibleFacility: false,
   search: {
     name: '',
@@ -469,21 +490,21 @@ const data = reactive({
     type: 0,
     startdate: '',
     status: 0,
-    enddate: ''
+    enddate: '',
   },
   companys: [],
   users: [],
   buildings: [],
   types: [
-    {id: 0, name: ' '},
-    {id: 1, name: '직영'},
-    {id: 2, name: '위탁관리'}        
+    { id: 0, name: ' ' },
+    { id: 1, name: '직영' },
+    { id: 2, name: '위탁관리' },
   ],
   statuss: [
-    {id: 0, name: '상태'},
-    {id: 1, name: '진행'},
-    {id: 2, name: '종료'}        
-  ]
+    { id: 0, name: '상태' },
+    { id: 1, name: '진행' },
+    { id: 2, name: '종료' },
+  ],
 })
 
 async function clickSearch() {
@@ -494,10 +515,10 @@ async function initData() {
   let res = await Companylist.find({
     company: data.session.company,
     type: Company.type.building,
-    orderby: 'c_name'
+    orderby: 'c_name',
   })
-  
-  data.companys = [{id: 0, name: ' '}, ...res.items]
+
+  data.companys = [{ id: 0, name: ' ' }, ...res.items]
 
   /*
      res = await Building.find({
@@ -515,10 +536,10 @@ async function initData() {
 
   res = await User.find({
     company: company,
-    orderby: 'u_name'
+    orderby: 'u_name',
   })
 
-  data.users = [{id: 0, name: ' '}, ...res.items]
+  data.users = [{ id: 0, name: ' ' }, ...res.items]
 }
 
 async function getItems(reset) {
@@ -526,7 +547,7 @@ async function getItems(reset) {
     data.page = 1
     data.items = []
   }
-  
+
   if (data.session.level != User.level.rootadmin) {
     data.search.company = data.session.company
   }
@@ -539,36 +560,46 @@ async function getItems(reset) {
     building: data.search.building,
     status: data.search.status,
     startdate: data.search.startdate,
-    enddate: data.search.enddate,    
-    orderby: 'cu_id desc'
+    enddate: data.search.enddate,
+    orderby: 'cu_id desc',
   })
 
   let items = []
-  
+
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
-    item.index = ((data.page - 1) * data.pagesize) + i    
+    item.index = (data.page - 1) * data.pagesize + i
     items.push(item)
   }
 
   data.total = res.total
-  data.items = data.items.concat(items)  
+  data.items = data.items.concat(items)
 
   data.page++
 }
 
-function clickInsert() {  
+function clickSingle() {
   data.item = util.clone(item)
   data.buildings = []
-  data.visible = true  
+  data.single = true
+  data.visible = false
+}
+
+function clickMulti() {
+  data.multi = true
+  data.visible = false
+}
+
+function clickInsert() {
+  data.visible = true
 }
 
 async function clickUpdate(item, index) {
   if (index == null) {
     return
   }
-  
+
   if (index.no == 0) {
     return
   }
@@ -579,26 +610,24 @@ async function clickUpdate(item, index) {
 
   let res = await Building.find({
     company: item.company.id,
-    orderby: 'b_name'
+    orderby: 'b_name',
   })
 
   console.log(item)
   console.log(res.items)
-  
-  data.buildings = [{id: 0, name: ' '}, ...res.items]
 
-  
+  data.buildings = [{ id: 0, name: ' ' }, ...res.items]
+
   data.item = util.clone(item)
 
-  
-  data.visible = true  
+  data.visible = true
 }
 
 onMounted(async () => {
   data.session = store.getters['getUser']
 
   util.loading(true)
-  
+
   await initData()
   await getItems()
 
@@ -607,33 +636,35 @@ onMounted(async () => {
 })
 
 function clickCancel() {
+  data.single = false
+  data.multi = false
   data.visible = false
 }
 
 const listRef = ref<InstanceType<typeof ElTable>>()
 const listSelection = ref([])
-const toggleListSelection = (rows) => {
+const toggleListSelection = rows => {
   if (rows) {
-    rows.forEach((row) => {
+    rows.forEach(row => {
       listRef.value!.toggleRowSelection(row, undefined)
     })
   } else {
     listRef.value!.clearSelection()
   }
 }
-const changeList = (val) => {
+const changeList = val => {
   listSelection.value = val
 }
 
 function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function() {
+  util.confirm('삭제하시겠습니까', async function () {
     util.loading(true)
-    
+
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
       let item = {
-        id: value.id
+        id: value.id,
       }
 
       await model.remove(item)
@@ -674,12 +705,12 @@ async function clickSubmit() {
 
   item.contractstartdate = util.convertDBDate(item.contractstartdate)
   item.contractenddate = util.convertDBDate(item.contractenddate)
-  
+
   item.contractprice = util.getInt(item.contractprice)
   item.contractday = util.getInt(item.contractday)
 
-  item.status = util.getInt(item.status)  
-  
+  item.status = util.getInt(item.status)
+
   if (item.id > 0) {
     await model.update(item)
   } else {
@@ -687,11 +718,20 @@ async function clickSubmit() {
   }
 
   //util.info('등록되었습니다')
-  
   await getItems(true)
 
-  data.visible = false  
-  util.loading(false)  
+  clickCancle()
+  util.loading(false)
+}
+
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+
+  console.log(response)
+  console.log(response.filename)
+  console.log(response.originalfilename)
+  external.filename = response.filename
+  external.originalfilename = response.originalfilename
 }
 
 function getCompany(id) {
@@ -739,10 +779,28 @@ async function changeCompany(item) {
 
   let res = await Building.find({
     company: item,
-    orderby: 'b_name'
+    orderby: 'b_name',
   })
-  
-  data.buildings = [{id: 0, name: ' '}, ...res.items]
+
+  data.buildings = [{ id: 0, name: ' ' }, ...res.items]
+}
+
+function clickDownloadExcelExample() {
+  util.alert('여기 추가해주세요')
+  // let url = '/api/download/companyexample'
+  // let filename = `고객.xlsx`
+  // util.download(store, url, filename)
+}
+
+async function clickDataSubmit() {
+  util.alert('여기 추가해주세요')
+  // util.loading(true)
+  // let filename = external.files[0].response.filename
+  // console.log(filename)
+  // await Extra.company(filename)
+  // clickCancel()
+  // util.alert('저장되었습니다')
+  // util.loading(false)
 }
 
 const bill = reactive({
