@@ -1,79 +1,33 @@
 <template>
-  <Title title="청구 및 결제 관리" />
+  <Title title="세금계산서 발행 조회" />
 
   <el-descriptions class="margin-top" :column="3" border style="margin-bottom: 10px">
     <el-descriptions-item>
       <template #label>
-        <div style="text-align: center">청구일</div>
+        <div style="text-align: center">기간</div>
       </template>
-      <el-date-picker style="margin: 0px 10px 0px 0px; height: 24px; width: 150px" v-model="data.search.startbilldate" />
-      <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.endbilldate" />
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div style="text-align: center">상태</div>
-      </template>
-      <div style="display: flex; justify-content: space-between">
-        <el-radio-group v-model="data.search.status">
-          <el-radio label="0">전체</el-radio>
-          <el-radio label="1">입금대기</el-radio>
-          <el-radio label="2">입금완료</el-radio>
-        </el-radio-group>
-        <div style="flex: 1; display: flex; align-items: center; justify-content: right">
-          <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+      <div style="display:flex;justify-content:space-between;">
+        <div>
+          <el-date-picker style="margin: 0px 10px 0px 0px; height: 24px; width: 150px" v-model="data.search.startbilldate" />
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.endbilldate" />
         </div>
+        <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+
       </div>
     </el-descriptions-item>
+    
   </el-descriptions>
 
-  <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-    <div style="flex: 1; text-align: right; gap: 5">
-      <el-button size="small" type="primary" @click="clickSetting" style="margin-right: 20px">출력설정</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">입금대기</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right: -5px">입금완료</el-button>
-      <el-button size="small" type="success" @click="clickGiroMulti">지로발행</el-button>
-    </div>
-  </div>
-
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
-    <el-table-column type="selection" width="40" align="center" />
-    <el-table-column prop="month" label="청구대상 월" align="center" width="100" />
-    <el-table-column label="기간" align="center" width="70">
-      <template #default="scope">
-        {{scope.row.period}}개월분
-      </template>
-    </el-table-column>
-    <el-table-column label="사업자명" align="left" width="200">
-      <template #default="scope">
-        {{ getCompany(scope.row.company) }}
-      </template>
-    </el-table-column>
-    <el-table-column label="건물" align="left" width="200">
-      <template #default="scope">
-        {{ getBuilding(scope.row.building) }}
-      </template>
-    </el-table-column>
-    <el-table-column prop="billdate" label="청구일" align="center" width="100" />    
-    <el-table-column label="금액" align="right" width="100">
-      <template #default="scope"> {{ util.money(scope.row.price) }} 원 </template>
-    </el-table-column>
-    <el-table-column label="상태" align="center" width="80">
-      <template #default="scope">
-        <span v-if="scope.row.status == 1">입금대기</span>
-        <span v-if="scope.row.status == 2">입금완료</span>
-      </template>
-    </el-table-column>
-    <el-table-column prop="billingname" label="담당자" align="left" width="80" />
-    <el-table-column prop="billingtel" label="연락처" align="left" />
-    <el-table-column prop="billingemail" label="이메일" align="left" />
-
+    <el-table-column prop="month" label="발행일자" align="center"  />
+    <el-table-column prop="month" label="공급자" align="center"  />
+    <el-table-column prop="month" label="품목" align="center"  />
+    <el-table-column prop="month" label="공급받는자" align="center"  />
+    <el-table-column prop="month" label="공급가액" align="center"  />
+    <el-table-column prop="month" label="세액" align="center"  />
+    <el-table-column prop="month" label="발행금액" align="center"  />
+    <el-table-column prop="month" label="상태" align="center"  />
     
-    <el-table-column label="지로" align="center" width="80">
-      <template #default="scope">
-        <span v-if="scope.row.giro == 1">미발행</span>
-        <span v-if="scope.row.giro == 2">발행완료</span>
-      </template>
-    </el-table-column>    
   </el-table>
 
   <el-dialog v-model="data.visibleSetting" width="800px">
@@ -269,6 +223,7 @@ async function initData() {
 }
 
 async function getItems() {
+  return
   if (data.session.level != User.level.rootadmin) {
     data.search.company = data.session.company
   }
@@ -444,7 +399,7 @@ function getUser(id) {
 
 function clickStatusMulti(status) {
   let title = ''
-  if (status == 2) {
+  if (status == 1) {
     title = '입금완료 처리하시겠습니까'
   } else {
     title = '입금대기 처리하시겠습니까'

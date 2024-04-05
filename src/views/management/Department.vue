@@ -159,10 +159,11 @@
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, DepartmentManager, Department, Company, Sns } from '~/models'
+import { User, DepartmentManager, Department, Company } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable, ElTree } from 'element-plus'
+import Sns from '~/models/sns'
 
 interface Tree {
   [key: string]: any

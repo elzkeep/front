@@ -23,8 +23,8 @@
         <div>매출</div>
       </template>
       <el-menu-item index="4-1">매출 보고서</el-menu-item>
-      <el-menu-item index="4-2">청구서 관리</el-menu-item>
-      <el-menu-item index="4-3">결제 기록</el-menu-item>
+      <el-menu-item index="4-2">청구 및 결제 관리</el-menu-item>
+      <el-menu-item index="4-3">세금계산서 발행 조회</el-menu-item>
     </el-sub-menu>
 
     <el-sub-menu index="2" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
@@ -104,7 +104,7 @@ const clickMenu = async (key: string, keyPath: string[]) => {
   } else if (key == '4-2') {
     router.push('/management/billing')
   } else if (key == '4-3') {
-      router.push('/management/payment')    
+      router.push('/management/tax')    
   } else if (key == '1-1') {
     router.push('/management/companyinfo')
   } else if (key == '10') {

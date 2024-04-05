@@ -5,8 +5,8 @@ export default class User {
     static readonly levels = ['', '일반', '팀장', '관리자', '전체관리자']
     static readonly status = { use: 1, notuse: 2} as const 
     static readonly statuss = ['', '사용', '사용안함']
-    static readonly approval = { wait: 1, complete: 2} as const 
-    static readonly approvals = ['', '미승인', '승인']
+    static readonly approval = { wait: 1, reject: 2, complete: 3} as const 
+    static readonly approvals = ['', '미승인', ' 거절', '승인']
         
     
     static getLevel(value: number) {

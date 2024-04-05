@@ -24,6 +24,15 @@ export default class Extra {
         return res
     }
 
+    static async externaluser(filename: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/external/user/${filename}`
+        })
+
+        return res
+    }
+
     static async company(filename: string) {
         const res = await request({
             method: 'GET',
@@ -32,4 +41,33 @@ export default class Extra {
 
         return res
     }
+
+    static async usersearch(params: any) {
+        const res = await request({
+            method: 'GET',
+            url: '/api/user/search',
+            params: params
+        })
+
+        if (res.items == null) {
+            res.items = []
+        }
+        return res
+    }
+
+    static async makebill(month: number, items: any) {
+        let data = {
+            ids: items.join(','),
+            month: month
+        }
+        
+        const res = await request({
+            method: 'POST',
+            url: '/api/billing/make',
+            data: data
+        })
+
+        return res
+    }    
+    
 }

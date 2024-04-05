@@ -489,7 +489,7 @@ const data = reactive({
   items: [],
   total: 0,
   page: 1,
-  pagesize: 20,
+  pagesize: 50,
   item: util.clone(item),
   visible: false,
   visibleView: false,

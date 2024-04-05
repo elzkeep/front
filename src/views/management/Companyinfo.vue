@@ -56,7 +56,19 @@
 
   <div style="margin-top:10px;display:flex;justify-content:space-between;">
     <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>
+    <div style="display:flex;gap:5px;">
     <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
+    <el-upload
+      :action="external.upload"
+      :headers="headers"
+      :show-file-list="false"
+      :on-success="handleFileSuccessUser"
+      :auto-upload="true"
+      :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+    >
+            <el-button size="small" type="success">외부 데이터 회원 연동</el-button>
+    </el-upload>
+    </div>
   </div>
 
 <el-dialog
@@ -409,7 +421,7 @@ const handleFileSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
   console.log(response.originalfilename);
   external.filename = response.filename;
   external.originalfilename = response.originalfilename;
-};
+}
 
 const beforeFileUpload: UploadProps["beforeUpload"] = rawFile => {
   return true;
@@ -421,7 +433,7 @@ const beforeFileUpload: UploadProps["beforeUpload"] = rawFile => {
      }
      return true;
    */
-};
+}
 
 function clickDataCancel() {
   external.visible = false
@@ -439,5 +451,15 @@ async function clickDataSubmit() {
   external.files = []
 
   util.loading(false)
+}
+
+const handleFileSuccessUser: UploadProps["onSuccess"] = async (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+
+  util.loading(true)  
+  await Extra.externaluser(response.filename)   
+  util.alert('저장되었습니다')
+
+  util.loading(false)  
 }
 </script>

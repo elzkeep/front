@@ -1,13 +1,13 @@
 import request from '~/global/request'
 
-export default class Licensecategory {
+export default class Billinguserlist {
         
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/licensecategory',
+            url: '/api/billinguserlist',
             data: item
         })
 
@@ -17,7 +17,7 @@ export default class Licensecategory {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/licensecategory/batch',
+            url: '/api/billinguserlist/batch',
             data: item
         })
 
@@ -27,7 +27,7 @@ export default class Licensecategory {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/licensecategory',
+            url: '/api/billinguserlist',
             data: item
         })
 
@@ -37,7 +37,7 @@ export default class Licensecategory {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/licensecategory',
+            url: '/api/billinguserlist',
             data: item
         })
 
@@ -47,7 +47,7 @@ export default class Licensecategory {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/licensecategory/batch',
+            url: '/api/billinguserlist/batch',
             data: item
         })
 
@@ -57,7 +57,7 @@ export default class Licensecategory {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/licensecategory',
+            url: '/api/billinguserlist',
             params: params
         })
 
@@ -70,7 +70,7 @@ export default class Licensecategory {
     static async count(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/licensecategory/count',
+            url: '/api/billinguserlist/count',
             params: params
         })
         
@@ -80,7 +80,7 @@ export default class Licensecategory {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/licensecategory/${id}`
+            url: `/api/billinguserlist/${id}`
         })
 
         return res
@@ -89,13 +89,11 @@ export default class Licensecategory {
     static async sum(params: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/licensecategory/sum?${params}`
+            url: `/api/billinguserlist/sum?${params}`
         })
 
         return res
     }
 
-
-    
 
 }

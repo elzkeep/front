@@ -34,6 +34,7 @@ import ManagementCustomercompany from '~/views/management/Customercompany.vue'
 import ManagementContract from '~/views/management/Contract.vue'
 import ManagementPayment from '~/views/management/Payment.vue'
 import ManagementFacility from '~/views/management/Facility.vue'
+import ManagementTax from '~/views/management/Tax.vue'
 
 import BuildingFacility from '~/views/building/Facility.vue'
 
@@ -229,6 +230,12 @@ const routes = [
     name: 'ManagementPayment',
     meta: { authorization: ['admin'] },
     component: ManagementPayment,
+  },
+  {
+    path: '/management/tax',
+    name: 'ManagementTax',
+    meta: { authorization: ['admin'] },
+    component: ManagementTax,
   },
   {
     path: '/management/facility/:id',

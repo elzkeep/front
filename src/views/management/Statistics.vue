@@ -21,7 +21,7 @@
       </template>
       <div style="display: flex; justify-content: space-between">
         <div>
-          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.startdate" />
+          <el-date-picker style="margin: 0px 5px 0px 0px; height: 24px; width: 150px" v-model="data.search.startdate" />
           <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.enddate" />
         </div>
         <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
@@ -72,31 +72,23 @@
     </el-table-column> -->
     <el-table-column prop="index" label="번호" width="100" align="center" />
     <el-table-column prop="billdate" label="기간" align="center" />
-    <el-table-column label="건물명" align="right">
-      <template #default="scope">
-        {{ scope.row.extra.building.name }}
-      </template>
-    </el-table-column>
+    <el-table-column prop="buildingname" label="건물명" align="left" />      
     <el-table-column prop="price" label="금액" align="right">
       <template #default="scope">
         {{ util.money(scope.row.price) }}
       </template>
     </el-table-column>
-    <el-table-column label="담당자" align="right">
-      <template #default="scope">
-        {{ scope.row.extra.company.billingname }}
-      </template>
-    </el-table-column>
+    <el-table-column prop="username" label="담당자" align="right" />      
   </el-table>
 
-  <el-dialog v-model="data.visible" width="800px">
-    <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+  <el-dialog v-model="data.visible" width="1000px">
+    <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px;margin-top:20px;">
       <el-input v-model="data.searchMaster" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="getMasters" />
       <el-button size="small" class="filter-item" type="primary" @click="getMasters">검색</el-button>
     </div>
-    <el-table :data="data.masters" border :height="height(170)" ref="listRef" @selection-change="changeList" style="height: 600px">
+    <el-table :data="data.masters" border :height="height(300)" ref="listRef" @selection-change="changeList" style="height: 600px">
       <el-table-column type="selection" width="40" align="center" />
-      <el-table-column prop="loginid" label="로그인아이디" align="left" />
+      <el-table-column prop="loginid" label="로그인아이디" align="left" width="100" />
       <el-table-column prop="name" label="이름" align="left" width="80" />
       <el-table-column label="팀" align="left" width="100">
         <template #default="scope">
@@ -131,9 +123,11 @@
 import { ref, reactive, onMounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { Statistics, Statisticsyear, Statisticsmonth, Statisticsday, Billing, User, Department } from '~/models'
+import { Statistics, Statisticsyear, Statisticsmonth, Statisticsday, Billing, User, Department, Billinguserlist } from '~/models'
 import { Chart, Grid, Line, Bar } from 'vue3-charts'
 import { useStore } from 'vuex'
+import Extra from '~/models/extra'
+import moment from 'moment'
 
 const { width, height } = size()
 
@@ -161,8 +155,8 @@ const data = reactive({
   company: 0,
   search: {
     text: '',
-    startdate: '2023-03-01',
-    enddate: '2024-04-04',
+    startdate: moment().subtract(6, 'months').format('YYYY-MM-DD'),
+    enddate: moment().format('YYYY-MM-DD'),
   },
   charts: [],
   departments: [],
@@ -174,54 +168,66 @@ const data = reactive({
 async function getItems() {
   let res
 
-  if (data.mode == 'year') {
-    res = await Statisticsyear.find({ company: store.getters.getUser.company, orderby: 'bi_duration' })
-  } else if (data.mode == 'month') {
-    // res = await Statisticsmonth.find({
-    //   company: store.getters.getUser.company,
-    //   startbilldate: data.search.startdate,
-    //   endbilldate: data.search.enddate,
-    //   duration: data.duration,
-    //   orderby: 'bi_duration',
-    // })
-    res = await Statisticsmonth.find({
-      company: store.getters.getUser.company,
-      duration: data.duration,
-      orderby: 'bi_duration',
-    })
-  } else if (data.mode == 'day') {
-    res = await Statisticsday.find({ company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration' })
+  /*
+     if (data.mode == 'year') {
+     res = await Statisticsyear.find({ company: store.getters.getUser.company, orderby: 'bi_duration' })
+     } else if (data.mode == 'month') {
+     // res = await Statisticsmonth.find({
+     //   company: store.getters.getUser.company,
+     //   startbilldate: data.search.startdate,
+     //   endbilldate: data.search.enddate,
+     //   duration: data.duration,
+     //   orderby: 'bi_duration',
+     // })
+     res = await Statisticsmonth.find({
+     company: store.getters.getUser.company,
+     duration: data.duration,
+     orderby: 'bi_duration',
+     })
+     } else if (data.mode == 'day') {
+     res = await Statisticsday.find({ company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration' })
+     }
+   */
+  
+  await getBills()
+
+  data.totalprice = 0
+  let charts = []
+  for (let i = 0; i < data.items.length; i++) {
+    let item = data.items[i]
+
+    let m = item.billdate.substring(0, 7)
+
+    let find = -1
+    for (let j = 0; j < charts.length; j++) {
+      if (charts[j].title == m) {
+        find = j
+        break
+      }
+    }
+    if (find == -1) {
+      charts.push({
+        title: m,
+        value: item.price,
+        total: 1
+      })
+    } else {
+      charts[find].value += item.price
+      charts[find].total++
+    }
+
+    data.totalprice += item.price
   }
 
-  await getBills()
-  data.totalprice = 0
-  data.charts = res.items.map(item => {
-    data.totalprice += item.totalprice
-    return {
-      title: data.mode == 'company' ? '전체' : item.duration,
-      value: item.totalprice,
-      total: item.total,
-    }
-  })
-
-  console.log(data.totalprice)
-
-  // data.total = res.total
-  // data.items = res.items
+  data.charts = charts  
 }
 
 async function getBills() {
-  // if (data.session.level != User.level.rootadmin) {
-  //   data.search.company = data.session.company
-  // }
-
-  let res = await Billing.find({
-    // page: data.page,
-    // pagesize: data.pagesize,
+  let res = await Billinguserlist.find({
     company: store.getters.getUser.company,
     startbilldate: data.search.startdate,
     endbilldate: data.search.enddate,
-    // orderby: 'u_id',
+    orderby: 'bi_billdate'
   })
 
   if (res.items == null) {
@@ -233,6 +239,20 @@ async function getBills() {
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
+    if (data.manager.length > 0) {
+      let find = false
+      for (let j = 0; j < data.manager.length; j++) {
+        if (item.user == data.manager[j].id) {
+          find = true
+          break
+        }
+      }
+
+      if (find == false) {
+        continue
+      }
+    }
+    
     item.index = i + 1
     items.push(item)
   }
@@ -267,7 +287,7 @@ async function getDepartments() {
 }
 
 async function getMasters() {
-  let res = await User.find({
+  let res = await Extra.usersearch({
     name: data.searchMaster,
     page: 0,
     // pagesize: data.masterpagesize,
@@ -372,11 +392,11 @@ async function clickRow(item) {
     await getItems()
   } else if (data.mode == 'month') {
     /*
-    data.mode = 'day'
-    data.company = item.id
-    data.duration = item.duration
-    await getItems()
-    */
+       data.mode = 'day'
+       data.company = item.id
+       data.duration = item.duration
+       await getItems()
+     */
   }
 }
 
@@ -444,12 +464,13 @@ const changeList = val => {
 
 function clickVisible() {
   util.loading(true)
+  data.searchMaster = ''
   getMasters()
-  util.loading(false)
-  data.visible = true
+  util.loading(false)  
+  data.visible = true  
 }
 
-function clickSubmitMaster() {
+async function clickSubmitMaster() {
   data.manager = []
   for (let i = 0; i < listSelection.value.length; i++) {
     let value = listSelection.value[i]
@@ -457,6 +478,7 @@ function clickSubmitMaster() {
     data.manager.push(value)
   }
 
+  await getItems(true)
   clickCancelMaster()
 }
 
