@@ -9,6 +9,9 @@
     <el-select v-model.number="data.search.status" placeholder="상태" size="small" style="margin-left: 5px; width: 100px">
       <el-option v-for="item in data.statuss" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
+    <el-select v-model.number="data.search.billingtype" placeholder="청구방법" size="small" style="margin-left: 5px; width: 100px">
+      <el-option v-for="item in data.billingtypes" :key="item.id" :label="item.name" :value="item.id" />
+    </el-select>
 
     <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left: 5px; width: 300px" @keypress.enter.native="clickSearch" />
 
@@ -34,9 +37,9 @@
 
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
 
-    <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="warning" @click="clickBill" style="margin-right:20px;">매출 실행</el-button>
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
+    <div style="flex: 1; text-align: right; gap: 5">
+      <el-button size="small" type="warning" @click="clickBill" style="margin-right: 20px">매출 실행</el-button>
+      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: -5px">삭제</el-button>
       <el-button size="small" type="success" @click="clickInsert">등록</el-button>
     </div>
   </div>
@@ -53,18 +56,6 @@
         {{ scope.row.extra.company.name }}
       </template>
     </el-table-column>
-    <el-table-column label="관리형태" align="center" width="70">
-      <template #default="scope">
-        <span v-if="scope.row.type == 1">직영</span>
-        <span v-if="scope.row.type == 2">위탁관리</span>
-      </template>
-    </el-table-column>
-    <!--<el-table-column label="점검자" align="left">
-      <template #default="scope">
-        {{getUser(scope.row.user)}}
-      </template>
-    </el-table-column>
-    -->
     <el-table-column label="계약기간" align="center" width="160">
       <template #default="scope"> {{ scope.row.contractstartdate }} ~ {{ scope.row.contractenddate }} </template>
     </el-table-column>
@@ -78,6 +69,13 @@
       </template>
     </el-table-column>
 
+    <el-table-column label="청구방법" align="center" width="50">
+      <template #default="scope">
+        <span v-if="scope.row.billingtype == 1">지로</span>
+        <span v-if="scope.row.billingtype == 2">계산서</span>
+      </template>
+    </el-table-column>
+
     <el-table-column label="청구일" align="center" width="70">
       <template #default="scope">
         <span v-if="scope.row.collectday > 0">
@@ -88,32 +86,30 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="담당자명" align="center" width="60">
+    <el-table-column label="영업자명" align="center" width="60">
+      <template #default="scope">
+        {{ getUser(scope.row.salesuser).name }}
+      </template>
+    </el-table-column>
+
+    <el-table-column label="점검자명" align="center" width="60">
       <template #default="scope">
         {{ getUser(scope.row.user).name }}
       </template>
     </el-table-column>
 
-    <el-table-column label="담당자연락처" align="center" width="100">
+    <el-table-column label="점검자연락처" align="center" width="100">
       <template #default="scope">
         {{ getUser(scope.row.user).tel }}
       </template>
     </el-table-column>
 
-    <el-table-column label="담당자이메일" align="left">
-      <template #default="scope">
-        {{ getUser(scope.row.user).email }}
-      </template>
-    </el-table-column>
-
-    <el-table-column prop="date" label="등록일" align="center" width="130" />
-
     <el-table-column label="설비 관리" align="center" width="90">
       <template #default="scope">
-        <el-button size="small" type="primary" @click="clickFacility(scope.row)">설비 관리</el-button>        
+        <el-button size="small" type="primary" @click="clickFacility(scope.row)">설비 관리</el-button>
       </template>
     </el-table-column>
-  </el-table>  
+  </el-table>
 
   <el-dialog v-model="data.visible" width="400px">
     <div style="margin-top: 20px" />
@@ -306,22 +302,13 @@
     <FacilityInsert />
   </el-dialog>
 
-  <el-dialog
-    v-model="bill.visible"
-    width="800px"
-  >
-
-    <y-table style="margin: 10px 0px;">
+  <el-dialog v-model="bill.visible" width="800px">
+    <y-table style="margin: 10px 0px">
       <y-tr>
         <y-th>기간</y-th>
         <y-td>
-          <el-select v-model.number="bill.month" placeholder="개월" size="small" style="width:100px;">
-            <el-option
-              v-for="item in bill.months"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
+          <el-select v-model.number="bill.month" placeholder="개월" size="small" style="width: 100px">
+            <el-option v-for="item in bill.months" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
       </y-tr>
@@ -330,18 +317,18 @@
     <el-table :data="listSelection" border :height="400">
       <el-table-column label="건물명" align="left">
         <template #default="scope">
-          {{scope.row.extra.building.name}}
+          {{ scope.row.extra.building.name }}
         </template>
-      </el-table-column>    
+      </el-table-column>
       <el-table-column label="사업자명" align="left">
         <template #default="scope">
-          {{scope.row.extra.company.name}}
+          {{ scope.row.extra.company.name }}
         </template>
       </el-table-column>
       <el-table-column label="관리형태" align="center" width="70">
         <template #default="scope">
-          <span v-if="scope.row.type==1">직영</span>
-          <span v-if="scope.row.type==2">위탁관리</span>
+          <span v-if="scope.row.type == 1">직영</span>
+          <span v-if="scope.row.type == 2">위탁관리</span>
         </template>
       </el-table-column>
       <!--<el-table-column label="점검자" align="left">
@@ -351,60 +338,54 @@
            </el-table-column>
       -->
       <el-table-column label="계약기간" align="center" width="160">
-        <template #default="scope">
-          {{scope.row.contractstartdate}} ~ {{scope.row.contractenddate}}
-        </template>
+        <template #default="scope"> {{ scope.row.contractstartdate }} ~ {{ scope.row.contractenddate }} </template>
       </el-table-column>
       <el-table-column label="계약금액" align="right" width="80">
-        <template #default="scope">
-          {{util.money(scope.row.contractprice)}} 원
-        </template>
+        <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
       </el-table-column>
       <el-table-column label="상태" align="center" width="50">
         <template #default="scope">
-          <span v-if="scope.row.status==1">진행</span>
-          <span v-if="scope.row.status==2">종료</span>
+          <span v-if="scope.row.status == 1">진행</span>
+          <span v-if="scope.row.status == 2">종료</span>
         </template>
       </el-table-column>
 
       <el-table-column label="청구일" align="center" width="70">
         <template #default="scope">
           <span v-if="scope.row.collectday > 0">
-            <span v-if="scope.row.collecmonth==1">당월</span>
+            <span v-if="scope.row.collecmonth == 1">당월</span>
             <span v-else>차월</span>
-            {{scope.row.collectday}} 일
+            {{ scope.row.collectday }} 일
           </span>
         </template>
       </el-table-column>
 
       <el-table-column label="담당자명" align="center" width="60">
         <template #default="scope">
-          {{getUser(scope.row.user).name}}
+          {{ getUser(scope.row.user).name }}
         </template>
       </el-table-column>
 
       <el-table-column label="담당자연락처" align="center" width="100">
         <template #default="scope">
-          {{getUser(scope.row.user).tel}}
+          {{ getUser(scope.row.user).tel }}
         </template>
       </el-table-column>
 
       <el-table-column label="담당자이메일" align="left">
         <template #default="scope">
-          {{getUser(scope.row.user).email}}
+          {{ getUser(scope.row.user).email }}
         </template>
       </el-table-column>
-      
+
       <el-table-column prop="date" label="등록일" align="center" width="130" />
-
-    </el-table>  
-
+    </el-table>
 
     <template #footer>
       <el-button size="small" @click="bill.visible = false">취소</el-button>
       <el-button size="small" type="primary" @click="clickBillSubmit">매출 실행</el-button>
     </template>
-  </el-dialog>  
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -451,12 +432,12 @@ const item = {
   date: '',
   extra: {
     building: {
-      id: null
+      id: null,
     },
     company: {
-      id: 0
-    }
-  }
+      id: 0,
+    },
+  },
 }
 
 const external = reactive({
@@ -487,6 +468,7 @@ const data = reactive({
     name: '',
     company: 0,
     building: 0,
+    billingtype: 0,
     type: 0,
     startdate: '',
     status: 0,
@@ -504,6 +486,11 @@ const data = reactive({
     { id: 0, name: '상태' },
     { id: 1, name: '진행' },
     { id: 2, name: '종료' },
+  ],
+  billingtypes: [
+    { id: 0, name: '청구방법' },
+    { id: 1, name: '지로' },
+    { id: 2, name: '계산서' },
   ],
 })
 
@@ -558,6 +545,7 @@ async function getItems(reset) {
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
+    billingtype: data.search.billingtype,
     status: data.search.status,
     startdate: data.search.startdate,
     enddate: data.search.enddate,
@@ -761,14 +749,14 @@ function getUser(id) {
     return {
       name: '',
       tel: '',
-      email: ''
+      email: '',
     }
   }
 
   return items[0]
 }
 
-function clickFacility(item) {  
+function clickFacility(item) {
   router.push(`/management/facility/${item.extra.building.id}`)
   //data.visibleFacility = true
 }
@@ -807,19 +795,19 @@ const bill = reactive({
   visible: false,
   month: 1,
   months: [
-    {id: 1, name: '1개월'},
-    {id: 2, name: '2개월'},
-    {id: 3, name: '3개월'},
-    {id: 4, name: '4개월'},
-    {id: 5, name: '5개월'},
-    {id: 6, name: '6개월'},
-    {id: 7, name: '7개월'},
-    {id: 8, name: '8개월'},
-    {id: 9, name: '9개월'},
-    {id: 10, name: '10개월'},
-    {id: 11, name: '11개월'},
-    {id: 12, name: '12개월'}
-  ]
+    { id: 1, name: '1개월' },
+    { id: 2, name: '2개월' },
+    { id: 3, name: '3개월' },
+    { id: 4, name: '4개월' },
+    { id: 5, name: '5개월' },
+    { id: 6, name: '6개월' },
+    { id: 7, name: '7개월' },
+    { id: 8, name: '8개월' },
+    { id: 9, name: '9개월' },
+    { id: 10, name: '10개월' },
+    { id: 11, name: '11개월' },
+    { id: 12, name: '12개월' },
+  ],
 })
 
 function clickBill() {
@@ -832,24 +820,22 @@ async function clickBillSubmit() {
   if (listSelection.value.length == 0) {
     return
   }
-  util.confirm('매출 실행 하시겠습니까', async function() {
+  util.confirm('매출 실행 하시겠습니까', async function () {
     util.loading(true)
 
     let ids = []
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
-      
+
       ids.push(value.extra.building.id)
-      
     }
 
     await Extra.makebill(bill.month, ids)
 
     util.alert('매출 실행되었습니다')
-    
+
     util.loading(false)
     bill.visible = false
   })
-
 }
 </script>
