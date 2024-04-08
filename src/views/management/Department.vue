@@ -102,7 +102,7 @@
       <el-input v-model="data.searchMaster.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickSearch" />
       <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
     </div>
-    <el-table :data="data.masters" highlight-current-row border :height="height(170)" ref="listRef" @current-change="changeMasterList" style="height: 600px">
+    <el-table :data="data.masters" highlight-current-row border :height="height(170)" ref="listRef" @current-change="changeMasterList" style="height: 600px" v-infinite="getMasters">
       <el-table-column prop="loginid" label="로그인아이디" align="left" />
       <el-table-column prop="name" label="이름" align="left" width="80" />
       <el-table-column label="팀" align="left" width="100">
@@ -129,7 +129,7 @@
 
   <el-dialog v-model="data.visibleView" width="600px">
     <el-card shadow="never">
-      <p class="text item">URL: http://dev.zkeep.space/signup</p>
+      <p class="text item">URL: {{ data.sns.url }}</p>
     </el-card>
     <div style="margin: 10px">
       <el-button> URL 복사 </el-button>
@@ -209,7 +209,8 @@ const user = {
 
 const sns = {
   to: '',
-  message: '지킴E 가입 URL\n팀명: 서비스기획팀\nURL: http://dev.zkeep.space',
+  message: `지킴E 가입 URL\n팀명: \nURL: http://dev.zkeep.space/signup`,
+  url: 'http://dev.zkeep.space/signup',
 }
 
 const data = reactive({
@@ -272,6 +273,8 @@ const filterNode = (value: string, data: Tree) => {
 
 const handleNodeClick = (tree: Tree) => {
   data.departmentItem = tree
+  data.sns.url = `http://dev.zkeep.space/signup?company=${data.departmentItem.company}&id=${data.departmentItem.id}`
+  data.sns.message = `지킴E 가입 URL\n팀명: ${data.departmentItem.name}\nURL: ${data.sns.url}`
   if (data.departmentItem.id == 0) {
     return
   }
@@ -361,7 +364,12 @@ async function getUsers() {
   data.users = items
 }
 
-async function getMasters() {
+async function getMasters(reset) {
+  if (reset == true) {
+    data.masterpage = 1
+    data.masters = []
+  }
+
   let res = await User.find({
     name: data.searchMaster.text,
     page: data.masterpage,
@@ -385,7 +393,9 @@ async function getMasters() {
   }
 
   data.masterTotal = res.total
-  data.masters = items
+  data.masters = data.masters.concat(items)
+
+  data.masterpage++
 }
 
 function clickInsert() {
@@ -408,7 +418,7 @@ async function clickUpdate() {
 }
 
 function clickMaster() {
-  getMasters()
+  getMasters(true)
   data.visibleMaster = true
 }
 
@@ -429,7 +439,7 @@ onMounted(async () => {
 })
 
 function clickSearch() {
-  getMasters()
+  getMasters(true)
 }
 
 function clickCancel() {
@@ -459,6 +469,7 @@ const changeList = val => {
 
 const changeMasterList = val => {
   data.dummyMaster = val
+  clickSubmitMaster()
 }
 
 async function clickSubmit() {

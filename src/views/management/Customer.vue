@@ -44,6 +44,25 @@
     </div>
   </div>
 
+  <div style="margin-top: 10px; margin-bottom: 20px; display: flex; justify-content: space-evenly">
+    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+      <p style="float: center; font-weight: 700; font-size: 16px">계약유지 고객수</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ data.total }}</p>
+    </div>
+    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+      <p style="float: center; font-weight: 700; font-size: 16px">계약해지 고객수</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ data.total }}</p>
+    </div>
+    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+      <p style="float: center; font-weight: 700; font-size: 16px">매출액</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ util.money(data.total) }}</p>
+    </div>
+    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+      <p style="float: center; font-weight: 700; font-size: 16px">관리점수 현황</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ data.total }}</p>
+    </div>
+  </div>
+
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="건물명" align="left">
@@ -311,6 +330,26 @@
             <el-option v-for="item in bill.months" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
+        <y-th>기준월</y-th>
+        <y-td>
+          <el-radio-group v-model.number="bill.base">
+            <el-radio-button label="1">이번달</el-radio-button>
+            <el-radio-button label="2">다음달</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>지정월</y-th>
+        <y-td colspan="3">
+          <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+            <el-select v-model.number="bill.year" placeholder="년도" size="small" style="width: 100px">
+              <el-option v-for="item in bill.years" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+            <el-radio-group v-model.number="bill.month" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 5">
+              <el-radio-button v-for="item in bill.months" :key="item.id" :label="item.id" style="margin-right: 5px">{{ item.name }}</el-radio-button>
+            </el-radio-group>
+          </div>
+        </y-td>
       </y-tr>
     </y-table>
 
@@ -511,7 +550,7 @@ async function initData() {
      res = await Building.find({
      orderby: 'b_name'
      })
-     
+
      data.buildings = [{id: 0, name: ' '}, ...res.items]
    */
 
@@ -608,7 +647,7 @@ async function clickUpdate(item, index) {
 
   data.item = util.clone(item)
 
-  data.visible = true
+  data.single = true
 }
 
 onMounted(async () => {
@@ -807,6 +846,13 @@ const bill = reactive({
     { id: 10, name: '10개월' },
     { id: 11, name: '11개월' },
     { id: 12, name: '12개월' },
+  ],
+  base: 1,
+  year: 2024,
+  years: [
+    { id: 2022, name: '2022' },
+    { id: 2023, name: '2023' },
+    { id: 2024, name: '2024' },
   ],
 })
 
