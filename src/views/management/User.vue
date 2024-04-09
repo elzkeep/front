@@ -255,31 +255,30 @@
       </y-tr>
     </y-table>
     <Title title="자격정보" />
-    <y-table>
+    <y-table v-for="item in data.license.items" :key="item.id">
       <y-tr>
-        <y-th colspan="1">기술자격증명</y-th>
-        <y-td colspan="3">
-          {{ licenseText('category') }}
+        <y-th rowspan="2" colspan="1">기술자격증명</y-th>
+        <y-td> (자격명) </y-td>
+        <y-td>
+          {{ item.extra.licensecategory.name }}
+        </y-td>
+        <y-td> (등록번호) </y-td>
+        <y-td>
+          {{ item.number }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th colspan="1">등록번호</y-th>
-        <y-td colspan="3">
-          {{ licenseText('number') }}
+        <y-td> (기술자격등급) </y-td>
+        <y-td>
+          {{ item.extra.licenselevel.name }}
+        </y-td>
+        <y-td> (취득일) </y-td>
+        <y-td>
+          {{ item.takingdate }}
         </y-td>
       </y-tr>
-      <y-tr>
-        <y-th colspan="1">기술자격등급</y-th>
-        <y-td colspan="3">
-          {{ licenseText('level') }}
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th colspan="1">기술자격취득일자</y-th>
-        <y-td colspan="3">
-          {{ licenseText('takingdate') }}
-        </y-td>
-      </y-tr>
+    </y-table>
+    <y-table style="margin-top: 10px">
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
@@ -349,31 +348,30 @@
       </y-tr>
     </y-table>
     <Title title="자격정보" />
-    <y-table>
+    <y-table v-for="item in data.license.items" :key="item.id">
       <y-tr>
-        <y-th colspan="1">기술자격증명</y-th>
-        <y-td colspan="3">
-          {{ licenseText('category') }}
+        <y-th rowspan="2" colspan="1">기술자격증명</y-th>
+        <y-td> (자격명) </y-td>
+        <y-td>
+          {{ item.extra.licensecategory.name }}
+        </y-td>
+        <y-td> (등록번호) </y-td>
+        <y-td>
+          {{ item.number }}
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th colspan="1">등록번호</y-th>
-        <y-td colspan="3">
-          {{ licenseText('number') }}
+        <y-td> (기술자격등급) </y-td>
+        <y-td>
+          {{ item.extra.licenselevel.name }}
+        </y-td>
+        <y-td> (취득일) </y-td>
+        <y-td>
+          {{ item.takingdate }}
         </y-td>
       </y-tr>
-      <y-tr>
-        <y-th colspan="1">기술자격등급</y-th>
-        <y-td colspan="3">
-          {{ licenseText('level') }}
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th colspan="1">기술자격취득일자</y-th>
-        <y-td colspan="3">
-          {{ licenseText('takingdate') }}
-        </y-td>
-      </y-tr>
+    </y-table>
+    <y-table style="margin-top: 10px">
       <y-tr>
         <y-th>법정교육일자</y-th>
         <y-td>
@@ -498,6 +496,7 @@ const data = reactive({
     company: 0,
     department: 0,
   },
+  company: {},
   companys: [],
   departments: [],
   levels: [
@@ -546,7 +545,10 @@ async function initData() {
       orderby: 'de_order,de_name',
     })
 
-    data.departments = [{ id: 0, name: ' ' }, ...res.items]
+    let ress = await Company.get(data.session.company)
+    data.company = ress.item
+
+    data.departments = [{ id: 0, name: data.company.name }, ...res.items]
 
     data.levels = [
       { id: 0, name: ' ' },
@@ -947,7 +949,7 @@ async function changeCompany(item) {
     orderby: 'de_order,de_name',
   })
 
-  data.departments = [{ id: 0, name: ' ' }, ...res.items]
+  data.departments = [{ id: 0, name: data.company.name }, ...res.items]
 
   data.item.department = 0
 }

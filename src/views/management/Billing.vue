@@ -16,8 +16,8 @@
       <div style="display: flex; justify-content: space-between">
         <el-radio-group v-model="data.search.status">
           <el-radio label="0">전체</el-radio>
-          <el-radio label="1">입금대기</el-radio>
-          <el-radio label="2">입금완료</el-radio>
+          <el-radio label="1">미수금</el-radio>
+          <el-radio label="2">수금</el-radio>
         </el-radio-group>
         <div style="flex: 1; display: flex; align-items: center; justify-content: right">
           <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
@@ -28,9 +28,10 @@
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
     <div style="flex: 1; text-align: right; gap: 5">
+      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: 20px">삭제</el-button>
       <el-button size="small" type="primary" @click="clickSetting" style="margin-right: 20px">출력설정</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">입금대기</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right: -5px">입금완료</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">미수금</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right: -5px">수금</el-button>
       <el-button size="small" type="success" @click="clickGiroMulti">지로발행</el-button>
     </div>
   </div>
@@ -39,9 +40,7 @@
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column prop="month" label="청구대상 월" align="center" width="100" />
     <el-table-column label="기간" align="center" width="70">
-      <template #default="scope">
-        {{scope.row.period}}개월분
-      </template>
+      <template #default="scope"> {{ scope.row.period }}개월분 </template>
     </el-table-column>
     <el-table-column label="사업자명" align="left" width="200">
       <template #default="scope">
@@ -53,27 +52,26 @@
         {{ getBuilding(scope.row.building) }}
       </template>
     </el-table-column>
-    <el-table-column prop="billdate" label="청구일" align="center" width="100" />    
+    <el-table-column prop="billdate" label="청구일" align="center" width="100" />
     <el-table-column label="금액" align="right" width="100">
       <template #default="scope"> {{ util.money(scope.row.price) }} 원 </template>
     </el-table-column>
     <el-table-column label="상태" align="center" width="80">
       <template #default="scope">
-        <span v-if="scope.row.status == 1">입금대기</span>
-        <span v-if="scope.row.status == 2">입금완료</span>
+        <span v-if="scope.row.status == 1">미수금</span>
+        <span v-if="scope.row.status == 2">수금</span>
       </template>
     </el-table-column>
     <el-table-column prop="billingname" label="담당자" align="left" width="80" />
     <el-table-column prop="billingtel" label="연락처" align="left" />
     <el-table-column prop="billingemail" label="이메일" align="left" />
 
-    
     <el-table-column label="지로" align="center" width="80">
       <template #default="scope">
         <span v-if="scope.row.giro == 1">미발행</span>
         <span v-if="scope.row.giro == 2">발행완료</span>
       </template>
-    </el-table-column>    
+    </el-table-column>
   </el-table>
 
   <el-dialog v-model="data.visibleSetting" width="800px">
@@ -200,8 +198,8 @@ const data = reactive({
   buildings: [],
   statuss: [
     { id: 0, name: ' ' },
-    { id: 1, name: '입금대기' },
-    { id: 2, name: '입금완료' },
+    { id: 1, name: '미수금' },
+    { id: 2, name: '수금' },
   ],
 })
 
@@ -248,8 +246,7 @@ async function initData() {
   let items = res.items.map(item => item.extra.building)
   data.buildings = [{ id: 0, name: ' ' }, ...items]
 
-  res = await Company.find({    
-  })
+  res = await Company.find({})
 
   data.companys = res.items
 
@@ -445,9 +442,9 @@ function getUser(id) {
 function clickStatusMulti(status) {
   let title = ''
   if (status == 2) {
-    title = '입금완료 처리하시겠습니까'
+    title = '수금 처리하시겠습니까'
   } else {
-    title = '입금대기 처리하시겠습니까'
+    title = '미수금 처리하시겠습니까'
   }
 
   util.confirm(title, async function () {
