@@ -52,6 +52,12 @@
         <el-input v-model="data.item.bankno" />
       </y-td>
     </y-tr>
+    <y-tr>
+      <y-th>지로번호</y-th>
+      <y-td>
+        <el-input v-model="data.item.giro" />
+      </y-td>
+    </y-tr>
   </y-table>
 
   <div style="margin-top:10px;display:flex;justify-content:space-between;">

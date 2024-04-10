@@ -69,7 +69,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="청구방법" align="center" width="50">
+    <el-table-column label="청구방법" align="center" width="60">
       <template #default="scope">
         <span v-if="scope.row.billingtype == 1">지로</span>
         <span v-if="scope.row.billingtype == 2">계산서</span>
@@ -583,7 +583,7 @@ function clickInsert() {
   data.visible = true
 }
 
-async function clickUpdate(item, index) {
+async function clickUpdate(item, index) {  
   if (index == null) {
     return
   }
@@ -608,7 +608,7 @@ async function clickUpdate(item, index) {
 
   data.item = util.clone(item)
 
-  data.visible = true
+  data.single = true
 }
 
 onMounted(async () => {
@@ -708,7 +708,9 @@ async function clickSubmit() {
   //util.info('등록되었습니다')
   await getItems(true)
 
-  clickCancle()
+  //clickCancle()
+  data.single = false
+  data.visible = false
   util.loading(false)
 }
 
