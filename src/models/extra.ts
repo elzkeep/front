@@ -68,6 +68,28 @@ export default class Extra {
         })
 
         return res
-    }    
-    
+    }
+
+    static async companyupload(filename: string) {
+        let data = {
+            filename: filename            
+        }
+        
+        const res = await request({
+            method: 'POST',
+            url: '/api/company/upload',
+            data: data
+        })
+
+        return res
+    }
+
+    static async customerstatus(id: number) {        
+        const res = await request({
+            method: 'GET',
+            url: `/api/customer/status/${id}`
+        })
+
+        return res
+    }
 }

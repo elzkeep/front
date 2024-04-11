@@ -2,21 +2,11 @@
   <Title title="고객 현황" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-    <el-date-picker
-      v-model="data.search.startdate"
-      type="date"
-      size="small"
-      style="width:120px;"
-    />
-    ~ 
-    <el-date-picker
-      v-model="data.search.enddate"
-      type="date"
-      size="small"
-      style="width:120px;"
-    />
-    
-    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left:5px;width: 300px" @keypress.enter.native="clickSearch" />
+    <el-date-picker v-model="data.search.startdate" type="date" size="small" style="width: 120px" />
+    ~
+    <el-date-picker v-model="data.search.enddate" type="date" size="small" style="width: 120px" />
+
+    <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left: 5px; width: 300px" @keypress.enter.native="clickSearch" />
 
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
 
@@ -39,17 +29,13 @@
       <template #default="scope">
         {{ scope.row.buildingcount }}
       </template>
-    </el-table-column>
-    <el-table-column label="계약총액" align="right" width="120">
-      <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
-    </el-table-column>
+    </el-table-column>    
     <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>
 
   <el-dialog v-model="data.visible" width="400px">
-
-    <div style="margin-top:20px;" />
-    <el-button size="large" type="success" @click="clickSingle">단건 등록</el-button>    
+    <div style="margin-top: 20px" />
+    <el-button size="large" type="success" @click="clickSingle">단건 등록</el-button>
     <el-button size="large" type="success" @click="clickMulti">일괄 등록</el-button>
 
     <template #footer>
@@ -65,12 +51,12 @@
           <el-row>
             <el-col :span="12">
               <el-text tag="b"> 설정대상 <br /><br /></el-text>
-              <el-text style="font-size:12px;">
+              <el-text style="font-size: 12px">
                 A열 = 건물명<br />
                 B열 = 대표자<br />
                 C열 = 사업자번호<br />
                 D열 = 주소<br />
-                E열 = 상세주소                
+                E열 = 상세주소
               </el-text>
             </el-col>
             <el-col :span="12">
@@ -87,13 +73,9 @@
                   :limit="1"
                 >
                   <template #trigger>
-                    <el-button type="success" style="margin-right: 10px">
-                      엑셀 등록
-                    </el-button>
+                    <el-button type="success" style="margin-right: 10px"> 엑셀 등록 </el-button>
                   </template>
-                  <el-button type="primary" @click="clickDownloadExcelExample">
-                    예제파일 다운로드
-                  </el-button>
+                  <el-button type="primary" @click="clickDownloadExcelExample"> 예제파일 다운로드 </el-button>
                 </el-upload>
               </div>
             </el-col>
@@ -111,25 +93,25 @@
     <Title title="기본 정보" />
     <y-table>
       <y-tr>
-        <y-th style="width:80px;">사업자명<span style="color:red;">*</span></y-th>
+        <y-th style="width: 80px">사업자명<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.name" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>사업자번호<span style="color:red;">*</span></y-th>
+        <y-th>사업자번호<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.companyno" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>대표자<span style="color:red;">*</span></y-th>
+        <y-th>대표자<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.ceo" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>주소<span style="color:red;">*</span></y-th>
+        <y-th>주소<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.address" />
         </y-td>
@@ -141,25 +123,23 @@
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>연락처<span style="color:red;">*</span></y-th>
+        <y-th>연락처<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.tel" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>이메일<span style="color:red;">*</span></y-th>
+        <y-th>이메일<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.email" />
         </y-td>
       </y-tr>
     </y-table>
 
-
-    
-    <div style="display: flex; justify-content: space-between; gap: 5px;" v-if="data.item.id > 0">
+    <div style="display: flex; justify-content: space-between; gap: 5px" v-if="data.item.id > 0">
       <Title title="건물 정보" />
-      
-      <div style="flex: 1; text-align: right; gap: 5;margin-top:15px;">        
+
+      <div style="flex: 1; text-align: right; gap: 5; margin-top: 15px">
         <el-button size="small" type="danger" @click="clickDeleteBuildingMulti" style="margin-right: -5px">건물 삭제</el-button>
         <el-button size="small" type="success" @click="clickInsertBuilding">건물 추가</el-button>
       </div>
@@ -172,42 +152,38 @@
       <el-table-column prop="companyno" label="사업자번호" align="left" width="120" />
       <el-table-column label="주소" align="left">
         <template #default="scope"> {{ scope.row.address }} {{ scope.row.addressetc }} </template>
-      </el-table-column>            
+      </el-table-column>
     </el-table>
-    
+
     <template #footer>
       <el-button size="small" @click="clickCancel">취소</el-button>
       <el-button size="small" type="primary" @click="clickSubmitSingle">등록</el-button>
     </template>
   </el-dialog>
 
-
-  <el-dialog
-    v-model="building.visible"
-    width="800px"
-  >
-
+  <el-dialog v-model="building.visible" width="800px">
     <y-table>
       <y-tr>
-        <y-th style="width:80px;">건물명<span style="color:red;">*</span></y-th>
+        <y-th style="width: 120px">건물명(점검대상)<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="building.name" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>사업자번호<span style="color:red;">*</span></y-th>
+        <y-th>사업자번호<span style="color: red">*</span></y-th>
         <y-td>
-          <el-input v-model="building.companyno" />
+          <el-checkbox v-model="building.check" label="동일여부" @click="clickCheck" />
+          <el-input v-model="building.companyno" v-bind:disabled="building.check" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>대표자<span style="color:red;">*</span></y-th>
+        <y-th>대표자<span style="color: red">*</span></y-th>
         <y-td>
-          <el-input v-model="building.ceo" />
+          <el-input v-model="building.ceo" v-bind:disabled="building.check" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th>주소<span style="color:red;">*</span></y-th>
+        <y-th>주소<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="building.address" />
         </y-td>
@@ -217,22 +193,21 @@
         <y-td>
           <el-input v-model="building.addressetc" />
         </y-td>
-      </y-tr>      
+      </y-tr>
     </y-table>
 
-      <template #footer>
-        <el-button size="small" @click="clickCancelBuilding">취소</el-button>
-        <el-button size="small" type="primary" @click="clickSubmitBuilding">등록</el-button>
-      </template>
+    <template #footer>
+      <el-button size="small" @click="clickCancelBuilding">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitBuilding">등록</el-button>
+    </template>
   </el-dialog>
-  
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, Customer, Building, Company, Customercompany, Companylist, Uploadfile } from '~/models'
+import { User, Customer, Building, Company, Customercompany, Customercompanylist, Uploadfile } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -266,12 +241,13 @@ const item = {
 
 const building = reactive({
   visible: false,
+  check: false,
   name: '',
   companyno: '',
   ceo: '',
   address: '',
   addressetc: '',
-  items: []
+  items: [],
 })
 
 const external = reactive({
@@ -303,7 +279,7 @@ const data = reactive({
     type: 0,
     text: '',
     startdate: '',
-    enddate: ''
+    enddate: '',
   },
   companys: [],
   users: [],
@@ -313,7 +289,7 @@ const data = reactive({
     { id: 2, name: '위탁관리' },
   ],
   filelist: [],
-  visibleBuilding: false
+  visibleBuilding: false,
 })
 
 // const handleExceed: UploadProps["onExceed"] = files => {
@@ -332,16 +308,16 @@ async function getItems(reset) {
     data.page = 1
     data.items = []
   }
-    
+
   if (data.session.level != User.level.rootadmin) {
     //data.search.company = data.session.company
   }
 
-  let res = await Companylist.find({
+  let res = await Customercompanylist.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    company: data.search.company,
+    company: data.session.company,
     startdate: data.search.startdate,
     enddate: data.search.enddate,
     orderby: 'c_name',
@@ -352,12 +328,12 @@ async function getItems(reset) {
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
-    item.index = ((data.page - 1) * data.pagesize) + i    
+    item.index = (data.page - 1) * data.pagesize + i
     items.push(item)
   }
 
   data.total = res.total
-  data.items = data.items.concat(items)  
+  data.items = data.items.concat(items)
 
   data.page++
 }
@@ -414,10 +390,10 @@ const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
 async function readBuilding() {
   let res = await Building.find({
     company: data.item.id,
-    orderby: 'b_name'
+    orderby: 'b_name',
   })
-  
-  building.items = res.items  
+
+  building.items = res.items
 }
 
 async function clickUpdate(item, index) {
@@ -432,10 +408,10 @@ async function clickUpdate(item, index) {
   if (index.no == 9) {
     return
   }
-  
+
   data.item = util.clone(item)
   // data.visible = true
-  
+
   await readBuilding()
   data.single = true
 }
@@ -446,7 +422,7 @@ onMounted(async () => {
   util.loading(true)
 
   await initData()
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -488,14 +464,13 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
 }
 
-async function clickSubmitSingle() {
-  console.log('clickSubmit')
+async function clickSubmitSingle() {  
   let item = util.clone(data.item)
 
   if (item.name == '') {
@@ -527,7 +502,6 @@ async function clickSubmitSingle() {
     util.alert('이메일을 입력하세요')
     return
   }
-  
 
   util.loading(true)
 
@@ -540,7 +514,7 @@ async function clickSubmitSingle() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   data.single = false
@@ -550,11 +524,10 @@ async function clickSubmitSingle() {
 function clickExcel() {
   let url = '/api/download/company'
   let filename = `고객현황-${moment().format('YYYY-MM-DD')}.xlsx`
-  util.download(store, url, filename);
+  util.download(store, url, filename)
 }
 
-function clickUpdateBuilding(item, index) {  
-}
+function clickUpdateBuilding(item, index) {}
 
 const bulidingRef = ref<InstanceType<typeof ElTable>>()
 const buildingSelection = ref([])
@@ -586,19 +559,35 @@ function clickDeleteBuildingMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
     await readBuilding()
-    
+
     util.loading(false)
   })
 }
 
-async function clickInsertBuilding() {  
-  building.visible = true  
+function clickCheck() {
+  if (building.check == false) {
+    building.companyno = data.item.companyno
+    building.ceo = data.item.ceo
+  } else {
+    building.companyno = ''
+    building.ceo = ''
+  }
+}
+
+async function clickInsertBuilding() {
+  building.check = false
+  building.name = ''
+  building.companyno = ''
+  building.ceo = ''
+  building.address = ''
+  building.addressetc = ''
+  building.visible = true
 }
 
 function clickCancelBuilding() {
-  building.visible = false  
+  building.visible = false
 }
 
 async function clickSubmitBuilding() {
@@ -620,34 +609,32 @@ async function clickSubmitBuilding() {
   item.company = data.item.id
   await Building.insert(item)
 
-
   util.alert('저장되었습니다')
 
   util.loading(false)
   await readBuilding()
-  
+
   building.visible = false
 }
 
 function clickDownloadExcelExample() {
   let url = '/api/download/companyexample'
   let filename = `고객.xlsx`
-  util.download(store, url, filename);
+  util.download(store, url, filename)
 }
 
 async function clickDataSubmit() {
   util.loading(true)
-  
-  let filename = external.files[0].response.filename
-  console.log(filename)
+
+  let filename = external.files[0].response.filename  
   await Extra.company(filename)
 
   clickCancel()
 
   util.alert('저장되었습니다')
 
+  await getItems(true)
+
   util.loading(false)
 }
-
-
 </script>
