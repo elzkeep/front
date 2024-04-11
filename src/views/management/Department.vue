@@ -132,7 +132,7 @@
       <p class="text item">URL: {{ data.sns.url }}</p>
     </el-card>
     <div style="margin: 10px">
-      <el-button> URL 복사 </el-button>
+      <el-button @click="clickCopyUrl"> URL 복사 </el-button>
     </div>
     <y-table>
       <y-tr>
@@ -164,6 +164,7 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable, ElTree } from 'element-plus'
 import Sns from '~/models/sns'
+import Extra from '~/models/extra'
 
 interface Tree {
   [key: string]: any
@@ -370,7 +371,7 @@ async function getMasters(reset) {
     data.masters = []
   }
 
-  let res = await User.find({
+  let res = await Extra.usersearch({
     name: data.searchMaster.text,
     page: data.masterpage,
     pagesize: data.masterpagesize,
@@ -409,11 +410,15 @@ async function clickUpdate() {
   if (data.departmentItem.id == 0) {
     return
   }
-  data.item = util.clone(data.departmentItem)
-  util.loading(true)
-  let res = await User.get(data.item.master)
-  data.master = res.item
-  util.loading(false)
+  data.item = data.departmentItem
+  if (data.item.master == 0) {
+    data.master = util.clone(user)
+  } else {
+    util.loading(true)
+    let res = await User.get(data.item.master)
+    data.master = res.item
+    util.loading(false)
+  }
   data.visible = true
 }
 
@@ -518,6 +523,18 @@ function clickSubmitMaster() {
   data.master = data.dummyMaster
   data.visibleMaster = false
   data.dummyMaster = util.clone(user)
+}
+
+function clickCopyUrl() {
+  var textarea = document.createElement('textarea')
+
+  document.body.appendChild(textarea)
+  textarea.value = data.sns.url
+  textarea.select()
+  document.execCommand('copy')
+  document.body.removeChild(textarea)
+
+  util.alert('URL이 복사되었습니다.')
 }
 
 async function clickSNS() {
