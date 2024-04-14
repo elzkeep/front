@@ -352,7 +352,7 @@ function clickDeleteMulti() {
         id: value.id,
       }
 
-      await model.remove(item)
+      await Billing.remove(item)
     }
 
     //util.info('삭제되었습니다')

@@ -463,4 +463,9 @@ function getUser(id) {
   return items[0].name
 }
 
+function clickDownloadExcelExample() {
+  let url = '/api/download/customerexample'
+  let filename = `건물 및 계약.xlsx`
+  util.download(store, url, filename)
+}
 </script>

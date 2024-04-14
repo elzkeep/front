@@ -42,6 +42,15 @@ export default class Extra {
         return res
     }
 
+    static async customer(filename: string) {
+        const res = await request({
+            method: 'GET',
+            url: `/api/customer/upload/${filename}`
+        })
+
+        return res
+    }
+
     static async usersearch(params: any) {
         const res = await request({
             method: 'GET',
