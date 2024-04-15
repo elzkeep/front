@@ -829,22 +829,14 @@ async function changeCompany(item) {
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
 }
 
-function clickDownloadExcelExample() {
-  util.alert('여기 추가해주세요')
-  // let url = '/api/download/companyexample'
-  // let filename = `고객.xlsx`
-  // util.download(store, url, filename)
-}
-
 async function clickDataSubmit() {
-  util.alert('여기 추가해주세요')
-  // util.loading(true)
-  // let filename = external.files[0].response.filename
-  // console.log(filename)
-  // await Extra.company(filename)
-  // clickCancel()
-  // util.alert('저장되었습니다')
-  // util.loading(false)
+  util.loading(true)
+  let filename = external.files[0].response.filename
+  console.log(filename)
+  await Extra.customer(filename)
+  clickCancel()
+  util.alert('저장되었습니다')
+  util.loading(false)
 }
 
 const bill = reactive({
@@ -900,5 +892,11 @@ async function clickBillSubmit() {
     util.loading(false)
     bill.visible = false
   })
+}
+
+function clickDownloadExcelExample() {
+  let url = '/api/download/customerexample'
+  let filename = `건물 및 계약.xlsx`
+  util.download(store, url, filename)
 }
 </script>
