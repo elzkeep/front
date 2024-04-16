@@ -21,18 +21,8 @@
           <template #label>
             <div style="text-align: center">팀/그룹 명</div>
           </template>
-          <!-- <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickSearch" /> -->
-          <el-input v-model="name" style="width: 300px" placeholder="검색할 팀/그룹 명을 입력해 주세요" />
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div style="text-align: center">상태</div>
-          </template>
           <div style="display: flex; justify-content: space-between">
-            <el-radio-group v-model="data.status">
-              <el-radio label="1">사용</el-radio>
-              <el-radio label="2">미사용</el-radio>
-            </el-radio-group>
+            <el-input v-model="name" style="width: 300px" placeholder="검색할 팀/그룹 명을 입력해 주세요" />
             <div style="flex: 1; display: flex; align-items: center; justify-content: right">
               <el-button size="small" type="info" @click="clickShareUrl">가입 URL 공유</el-button>
               <el-button size="small" type="success" @click="clickInsert">등록</el-button>
@@ -64,6 +54,15 @@
   <el-dialog v-model="data.visible" width="800px">
     <y-table>
       <y-tr>
+        <y-th>상태</y-th>
+        <y-td>
+          <el-radio-group v-model="data.item.status">
+            <el-radio :label="1">사용</el-radio>
+            <el-radio :label="2">미사용</el-radio>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+      <y-tr>
         <y-th>팀/그룹 명</y-th>
         <y-td>
           <el-input v-model="data.item.name" />
@@ -92,6 +91,7 @@
     </y-table>
 
     <template #footer>
+      <el-button size="small" type="danger" @click="clickRemove">삭제</el-button>
       <el-button size="small" @click="clickCancel">취소</el-button>
       <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
     </template>
@@ -181,6 +181,7 @@ const item = {
   id: 0,
   name: '',
   master: 0,
+  status: 1,
   order: 0,
   parent: 0,
   company: 0,
@@ -237,7 +238,6 @@ const data = reactive({
   masterpagesize: 20,
   departmentItem: util.clone(item),
   departments: [],
-  status: '1',
   item: util.clone(item),
   visible: false,
   visibleMaster: false,
@@ -303,6 +303,7 @@ async function getItems() {
   }
 
   let items = []
+  let notApprovedItems = []
 
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
@@ -313,14 +314,18 @@ async function getItems() {
 
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
-    if (item.parent == 0) {
-      items.push(itemMap[item.id].item)
-    } else {
-      if (!itemMap[item.parent]) {
-        console.error('aaaa')
+    if (item.status == 1) {
+      if (item.parent == 0) {
+        items.push(itemMap[item.id].item)
       } else {
-        itemMap[item.parent].item.children.push(itemMap[item.id].item)
+        if (!itemMap[item.parent]) {
+          console.error('aaaa')
+        } else {
+          itemMap[item.parent].item.children.push(itemMap[item.id].item)
+        }
       }
+    } else {
+      notApprovedItems.push(itemMap[item.id].item)
     }
   }
 
@@ -329,8 +334,12 @@ async function getItems() {
   item.label = data.company.name
   item.children = items
 
+  let notApprovedItem = { label: '미승인', children: [] }
+  notApprovedItem.id = 1
+  notApprovedItem.children = notApprovedItems
+
   data.total = res.total
-  data.items = [item]
+  data.items = [item, notApprovedItem]
 
   let reverseItem = res.items.reverse()
   data.departments = [{ id: 0, name: data.company.name }, ...reverseItem]
@@ -345,7 +354,7 @@ async function getUsers() {
     company: data.session.company,
     department: data.departmentItem.id,
     approval: 3,
-    status: util.getInt(data.status),
+    status: 1,
     orderby: 'u_id desc',
   })
 
@@ -514,6 +523,21 @@ async function clickSubmit() {
   data.visible = false
   util.loading(false)
   data.master = util.clone(user)
+}
+
+async function clickRemove() {
+  util.loading(true)
+  let res = await User.find({ department: data.item.id })
+  util.loading(false)
+  if (res.total > 0) {
+    util.alert('팀원을 이동시킨후 삭제해 주세요.')
+  } else {
+    util.loading(true)
+    await model.remove(data.item.id)
+    await getItems()
+    data.visible = false
+    util.loading(false)
+  }
 }
 
 function clickSubmitMaster() {
