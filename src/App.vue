@@ -1,16 +1,18 @@
 <template>
-  <BaseHeader v-if="store.state.token != null && store.state.token != ''" />
+  <div class="wrapper">
+    <BaseHeader v-if="store.state.token != null && store.state.token != ''" />
 
-  <div style="display:flex;">
-    <!--<ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />-->
-    <CheckMenu v-if="data.menu == 'management' || data.menu == 'building'" />
-    <div style="flex:1;">
-      <div style="padding: 10px 10px;">
-        <router-view />
+    <div style="display: flex">
+      <!--<ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />-->
+      <CheckMenu v-if="data.menu == 'management' || data.menu == 'building'" />
+      <div style="flex: 1">
+        <BaseTab v-if="!isMenuActive('ManagementDashboard')" />
+        <div style="padding: 10px 10px">
+          <router-view />
+        </div>
       </div>
     </div>
   </div>
-  
 </template>
 
 <script setup lang="ts">
@@ -39,13 +41,14 @@ watchEffect(() => {
   } else if (s[1] == 'building') {
     data.menu = s[1]
   } else {
-    data.menu = s[2]    
-  }  
+    data.menu = s[2]
+  }
 })
 
+const isMenuActive = routeName => routeName === route.name
 </script>
 
-<style>
+<!-- <style>
 body {
   display: flex;
   flex-direction: column;
@@ -87,4 +90,9 @@ body {
   text-align: center;
 }
 
+</style> -->
+
+<style lang="css">
+@import '../src/assets/css/reset.css';
+@import '../src/assets/css/main.css';
 </style>

@@ -15,7 +15,7 @@
       />
     </div>
 
-    <div style="flex-grow: 1">
+    <div style="flex-grow: 1; width: 900px">
       <el-descriptions class="margin-top" :column="3" border>
         <el-descriptions-item>
           <template #label>
@@ -33,7 +33,7 @@
       </el-descriptions>
 
       <el-table :data="data.users" border :height="height(170)" ref="listRef">
-        <el-table-column prop="index" label="번호" align="left" />
+        <el-table-column prop="index" label="번호" width="100" align="center" />
         <el-table-column prop="name" label="이름" align="left" />
         <el-table-column label="직책/직급" align="left">
           <template #default="scope">
