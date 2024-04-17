@@ -239,6 +239,7 @@ nav a::before {
   background-color: #f26e52;
   position: relative;
   width: 60px;
+  min-height: 867px;
 }
 
 .side-icon {
