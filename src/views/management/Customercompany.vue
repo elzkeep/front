@@ -29,7 +29,7 @@
       <template #default="scope">
         {{ scope.row.buildingcount }}
       </template>
-    </el-table-column>    
+    </el-table-column>
     <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>
 
@@ -470,7 +470,7 @@ function clickDeleteMulti() {
   })
 }
 
-async function clickSubmitSingle() {  
+async function clickSubmitSingle() {
   let item = util.clone(data.item)
 
   if (item.name == '') {
@@ -626,7 +626,7 @@ function clickDownloadExcelExample() {
 async function clickDataSubmit() {
   util.loading(true)
 
-  let filename = external.files[0].response.filename  
+  let filename = external.files[0].response.filename
   await Extra.company(filename)
 
   clickCancel()

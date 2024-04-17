@@ -1,9 +1,8 @@
 <template>
   <div class="base-header">
     <div class="base-title">
-      <h1><img alt="zkeep" src="../../assets/image.svg" /></h1>
       <div class="header">
-        <div class="header-icon"><img class="side-icon" alt="menu" src="../../assets/icon/menu.svg" /></div>
+        <div :class="{ hide: !store.getters['getNav'] }" class="header-icon" @click="store.commit('setNav')"><img class="side-icon" alt="menu" src="../../assets/icon/menu.svg" /></div>
         <div class="header-title">
           <h2 class="page-tit">{{ data.title }}</h2>
         </div>

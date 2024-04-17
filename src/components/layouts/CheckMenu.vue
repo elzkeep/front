@@ -1,30 +1,88 @@
 <template>
-  <div class="lnb-section">
+  <div class="navbody" :class="{ shrink: store.getters['getNav'] }">
     <nav>
+      <div class="img-border">
+        <h1 :class="{ hide: !store.getters['getNav'] }"><img alt="zkeep" src="../../assets/image.svg" /></h1>
+        <div :class="{ profile: !store.getters['getNav'], hide: store.getters['getNav'] }">
+          <div class="profile-top">
+            <div class="profile-logo">
+              <img src="../../assets/logo.png" width="19" height="19" />
+              <span :class="{ hide: store.getters['getNav'] }" class="menu-tit">지킴</span>
+            </div>
+            <div class="profile-icon" @click="store.commit('setNav')"><img class="side-icon" alt="menu" src="../../assets/icon/menu.svg" /></div>
+          </div>
+        </div>
+      </div>
       <ul class="menu">
         <li>
           <router-link :to="{ name: 'ManagementDashboard' }" :class="{ on: isMenuActive('ManagementDashboard') }">
-            <img class="side-icon" alt="piechart" src="../../assets/icon/piechart.svg" />
+            <img v-if="!store.getters['getNav'] && !isMenuActive('ManagementDashboard')" class="side-icon" alt="approval" src="../../assets/icon/fill/fill_piechart.svg" />
+            <img v-if="store.getters['getNav'] || isMenuActive('ManagementDashboard')" class="side-icon" alt="piechart" src="../../assets/icon/piechart.svg" />
+            <h3 :class="{ hide: store.getters['getNav'] }" class="check-tit">대쉬보드</h3>
           </router-link>
         </li>
         <li>
-          <router-link :to="{ name: 'ManagementCustomercompany' }" :class="{ on: isMenuActive('ManagementCustomercompany') }">
-            <img class="side-icon" alt="team" src="../../assets/icon/team.svg" />
+          <router-link :to="{ name: 'ManagementCustomercompany' }" :class="{ on: isMenuActive('ManagementCustomercompany') || isMenuActive('ManagementCustomer') }">
+            <img
+              v-if="!store.getters['getNav'] && !isMenuActive('ManagementCustomercompany') && !isMenuActive('ManagementCustomer')"
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/fill/fill_team.svg"
+            />
+            <img v-if="store.getters['getNav'] || isMenuActive('ManagementCustomercompany') || isMenuActive('ManagementCustomer')" class="side-icon" alt="team" src="../../assets/icon/team.svg" />
+            <h3 :class="{ hide: store.getters['getNav'] }" class="check-tit">고객관리</h3>
           </router-link>
         </li>
         <li>
-          <router-link :to="{ name: 'ManagementStatistics' }" :class="{ on: isMenuActive('ManagementStatistics') }">
-            <img class="side-icon" alt="document" src="../../assets/icon/document.svg" />
+          <router-link :to="{ name: 'ManagementStatistics' }" :class="{ on: isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax') }">
+            <img
+              v-if="!store.getters['getNav'] && !isMenuActive('ManagementStatistics') && !isMenuActive('ManagementBilling') && !isMenuActive('ManagementTax')"
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/fill/fill_document.svg"
+            />
+            <img
+              v-if="store.getters['getNav'] || isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax')"
+              class="side-icon"
+              alt="document"
+              src="../../assets/icon/document.svg"
+            />
+            <h3 :class="{ hide: store.getters['getNav'] }" class="check-tit">매출 보고서</h3>
           </router-link>
         </li>
         <li>
           <router-link :to="{ name: 'ManagementReport' }" :class="{ on: isMenuActive('ManagementReport') }">
-            <img class="side-icon" alt="setting" src="../../assets/icon/setting.svg" />
+            <img v-if="!store.getters['getNav'] && !isMenuActive('ManagementReport')" class="side-icon" alt="approval" src="../../assets/icon/fill/fill_setting.svg" />
+            <img v-if="store.getters['getNav'] || isMenuActive('ManagementReport')" class="side-icon" alt="setting" src="../../assets/icon/setting.svg" />
+            <h3 :class="{ hide: store.getters['getNav'] }" class="check-tit">점검관리</h3>
           </router-link>
         </li>
         <li>
-          <router-link :to="{ name: 'ManagementCompanyinfo' }" :class="{ on: isMenuActive('ManagementCompanyinfo') }">
-            <img class="side-icon" alt="approval" src="../../assets/icon/approval.svg" />
+          <router-link
+            :to="{ name: 'ManagementCompanyinfo' }"
+            :class="{ on: isMenuActive('ManagementCompanyinfo') || isMenuActive('ManagementCompanylicene') || isMenuActive('ManagementUser') || isMenuActive('ManagementDepartment') }"
+          >
+            <img
+              v-if="
+                !store.getters['getNav'] &&
+                !isMenuActive('ManagementCompanyinfo') &&
+                !isMenuActive('ManagementCompanylicene') &&
+                !isMenuActive('ManagementUser') &&
+                !isMenuActive('ManagementDepartment')
+              "
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/fill/fill_approval.svg"
+            />
+            <img
+              v-if="
+                store.getters['getNav'] || isMenuActive('ManagementCompanyinfo') || isMenuActive('ManagementCompanylicene') || isMenuActive('ManagementUser') || isMenuActive('ManagementDepartment')
+              "
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/approval.svg"
+            />
+            <h3 :class="{ hide: store.getters['getNav'] }" class="check-tit">사업자 관리</h3>
           </router-link>
         </li>
         <!-- 커뮤니케이션
@@ -68,169 +126,4 @@ const isBuilding = () => data.company.type == Company.type.building
 const isAdmin = () => data.session.level == 4
 
 const isMenuActive = routeName => routeName === route.name
-
-const clickMenu = async (key: string, keyPath: string[]) => {
-  console.log(key)
-  if (key == '5') {
-    router.push('/management/dashboard')
-  } else if (key == '1-4') {
-    router.push('/management/department')
-  } else if (key == '1-3') {
-    router.push('/management/user')
-  } else if (key == '1-2') {
-    router.push('/management/companylicense')
-  } else if (key == '5') {
-    router.push('/management/license')
-  } else if (key == '3-2') {
-    router.push('/management/customer')
-  } else if (key == '3-3') {
-    router.push('/management/contract')
-  } else if (key == '3-1') {
-    router.push('/management/customercompany')
-  } else if (key == '4-1') {
-    router.push('/management/statistics')
-  } else if (key == '4-2') {
-    router.push('/management/billing')
-  } else if (key == '4-3') {
-    router.push('/management/tax')
-  } else if (key == '1-1') {
-    router.push('/management/companyinfo')
-  } else if (key == '10') {
-    router.push('/management/report')
-  } else if (key == '2-2') {
-    router.push('/management/report')
-  }
-}
 </script>
-<style>
-.el-sub-menu {
-  margin: 0px 0px !important;
-  papdding: 0px 0px !important;
-}
-
-.el-menu-item {
-  margin: 0px 0px 0px 8px !important;
-}
-</style>
-
-<!-- <template>
-  <el-menu @select="clickMenu">
-    <el-menu-item index="5" style="width: 160px; overflow: hidden; padding: 0px 10px 0px 14px !important; font-size: 14px">
-      <el-icon><Menu /></el-icon>
-      <span>대시보드</span>
-    </el-menu-item>
-
-    <el-sub-menu index="3" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
-      <template #title>
-        <el-icon><User /></el-icon>
-        <div>고객</div>
-      </template>
-      <el-menu-item index="3-1">고객 현황</el-menu-item>
-      <el-menu-item index="3-2">건물 및 계약 관리</el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="4" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
-      <template #title>
-        <el-icon><Money /></el-icon>
-        <div>매출</div>
-      </template>
-      <el-menu-item index="4-1">매출 보고서</el-menu-item>
-      <el-menu-item index="4-2">청구 및 결제 관리</el-menu-item>
-      <el-menu-item index="4-3">세금계산서 발행 조회</el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="2" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
-      <template #title>
-        <el-icon><Files /></el-icon>
-        <div>점검기록</div>
-      </template>
-      <el-menu-item index="2-2">점검현황</el-menu-item>
-      <el-menu-item index="2-3">점검 보고서</el-menu-item>
-      <el-menu-item index="2-4">적합/부적합 결과</el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="1" style="width: 160px; overflow: hidden; padding: 0px 0px !important; padding: 0px 0px">
-      <template #title>
-        <el-icon><Document /></el-icon>
-        <div>사업자정보</div>
-      </template>
-      <el-menu-item index="1-1">기본정보 관리</el-menu-item>
-      <el-menu-item index="1-2">보유먼허 관리</el-menu-item>
-      <el-menu-item index="1-3">소속회원 관리</el-menu-item>
-      <el-menu-item index="1-4">팀 관리</el-menu-item>
-    </el-sub-menu>
-  </el-menu>
-</template>
-
-<script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import router from '~/router'
-import { Company } from '~/models'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-
-const store = useStore()
-const route = useRoute()
-
-const data = reactive({
-  session: {
-    level: 0,
-    company: 0,
-  },
-  company: {
-    type: 0,
-  },
-})
-
-onMounted(async () => {
-  data.session = store.getters['getUser']
-  data.company = store.getters['getCompany']
-})
-
-const isWork = () => data.company.type == Company.type.work
-const isBuilding = () => data.company.type == Company.type.building
-const isAdmin = () => data.session.level == 4
-
-const clickMenu = async (key: string, keyPath: string[]) => {
-  console.log(key)
-  if (key == '5') {
-    router.push('/management/dashboard')
-  } else if (key == '1-4') {
-    router.push('/management/department')
-  } else if (key == '1-3') {
-    router.push('/management/user')
-  } else if (key == '1-2') {
-    router.push('/management/companylicense')
-  } else if (key == '5') {
-    router.push('/management/license')
-  } else if (key == '3-2') {
-    router.push('/management/customer')
-  } else if (key == '3-3') {
-    router.push('/management/contract')
-  } else if (key == '3-1') {
-    router.push('/management/customercompany')
-  } else if (key == '4-1') {
-    router.push('/management/statistics')
-  } else if (key == '4-2') {
-    router.push('/management/billing')
-  } else if (key == '4-3') {
-    router.push('/management/tax')
-  } else if (key == '1-1') {
-    router.push('/management/companyinfo')
-  } else if (key == '10') {
-    router.push('/management/report')
-  } else if (key == '2-2') {
-    router.push('/management/report')
-  }
-}
-</script>
-<style>
-.el-sub-menu {
-  margin: 0px 0px !important;
-  papdding: 0px 0px !important;
-}
-
-.el-menu-item {
-  margin: 0px 0px 0px 8px !important;
-}
-</style> -->
