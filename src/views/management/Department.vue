@@ -1,6 +1,6 @@
 <template>
   <Title title="팀 관리" />
-  <div style="display: flex">
+  <div style="display: flex; width: 100%; height: 100%">
     <div style="flex-grow: 0; margin-right: 10px; border: 1px solid #ddd; width: 300px">
       <el-tree
         ref="treeRef"
@@ -15,7 +15,7 @@
       />
     </div>
 
-    <div style="flex-grow: 1; width: 900px">
+    <div style="flex-grow: 1">
       <el-descriptions class="margin-top" :column="3" border>
         <el-descriptions-item>
           <template #label>

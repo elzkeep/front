@@ -213,30 +213,41 @@ hr {
 /*=================================================================================================
 checkMenu
 ===================================================================================================*/
-.navbody {
+body {
   overflow-x: hidden;
   background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   position: relative;
 }
+.menu ul {
+  position: relative;
+}
 .menu li {
-  /* height: 60px; */
   display: flex;
   align-items: center;
+  position: relative;
 }
-.menu li .on {
+.menu li.on {
   width: 184px;
   background-color: #f26e52;
   border-radius: 0px 20px 20px 0px;
   left: 0;
   top: 0;
 }
-.menu li a {
+.menu a {
   display: flex;
-  position: relative;
-  width: 100%;
-  padding: 18px 0;
+  align-items: center;
+  height: 60px;
+}
+.menu a .check-tit {
+  transition: opacity 0.3s 0.2s color 0.3s;
+}
+.menu a.active i:first-child {
+  opacity: 0;
+}
+.menu a.active i:last-child {
+  opacity: 1;
 }
 nav {
   display: flex;
@@ -263,6 +274,9 @@ nav a::before {
 .img-border {
   border-bottom: 1px solid #e7e7e7;
 }
+.shrink .img-border {
+  height: 70px;
+}
 .profile {
   height: 316px;
 }
@@ -287,6 +301,24 @@ nav a::before {
   font-weight: 600;
   font-size: 1.15rem;
 }
+.profile-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  flex-direction: column;
+}
+.profile-box .group {
+  background-color: #111;
+  background-size: 100% 100%;
+  border-radius: 44px;
+  height: 88px;
+  width: 88px;
+  left: 0;
+  top: 0;
+  position: fiexd;
+}
 h1 img {
   width: 60px;
   height: 69px;
@@ -298,7 +330,7 @@ h1 img {
 .check-tit {
   padding-left: 20px;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   color: #2c3238;
   position: relative;
 }
@@ -306,28 +338,52 @@ h1 img {
   font-size: 17px;
   font-weight: bold;
 }
+.subtit-ul {
+  padding-left: 30px;
+}
+.subtit-li a {
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+.subtit-mi a {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+}
+.subtit {
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
 .on .check-tit {
   color: #ffffff;
 }
-.shrink nav {
+body.shrink nav {
   width: 61px;
   background-color: #f26e52;
 }
-.hide {
+.hiden {
   transition: opacity 0.3s 0.2s;
 }
-.shrink .hide {
+body.shrink .hiden {
   opacity: 0;
   pointer-events: none;
   transition-delay: 0s;
 }
-.haeder .hide {
+.haeder .hiden {
   opacity: 0;
   pointer-events: none;
   transition-delay: 0s;
 }
-.shrink .menu li .on {
+.shrink .menu li.on {
   background-color: #a32c13;
+  border-radius: 0px;
+  width: 100%;
 }
 .shrink a::before {
   content: '';

@@ -4,7 +4,7 @@
   <y-table>
     <y-tr>
       <y-th style="width: 100px">구분</y-th>
-      <y-td>
+      <y-td style="width: 4000px">
         <span v-if="data.item.type == 1">점검회사</span>
         <span v-if="data.item.type == 2">건물</span>
       </y-td>
