@@ -1,10 +1,10 @@
 <template>
   <Title title="기본 정보 관리" />
 
-  <y-table>
+  <y-table style="width: 100%">
     <y-tr>
-      <y-th style="width: 100px">구분</y-th>
-      <y-td style="width: 4000px">
+      <y-th>구분</y-th>
+      <y-td>
         <span v-if="data.item.type == 1">점검회사</span>
         <span v-if="data.item.type == 2">건물</span>
       </y-td>

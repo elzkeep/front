@@ -1,5 +1,5 @@
 <template>
-  <body :class="{ shrink: store.getters['getNav'] }">
+  <div :class="{ shrink: store.getters['getNav'] }">
     <nav>
       <div class="img-border">
         <h1 v-if="store.getters['getNav']"><img alt="zkeep" src="../../assets/image.svg" /></h1>
@@ -167,7 +167,7 @@
         </li> -->
       </ul>
     </nav>
-  </body>
+  </div>
 </template>
 
 <script lang="ts" setup>

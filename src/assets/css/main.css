@@ -201,6 +201,7 @@ layout
 .wrapper {
   width: 100%;
   min-width: 1200px;
+  display: flex;
 }
 .lnb-section {
   order: 0;
@@ -363,14 +364,14 @@ h1 img {
 .on .check-tit {
   color: #ffffff;
 }
-body.shrink nav {
+body .shrink nav {
   width: 61px;
   background-color: #f26e52;
 }
 .hiden {
   transition: opacity 0.3s 0.2s;
 }
-body.shrink .hiden {
+body .shrink .hiden {
   opacity: 0;
   pointer-events: none;
   transition-delay: 0s;

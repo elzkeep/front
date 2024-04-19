@@ -1,14 +1,12 @@
 <template>
   <div class="wrapper">
-    <div style="display: flex">
-      <!--<ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />-->
-      <CheckMenu v-if="data.menu == 'management' || data.menu == 'building'" />
-      <div style="flex: 1">
-        <BaseHeader v-if="store.state.token != null && store.state.token != ''" />
-        <BaseTab v-if="!isMenuActive('ManagementDashboard')" />
-        <div style="padding: 10px 10px">
-          <router-view />
-        </div>
+    <!--<ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />-->
+    <CheckMenu v-if="data.menu == 'management' || data.menu == 'building'" />
+    <div style="flex: 1">
+      <BaseHeader v-if="store.state.token != null && store.state.token != ''" />
+      <BaseTab v-if="!isMenuActive('ManagementDashboard')" />
+      <div style="padding: 10px 10px">
+        <router-view />
       </div>
     </div>
   </div>
