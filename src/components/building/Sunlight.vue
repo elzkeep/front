@@ -41,7 +41,7 @@
     <y-tr>
       <y-th>발전용량</y-th>
       <y-td>
-        <el-input v-model="data.item.value6" style="width:50px;" /> V        
+        <el-input v-model="data.item.value6" style="width:50px;" /> kW     
       </y-td>
     </y-tr>        
   </y-table>

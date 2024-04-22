@@ -114,8 +114,8 @@
           <y-th>관리형태</y-th>
           <y-td>
             <el-radio-group v-model.number="data.item.type">
-              <el-radio-button size="small" label="1">직영</el-radio-button>
-              <el-radio-button size="small" label="2">위탁관리</el-radio-button>
+              <el-radio-button size="small" value="1">직영</el-radio-button>
+              <el-radio-button size="small" value="2">위탁관리</el-radio-button>
             </el-radio-group>
           </y-td>
         </y-tr>

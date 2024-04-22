@@ -172,7 +172,7 @@
       <y-tr>
         <y-th>사업자번호<span style="color: red">*</span></y-th>
         <y-td>
-          <el-checkbox v-model="building.check" label="동일여부" @click="clickCheck" />
+          <el-checkbox v-model="building.check" label="고객정보와 동일" @click="clickCheck" />
           <el-input v-model="building.companyno" v-bind:disabled="building.check" />
         </y-td>
       </y-tr>

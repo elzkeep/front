@@ -495,8 +495,8 @@ async function clickSubmit() {
   }
 
   if (data.master.id == 0) {
-    util.alert('팀/그룹 장을 선택하세요')
-    return
+    //util.alert('팀/그룹 장을 선택하세요')
+    //return
   }
 
   if (item.order == '') {

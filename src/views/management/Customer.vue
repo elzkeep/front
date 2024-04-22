@@ -80,7 +80,7 @@
     </el-table-column>
     <el-table-column label="계약용량" align="right" width="70">
       <template #default="scope">
-        {{ scope.row.extra.building.weight }}
+        {{ scope.row.extra.building.totalweight }}
       </template>
     </el-table-column>
     <el-table-column label="계약금액" align="right" width="80">
@@ -671,7 +671,7 @@ onMounted(async () => {
   util.loading(true)
 
   await initData()
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -713,7 +713,7 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
