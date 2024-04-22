@@ -430,6 +430,32 @@
       <el-button size="small" type="primary" @click="clickBillSubmit">매출 실행</el-button>
     </template>
   </el-dialog>
+
+  <el-dialog v-model="data.visibleBusiness" width="800px">
+    <el-table :data="data.business.items" border @row-click="clickUpdate" ref="listRef" v-infinite="getItems" height="500">
+      <el-table-column label="건물명" align="left">
+        <template #default="scope">
+          {{ scope.row.extra.building.name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="계약기간" align="center" width="160">
+        <template #default="scope"> {{ scope.row.contractstartdate }} ~ {{ scope.row.contractenddate }} </template>
+      </el-table-column>
+      <el-table-column label="계약금액" align="right" width="80">
+        <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
+      </el-table-column>
+      <el-table-column label="상태" align="center" width="50">
+        <template #default="scope">
+          <span v-if="scope.row.status == 1">진행</span>
+          <span v-if="scope.row.status == 2">종료</span>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <template #footer>
+      <el-button size="small" @click="data.visibleBusiness = false">취소</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -508,6 +534,8 @@ const data = reactive({
   single: false,
   multi: false,
   visibleFacility: false,
+  visibleBusiness: false,
+  visibleInspector: false,
   search: {
     name: '',
     company: 0,
@@ -522,11 +550,15 @@ const data = reactive({
     currentuser: 0,
     user: 0,
     money: 0,
-    score: 0
-    },
+    score: 0,
+  },
   companys: [],
   users: [],
   buildings: [],
+  business: {
+    items: [],
+    total: 0,
+  },
   types: [
     { id: 0, name: ' ' },
     { id: 1, name: '직영' },
@@ -621,6 +653,18 @@ async function getItems(reset) {
   data.page++
 }
 
+async function getBusiness(salesuser) {
+  let res = await model.find({
+    company: data.search.company,
+    // building: data.search.building,
+    salesuser: salesuser,
+    orderby: 'cu_id desc',
+  })
+
+  data.business.total = res.total
+  data.business.items = res.items
+}
+
 function clickSingle() {
   data.item = util.clone(item)
   data.buildings = []
@@ -637,7 +681,7 @@ function clickInsert() {
   data.visible = true
 }
 
-async function clickUpdate(item, index) {  
+async function clickUpdate(item, index) {
   if (index == null) {
     return
   }
@@ -647,6 +691,20 @@ async function clickUpdate(item, index) {
   }
 
   if (index.no == 9) {
+    util.loading(true)
+    getBusiness(item.salesuser)
+    console.log(item.salesuser)
+    util.loading(false)
+    data.visibleBusiness = true
+    return
+  }
+
+  if (index.no == 10) {
+    data.visibleInspector = true
+    return
+  }
+
+  if (index.no == 12) {
     return
   }
 
