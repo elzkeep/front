@@ -456,13 +456,39 @@
       <el-button size="small" @click="data.visibleBusiness = false">취소</el-button>
     </template>
   </el-dialog>
+
+  <el-dialog v-model="data.visibleInspector" width="800px">
+    <y-table style="margin: 10px 0px">
+      <y-tr>
+        <y-th>이름</y-th>
+        <y-td>
+          {{ getUser(data.inspector).name }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>소속</y-th>
+        <y-td>
+          {{ getDepartment(getUser(data.inspector).company) }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>연락처</y-th>
+        <y-td>
+          {{ getUser(data.inspector).tel }}
+        </y-td>
+      </y-tr>
+    </y-table>
+    <template #footer>
+      <el-button size="small" @click="data.visibleInspector = false">취소</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, Customer, Building, Company, Companylist } from '~/models'
+import { User, Customer, Building, Company, Companylist, Department } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -559,6 +585,8 @@ const data = reactive({
     items: [],
     total: 0,
   },
+  departments: [],
+  inspector: 0,
   types: [
     { id: 0, name: ' ' },
     { id: 1, name: '직영' },
@@ -613,6 +641,12 @@ async function initData() {
   res = await Extra.customerstatus(company)
 
   data.status = res
+
+  res = await Department.find({
+    company: data.session.company,
+  })
+
+  data.departments = [{ id: 0, name: ' ' }, ...res.items]
 }
 
 async function getItems(reset) {
@@ -700,6 +734,7 @@ async function clickUpdate(item, index) {
   }
 
   if (index.no == 10) {
+    data.inspector = item.user
     data.visibleInspector = true
     return
   }
@@ -846,6 +881,16 @@ function getCompany(id) {
   return items[0].name
 }
 
+function getDepartment(id) {
+  let items = data.departments.filter(item => item.id == id)
+
+  if (items.length == 0) {
+    return ''
+  }
+
+  return items[0].name
+}
+
 function getBuilding(id) {
   let items = data.buildings.filter(item => item.id == id)
 
@@ -864,6 +909,8 @@ function getUser(id) {
       name: '',
       tel: '',
       email: '',
+      company: 0,
+      department: 0,
     }
   }
 
