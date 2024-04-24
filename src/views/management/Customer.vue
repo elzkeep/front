@@ -198,7 +198,7 @@
         <y-th>사업자명</y-th>
         <y-td>
           <el-select v-model.number="data.item.company" size="small" placeholder="사업자명" style="width: 250px" @change="changeCompany">
-            <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
+            <el-option v-for="item in data.companys" :key="item.id" :label="getCompanyInfo(item)" :value="item.id" />
           </el-select>
         </y-td>
       </y-tr>
@@ -817,7 +817,6 @@ async function clickUpdate(item, index) {
   if (index.no == 9) {
     util.loading(true)
     getBusiness(item.salesuser)
-    console.log(item.salesuser)
     util.loading(false)
     data.visibleBusiness = true
     return
@@ -838,13 +837,13 @@ async function clickUpdate(item, index) {
     orderby: 'b_name',
   })
 
-  console.log(item)
-  console.log(res.items)
-
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
 
+  item.company = item.extra.company.id
+  item.building = item.extra.building.id
+  
   data.item = util.clone(item)
-
+  
   res = await User.get(item.user)
   data.inspect = res.item
 
@@ -976,10 +975,6 @@ async function clickSubmit() {
 
 const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
-
-  console.log(response)
-  console.log(response.filename)
-  console.log(response.originalfilename)
   external.filename = response.filename
   external.originalfilename = response.originalfilename
 }
@@ -1044,9 +1039,6 @@ function clickFacility(item) {
 }
 
 async function changeCompany(item) {
-  console.log(item)
-  console.log('changeCompany')
-
   let res = await Building.find({
     company: item,
     orderby: 'b_name',
@@ -1058,7 +1050,6 @@ async function changeCompany(item) {
 async function clickDataSubmit() {
   util.loading(true)
   let filename = external.files[0].response.filename
-  console.log(filename)
   await Extra.customer(filename)
   clickCancel()
   util.alert('저장되었습니다')
@@ -1122,8 +1113,6 @@ function clickBill() {
   bill.durationmonth = []
   
   bill.visible = true
-
-  console.log(listSelection.value)
 }
 
 async function clickBillSubmit() {
@@ -1140,7 +1129,6 @@ async function clickBillSubmit() {
       ids.push(value.extra.building.id)
     }
 
-    console.log(bill.durationmonth)
     await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids)
 
     util.alert('매출 실행되었습니다')
@@ -1154,5 +1142,13 @@ function clickDownloadExcelExample() {
   let url = '/api/download/customerexample'
   let filename = `건물 및 계약.xlsx`
   util.download(store, url, filename)
+}
+
+function getCompanyInfo(item) {
+  if (item.id == 0) {
+    return ''
+  }
+  
+  return `${item.name} (${item.companyno})`
 }
 </script>
