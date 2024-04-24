@@ -299,9 +299,12 @@
       <y-tr>
         <y-th>점검 담당자</y-th>
         <y-td>
+			<!--
           <el-select v-model.number="data.item.user" size="small" placeholder="점검 담당자" style="width: 150px">
             <el-option v-for="item in data.users" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
+		  -->
+          <el-input v-model="data.inspect.name" readonly @click="clickInspector" />
         </y-td>
       </y-tr>
     </y-table>
@@ -444,13 +447,69 @@
       <el-button size="small" @click="data.visibleBusiness = false">취소</el-button>
     </template>
   </el-dialog>
+
+  <el-dialog v-model="data.visibleInspector" width="800px">
+    <y-table style="margin: 10px 0px">
+      <y-tr>
+        <y-th>이름</y-th>
+        <y-td>
+          {{ getUser(data.inspector).name }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>소속</y-th>
+        <y-td>
+          {{ getDepartment(getUser(data.inspector).company) }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>연락처</y-th>
+        <y-td>
+          {{ getUser(data.inspector).tel }}
+        </y-td>
+      </y-tr>
+    </y-table>
+    <template #footer>
+      <el-button size="small" @click="data.visibleInspector = false">취소</el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.visibleInspectors" width="800px">
+    <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+      <el-input v-model="data.searchInspector.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickInspectorSearch" />
+      <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
+    </div>
+    <el-table :data="data.inspectors" highlight-current-row border :height="height(170)" ref="listRef" @current-change="changeInspectorList" style="height: 600px" v-infinite="getInspectors">
+      <el-table-column prop="loginid" label="로그인아이디" align="left" />
+      <el-table-column prop="name" label="이름" align="left" width="80" />
+      <el-table-column label="팀" align="left" width="100">
+        <template #default="scope">
+          {{ getDepartment(scope.row.department) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="email" label="이메일" align="left" />
+      <el-table-column prop="tel" label="연락처" align="left" width="100" />
+      <el-table-column label="주소" align="left">
+        <template #default="scope"> {{ scope.row.address }} {{ scope.row.addressetc }} </template>
+      </el-table-column>
+      <el-table-column label="권한" align="center" width="70">
+        <template #default="scope">
+          {{ getLevel(scope.row.level) }}
+        </template>
+      </el-table-column>
+    </el-table>
+    <template #footer>
+      <el-button size="small" @click="data.visibleInspectors = false">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitInspector">등록</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, Customer, Building, Company, Companylist } from '~/models'
+import { User, Customer, Building, Company, Companylist, Department } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -498,6 +557,27 @@ const item = {
   },
 }
 
+const user = {
+  id: 0,
+  loginid: '',
+  passwd: '',
+  name: '',
+  email: '',
+  tel: '',
+  address: '',
+  addressetc: '',
+  joindate: '',
+  careeryear: 0,
+  careermonth: 0,
+  level: 1,
+  approval: 1,
+  rejectreason: '',
+  status: 1,
+  company: 0,
+  department: 0,
+  date: '',
+}
+
 const external = reactive({
   type: 1,
   filename: '',
@@ -524,6 +604,7 @@ const data = reactive({
   visibleFacility: false,
   visibleBusiness: false,
   visibleInspector: false,
+  visibleInspectors: false,
   search: {
     name: '',
     company: 0,
@@ -547,6 +628,17 @@ const data = reactive({
     items: [],
     total: 0,
   },
+  departments: [],
+  inspector: 0,
+  dummyInspector: util.clone(user),
+  inspect: util.clone(user),
+  inspectors: [],
+  inspectorTotal: 0,
+  inspectorpage: 1,
+  inspectorpagesize: 20,
+  searchInspector: {
+    text: '',
+  },
   types: [
     { id: 0, name: ' ' },
     { id: 1, name: '직영' },
@@ -566,6 +658,10 @@ const data = reactive({
 
 async function clickSearch() {
   await getItems(true)
+}
+
+function clickInspectorSearch() {
+  getInspectors(true)
 }
 
 async function initData() {
@@ -601,6 +697,12 @@ async function initData() {
   res = await Extra.customerstatus(company)
 
   data.status = res
+
+  res = await Department.find({
+    company: data.session.company,
+  })
+
+  data.departments = [{ id: 0, name: ' ' }, ...res.items]
 }
 
 async function getItems(reset) {
@@ -653,6 +755,40 @@ async function getBusiness(salesuser) {
   data.business.items = res.items
 }
 
+async function getInspectors(reset) {
+  if (reset == true) {
+    data.inspectorpage = 1
+    data.inspectors = []
+  }
+
+  let res = await Extra.usersearch({
+    name: data.searchInspector.text,
+    page: data.inspectorpage,
+    pagesize: data.inspectorpagesize,
+    company: data.session.company,
+    approval: 3,
+    status: 1,
+    orderby: 'u_id desc',
+  })
+
+  if (res.items == null) {
+    res.items = []
+  }
+
+  let items = []
+
+  for (let i = 0; i < res.items.length; i++) {
+    let item = res.items[i]
+    item.index = i + 1
+    items.push(item)
+  }
+
+  data.inspectorTotal = res.total
+  data.inspectors = data.inspectors.concat(items)
+
+  data.inspectorpage++
+}
+
 function clickSingle() {
   data.item = util.clone(item)
   data.buildings = []
@@ -688,6 +824,7 @@ async function clickUpdate(item, index) {
   }
 
   if (index.no == 10) {
+    data.inspector = item.user
     data.visibleInspector = true
     return
   }
@@ -708,7 +845,15 @@ async function clickUpdate(item, index) {
 
   data.item = util.clone(item)
 
+  res = await User.get(item.user)
+  data.inspect = res.item
+
   data.single = true
+}
+
+function clickInspector() {
+  getInspectors(true)
+  data.visibleInspectors = true
 }
 
 onMounted(async () => {
@@ -742,6 +887,20 @@ const toggleListSelection = rows => {
 }
 const changeList = val => {
   listSelection.value = val
+}
+
+const changeInspectorList = val => {
+  data.dummyInspector = val
+  clickSubmitInspector()
+}
+
+function clickSubmitInspector() {
+  if (data.dummyInspector == null) {
+    return
+  }
+  data.inspect = data.dummyInspector
+  data.visibleInspectors = false
+  data.dummyInspector = util.clone(user)
 }
 
 function clickDeleteMulti() {
@@ -784,7 +943,8 @@ async function clickSubmit() {
 
   util.loading(true)
 
-  item.user = util.getInt(item.user)
+  // item.user = util.getInt(item.user)
+  item.user = data.inspect.id
   item.company = util.getInt(item.company)
   item.building = util.getInt(item.building)
   item.type = util.getInt(item.type)
@@ -834,6 +994,16 @@ function getCompany(id) {
   return items[0].name
 }
 
+function getDepartment(id) {
+  let items = data.departments.filter(item => item.id == id)
+
+  if (items.length == 0) {
+    return ''
+  }
+
+  return items[0].name
+}
+
 function getBuilding(id) {
   let items = data.buildings.filter(item => item.id == id)
 
@@ -852,10 +1022,20 @@ function getUser(id) {
       name: '',
       tel: '',
       email: '',
+      company: 0,
+      department: 0,
     }
   }
 
   return items[0]
+}
+
+function getLevel(id) {
+  if (id > 5) {
+    return ''
+  }
+
+  return User.levels[id]
 }
 
 function clickFacility(item) {
