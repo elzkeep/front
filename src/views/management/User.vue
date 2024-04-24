@@ -852,6 +852,7 @@ async function clickSubmit() {
     return
   }
 
+  /*
   if (item.email == '') {
     util.alert('이메일을 입력하세요')
     return
@@ -871,16 +872,19 @@ async function clickSubmit() {
     util.alert('주소를 입력하세요')
     return
   }
+  */
 
   if (item.passwd != item.passwd2) {
     util.alert('비밀번호가 정확하지 않습니다')
     return
   }
 
+  /*
   if (item.joindate == '') {
     util.alert('입사일을 입력하세요')
     return
   }
+  */
 
   if (item.level == 0) {
     util.alert('권한을 선택하세요')

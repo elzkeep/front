@@ -64,11 +64,17 @@ export default class Extra {
         return res
     }
 
-    static async makebill(month: number, items: any) {
+    static async makebill(durationtype: number, base: number, year: number, month: number, durationmonth: any, items: any) {
         let data = {
+            durationtype: durationtype,
+            base: base,
             ids: items.join(','),
-            month: month
+            month: month,
+            durationmonth: durationmonth,
+            year: year
         }
+
+        console.log(data)
         
         const res = await request({
             method: 'POST',

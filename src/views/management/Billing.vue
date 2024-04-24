@@ -15,9 +15,9 @@
       </template>
       <div style="display: flex; justify-content: space-between">
         <el-radio-group v-model="data.search.status">
-          <el-radio label="0">전체</el-radio>
-          <el-radio label="1">미수금</el-radio>
-          <el-radio label="2">수금</el-radio>
+          <el-radio value="0">전체</el-radio>
+          <el-radio value="1">미수금</el-radio>
+          <el-radio value="2">수금</el-radio>
         </el-radio-group>
         <div style="flex: 1; display: flex; align-items: center; justify-content: right">
           <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>

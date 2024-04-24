@@ -341,4 +341,8 @@ export default class util {
 
     return rate
   }
+
+  static makeArray(arr: any) {
+    return arr.join(',')
+  }
 }

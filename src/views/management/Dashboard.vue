@@ -260,7 +260,7 @@ async function getItems() {
   console.log(week)
   console.log(month)
   
-  let res = await User.find({company: data.session.company})
+  let res = await User.find({company: data.session.company, status: 1})
   info.users = res.items.length
 
   res = await Customer.find({company: data.session.company, type: 1})  

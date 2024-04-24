@@ -197,7 +197,7 @@
       <y-tr>
         <y-th>사업자명</y-th>
         <y-td>
-          <el-select v-model.number="data.item.company" placeholder="사업자명" style="width: 250px" @change="changeCompany">
+          <el-select v-model.number="data.item.company" size="small" placeholder="사업자명" style="width: 250px" @change="changeCompany">
             <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
@@ -205,21 +205,11 @@
       <y-tr>
         <y-th>건물명</y-th>
         <y-td>
-          <el-select v-model.number="data.item.building" placeholder="건물명" style="width: 250px">
+          <el-select v-model.number="data.item.building" size="small" placeholder="건물명" style="width: 250px">
             <el-option v-for="item in data.buildings" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
-      </y-tr>
-
-      <y-tr>
-        <y-th>관리형태</y-th>
-        <y-td>
-          <el-radio-group v-model.number="data.item.type">
-            <el-radio-button size="small" value="1">직영</el-radio-button>
-            <el-radio-button size="small" value="2">위탁관리</el-radio-button>
-          </el-radio-group>
-        </y-td>
-      </y-tr>
+      </y-tr>      
       <y-tr>
         <y-th>점검일</y-th>
         <y-td> 매월 <el-input v-model="data.item.companyno" style="width: 50px" /> 일 </y-td>
@@ -309,7 +299,7 @@
       <y-tr>
         <y-th>점검 담당자</y-th>
         <y-td>
-          <el-select v-model.number="data.item.user" placeholder="점검 담당자" style="width: 150px">
+          <el-select v-model.number="data.item.user" size="small" placeholder="점검 담당자" style="width: 150px">
             <el-option v-for="item in data.users" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
@@ -326,33 +316,38 @@
     <FacilityInsert />
   </el-dialog>
 
-  <el-dialog v-model="bill.visible" width="800px">
+  <el-dialog v-model="bill.visible" width="900px">
     <y-table style="margin: 10px 0px">
       <y-tr>
-        <y-th>기간</y-th>
-        <y-td>
+        <y-th style="width:90px;">
+          <el-select v-model.number="bill.durationtype" size="small" style="margin-left: 5px; width: 80px">
+            <el-option v-for="item in bill.durationtypes" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-th>
+        <y-td v-if="bill.durationtype == 1">
           <el-select v-model.number="bill.month" placeholder="개월" size="small" style="width: 100px">
             <el-option v-for="item in bill.months" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
-        <y-th>기준월</y-th>
-        <y-td>
-          <el-radio-group v-model.number="bill.base">
-            <el-radio-button label="1">이번달</el-radio-button>
-            <el-radio-button label="2">다음달</el-radio-button>
+        <y-th v-if="bill.durationtype == 1">기준월</y-th>
+        <y-td v-if="bill.durationtype == 1">
+          <el-radio-group v-model.number="bill.base" size="small">
+            <el-radio-button value="1">이번달</el-radio-button>
+            <el-radio-button value="2">다음달</el-radio-button>
           </el-radio-group>
         </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th>지정월</y-th>
-        <y-td colspan="3">
-          <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-            <el-select v-model.number="bill.year" placeholder="년도" size="small" style="width: 100px">
+        <y-td v-if="bill.durationtype == 2">
+          <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 0px">
+            <el-select v-model.number="bill.year" placeholder="년도" size="small" style="width: 80px">
               <el-option v-for="item in bill.years" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <el-radio-group v-model.number="bill.month" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 5">
-              <el-radio-button v-for="item in bill.months" :key="item.id" :label="item.id" style="margin-right: 5px">{{ item.name }}</el-radio-button>
-            </el-radio-group>
+
+            <el-checkbox-group v-model="bill.durationmonth" size="small">
+              <el-checkbox-button v-for="item in bill.durationmonths" :key="item.id" :value="item.id">
+              {{item.name}}
+              </el-checkbox-button>
+            </el-checkbox-group>
+            
           </div>
         </y-td>
       </y-tr>
@@ -368,13 +363,7 @@
         <template #default="scope">
           {{ scope.row.extra.company.name }}
         </template>
-      </el-table-column>
-      <el-table-column label="관리형태" align="center" width="70">
-        <template #default="scope">
-          <span v-if="scope.row.type == 1">직영</span>
-          <span v-if="scope.row.type == 2">위탁관리</span>
-        </template>
-      </el-table-column>
+      </el-table-column>      
       <!--<el-table-column label="점검자" align="left">
            <template #default="scope">
            {{getUser(scope.row.user)}}
@@ -422,7 +411,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="date" label="등록일" align="center" width="130" />
     </el-table>
 
     <template #footer>
@@ -573,7 +561,7 @@ const data = reactive({
     { id: 0, name: '청구방법' },
     { id: 1, name: '지로' },
     { id: 2, name: '계산서' },
-  ],
+  ]  
 })
 
 async function clickSearch() {
@@ -900,6 +888,7 @@ async function clickDataSubmit() {
 const bill = reactive({
   visible: false,
   month: 1,
+  durationmonth: [],
   months: [
     { id: 1, name: '1개월' },
     { id: 2, name: '2개월' },
@@ -914,16 +903,44 @@ const bill = reactive({
     { id: 11, name: '11개월' },
     { id: 12, name: '12개월' },
   ],
+  durationmonths: [
+    { id: 1, name: '1월' },
+    { id: 2, name: '2월' },
+    { id: 3, name: '3월' },
+    { id: 4, name: '4월' },
+    { id: 5, name: '5월' },
+    { id: 6, name: '6월' },
+    { id: 7, name: '7월' },
+    { id: 8, name: '8월' },
+    { id: 9, name: '9월' },
+    { id: 10, name: '10월' },
+    { id: 11, name: '11월' },
+    { id: 12, name: '12월' },
+  ],
   base: 1,
   year: 2024,
-  years: [
-    { id: 2022, name: '2022' },
-    { id: 2023, name: '2023' },
+  years: [    
     { id: 2024, name: '2024' },
   ],
+  durationtypes: [
+    { id: 1, name: '기간별' },
+    { id: 2, name: '지정월' },
+  ],
+  durationtype: 1  
 })
 
 function clickBill() {
+  if (listSelection.value.length == 0) {
+    util.alert('매출 실행 대상을 선택하세요')
+    return
+  }
+  
+  bill.durationtype = 1
+  bill.base = 1
+  bill.month = 1
+  bill.year = 2024
+  bill.durationmonth = []
+  
   bill.visible = true
 
   console.log(listSelection.value)
@@ -943,7 +960,8 @@ async function clickBillSubmit() {
       ids.push(value.extra.building.id)
     }
 
-    await Extra.makebill(bill.month, ids)
+    console.log(bill.durationmonth)
+    await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids)
 
     util.alert('매출 실행되었습니다')
 
