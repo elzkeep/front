@@ -17,6 +17,9 @@ import AdminCustomer from '~/views/admin/Customer.vue'
 import AdminBilling from '~/views/admin/Billing.vue'
 import AdminReport from '~/views/admin/Report.vue'
 import AdminStatistics from '~/views/admin/Statistics.vue'
+import AdminNotice from '~/views/admin/Notice.vue'
+import AdminFaq from '~/views/admin/Faq.vue'
+import AdminJoin from '~/views/admin/Join.vue'
 
 import ManagementDashboard from '~/views/management/Dashboard.vue'
 import ManagementCompany from '~/views/management/Company.vue'
@@ -35,6 +38,7 @@ import ManagementContract from '~/views/management/Contract.vue'
 import ManagementPayment from '~/views/management/Payment.vue'
 import ManagementFacility from '~/views/management/Facility.vue'
 import ManagementTax from '~/views/management/Tax.vue'
+
 
 import BuildingFacility from '~/views/building/Facility.vue'
 
@@ -243,6 +247,24 @@ const routes = [
     meta: { authorization: ['admin'] },
     component: ManagementFacility,
   },
+  {
+    path: '/admin/notice',
+    name: 'AdminNotice',
+    meta: { authorization: ['admin'] },
+    component: AdminNotice,
+  },
+  {
+    path: '/admin/Faq',
+    name: 'AdminFaq',
+    meta: { authorization: ['admin'] },
+    component: AdminFaq,
+  },
+  {
+    path: '/admin/Join',
+    name: 'Adminjoin',
+    meta: { authorization: ['admin'] },
+    component: AdminJoin,
+  }  
 ]
 
 const router = createRouter({

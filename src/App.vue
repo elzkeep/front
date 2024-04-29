@@ -2,8 +2,8 @@
   <BaseHeader v-if="store.state.token != null && store.state.token != ''" />
 
   <div style="display:flex;">
-    <!--<ManagementMenu v-if="data.menu == 'management' || data.menu == 'building'" />-->
-    <CheckMenu v-if="data.menu == 'management' || data.menu == 'building'" />
+    <AdminMenu v-if="getLevel() == 4" />
+    <CheckMenu v-if="getLevel() != 4 && (data.menu == 'management' || data.menu == 'building')" />
     <div style="flex:1;">
       <div style="padding: 10px 10px;">
         <router-view />
@@ -42,6 +42,14 @@ watchEffect(() => {
     data.menu = s[2]    
   }  
 })
+
+function getLevel() {
+  if (store.state.user == null || store.state.user == undefined) {
+    return 0
+  }
+
+  return store.state.user.level    
+}
 
 </script>
 

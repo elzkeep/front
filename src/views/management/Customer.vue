@@ -195,19 +195,20 @@
   <el-dialog v-model="data.single" width="800px">
     <y-table>
       <y-tr>
-        <y-th>사업자명</y-th>
+        <y-th style="width:100px;">사업자명</y-th>
         <y-td>
           <el-select v-model.number="data.item.company" size="small" placeholder="사업자명" style="width: 250px" @change="changeCompany">
-            <el-option v-for="item in data.companys" :key="item.id" :label="getCompanyInfo(item)" :value="item.id" />
+            <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
       </y-tr>
       <y-tr>
         <y-th>건물명</y-th>
         <y-td>
-          <el-select v-model.number="data.item.building" size="small" placeholder="건물명" style="width: 250px">
+          <el-select v-model.number="data.item.building" size="small" placeholder="건물명" style="width: 250px" @change="changeBuilding">
             <el-option v-for="item in data.buildings" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
+          </el-select>          
+          &nbsp;&nbsp;&nbsp;<span v-if="data.building.companyno != ''">사업자번호 : {{data.building.companyno}}</span>
         </y-td>
       </y-tr>      
       <y-tr>
@@ -653,7 +654,10 @@ const data = reactive({
     { id: 0, name: '청구방법' },
     { id: 1, name: '지로' },
     { id: 2, name: '계산서' },
-  ]  
+  ],
+  building: {
+    companyno: ''
+  }
 })
 
 async function clickSearch() {
@@ -841,6 +845,8 @@ async function clickUpdate(item, index) {
 
   item.company = item.extra.company.id
   item.building = item.extra.building.id
+
+  changeBuilding(item.building)
   
   data.item = util.clone(item)
   
@@ -983,10 +989,14 @@ function getCompany(id) {
   let items = data.companys.filter(item => item.id == id)
 
   if (items.length == 0) {
-    return ''
+    return {
+      id: 0,
+      name: '',
+      companyno: ''
+    }
   }
 
-  return items[0].name
+  return items[0]
 }
 
 function getDepartment(id) {
@@ -1003,10 +1013,14 @@ function getBuilding(id) {
   let items = data.buildings.filter(item => item.id == id)
 
   if (items.length == 0) {
-    return ''
+    return {
+      id: 0,
+      name: '',
+      companyno: ''
+    }
   }
 
-  return items[0].name
+  return items[0]
 }
 
 function getUser(id) {
@@ -1045,6 +1059,18 @@ async function changeCompany(item) {
   })
 
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
+  data.building = {companyno: ''}
+}
+
+function changeBuilding(id) {  
+  let building = getBuilding(id)
+  if (building.companyno == '') {
+    let company = getCompany(building.company)
+
+    building.companyno = company.companyno
+  }
+  
+  data.building = building
 }
 
 async function clickDataSubmit() {

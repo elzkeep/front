@@ -4,6 +4,7 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminMenu: typeof import('./components/layouts/AdminMenu.vue')['default']
     AptInsert: typeof import('./components/management/AptInsert.vue')['default']
     BaseHeader: typeof import('./components/layouts/BaseHeader.vue')['default']
     Basic: typeof import('./components/building/Basic.vue')['default']
@@ -52,7 +53,6 @@ declare module 'vue' {
     Generator: typeof import('./components/building/Generator.vue')['default']
     InquiryInsert: typeof import('./components/management/InquiryInsert.vue')['default']
     Low: typeof import('./components/report/Low.vue')['default']
-    ManagementMenu: typeof import('./components/layouts/ManagementMenu.vue')['default']
     PageTitle: typeof import('./components/PageTitle.vue')['default']
     Sunlight: typeof import('./components/building/Sunlight.vue')['default']
     TiptapEditor: typeof import('./components/TiptapEditor.vue')['default']

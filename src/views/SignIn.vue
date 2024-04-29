@@ -51,7 +51,6 @@ async function clickSignin() {
 
     if (res.user.level != User.level.rootadmin) {
       let res2 = await Company.get(res.user.company)
-      console.log(res2)
       let company = res2.item
 
       store.commit('setCompany', company)

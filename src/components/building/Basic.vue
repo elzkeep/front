@@ -14,8 +14,8 @@
       <y-th>수전형태</y-th>
       <y-td>
         <el-radio-group v-model="data.item.value3">
-          <el-radio-button size="small" label="1">저압</el-radio-button>
-          <el-radio-button size="small" label="2">특고압</el-radio-button>
+          <el-radio-button size="small" value="1">저압</el-radio-button>
+          <el-radio-button size="small" value="2">특고압</el-radio-button>
         </el-radio-group>
       </y-td>
     </y-tr>
