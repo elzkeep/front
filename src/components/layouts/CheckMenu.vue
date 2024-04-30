@@ -1,61 +1,179 @@
 <template>
-
-
-  <el-menu  @select="clickMenu">
-
-    <el-menu-item index="5" style="width:160px;overflow:hidden; padding: 0px 10px 0px 14px !important;font-size:14px;">
-      <el-icon><Menu /></el-icon>
-      <span>대시보드</span>
-    </el-menu-item>
-
-    <el-sub-menu index="3" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-      <template #title>
-        <el-icon><User /></el-icon>
-        <div>고객</div>
-      </template>
-      <el-menu-item index="3-1">고객 현황</el-menu-item>
-      <el-menu-item index="3-2">건물 및 계약 관리</el-menu-item>          
-    </el-sub-menu>
-
-    <el-sub-menu index="4" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-      <template #title>
-        <el-icon><Money /></el-icon>
-        <div>매출</div>
-      </template>
-      <el-menu-item index="4-1">매출 보고서</el-menu-item>
-      <el-menu-item index="4-2">청구 및 결제 관리</el-menu-item>
-      <el-menu-item index="4-3">세금계산서 발행 조회</el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="2" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-      <template #title>
-        <el-icon><Files /></el-icon>
-        <div>점검기록</div>
-      </template>      
-      <el-menu-item index="2-2">점검현황</el-menu-item>
-      <el-menu-item index="2-3">점검 보고서</el-menu-item>
-      <el-menu-item index="2-4">적합/부적합 결과</el-menu-item>
-    </el-sub-menu>
-    
-    <el-sub-menu index="1" style="width:160px;overflow:hidden; padding: 0px 0px !important;padding :0px 0px;">
-      <template #title>
-        <el-icon><Document /></el-icon>
-        <div>사업자정보</div>
-      </template>
-      <el-menu-item index="1-1">기본정보 관리</el-menu-item>
-      <el-menu-item index="1-2">보유먼허 관리</el-menu-item>
-      <el-menu-item index="1-3">소속회원 관리</el-menu-item>
-      <el-menu-item index="1-4">팀 관리</el-menu-item>
-    </el-sub-menu>
-
-  </el-menu>
-
+  <div :class="{ shrink: store.getters['getNav'] }">
+    <nav>
+      <div class="img-border">
+        <h1 v-if="store.getters['getNav']"><img alt="zkeep" src="../../assets/image.svg" /></h1>
+        <div :class="{ profile: !store.getters['getNav'] }" class="hiden">
+          <div class="profile-top">
+            <div class="profile-logo">
+              <img src="../../assets/logo.png" width="19" height="19" />
+              <span class="hiden">지킴</span>
+            </div>
+            <div class="profile-icon" @click="store.commit('setNav')"><img class="side-icon" alt="menu" src="../../assets/icon/menu.svg" /></div>
+          </div>
+          <div class="profile-box">
+            <div class="group"><img :src="data.user.profile" /></div>
+            <div style="margin-top: 13px">
+              <span style="font-size: 14px; font-weight: 500">{{ data.session.name }}</span>
+            </div>
+            <div style="margin-top: 5px">
+              <span style="font-size: 12px; font-weight: 400">회사명 + 부서명</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="menu">
+        <li :class="{ on: isMenuActive('ManagementDashboard') }">
+          <router-link :to="{ name: 'ManagementDashboard' }">
+            <img v-if="!store.getters['getNav'] && !isMenuActive('ManagementDashboard')" class="side-icon" alt="approval" src="../../assets/icon/fill/fill_piechart.svg" />
+            <img v-if="store.getters['getNav'] || isMenuActive('ManagementDashboard')" class="side-icon" alt="piechart" src="../../assets/icon/piechart.svg" />
+            <h3 class="check-tit hiden">대쉬보드</h3>
+          </router-link>
+        </li>
+        <li style="display: block" :class="{ on: isMenuActive('ManagementCustomercompany') || isMenuActive('ManagementCustomer') }">
+          <router-link :to="{ name: 'ManagementCustomercompany' }">
+            <div class="icon">
+              <img
+                v-if="!store.getters['getNav'] && !isMenuActive('ManagementCustomercompany') && !isMenuActive('ManagementCustomer')"
+                class="side-icon"
+                alt="approval"
+                src="../../assets/icon/fill/fill_team.svg"
+              />
+              <img v-if="store.getters['getNav'] || isMenuActive('ManagementCustomercompany') || isMenuActive('ManagementCustomer')" class="side-icon" alt="team" src="../../assets/icon/team.svg" />
+            </div>
+            <span class="check-tit hiden">고객관리</span>
+          </router-link>
+          <ul v-if="!store.getters['getNav'] && (isMenuActive('ManagementCustomercompany') || isMenuActive('ManagementCustomer'))" class="subtit-ul">
+            <li class="subtit-li">
+              <router-link :to="{ name: 'ManagementCustomercompany' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementCustomercompany') }">고객현황</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link :to="{ name: 'ManagementCustomer' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementCustomer') }">건물 및 계약관리</span>
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <li style="display: block" :class="{ on: isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax') }">
+          <router-link :to="{ name: 'ManagementStatistics' }">
+            <img
+              v-if="!store.getters['getNav'] && !isMenuActive('ManagementStatistics') && !isMenuActive('ManagementBilling') && !isMenuActive('ManagementTax')"
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/fill/fill_document.svg"
+            />
+            <img
+              v-if="store.getters['getNav'] || isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax')"
+              class="side-icon"
+              alt="document"
+              src="../../assets/icon/document.svg"
+            />
+            <h3 class="check-tit hiden">매출 보고서</h3>
+          </router-link>
+          <ul v-if="!store.getters['getNav'] && (isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax'))" class="subtit-ul">
+            <li class="subtit-li">
+              <router-link :to="{ name: 'ManagementStatistics' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementStatistics') }">매출보고서</span>
+              </router-link>
+            </li>
+            <li class="subtit-mi">
+              <router-link :to="{ name: 'ManagementBilling' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementBilling') }">청구 및 결제관리</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link :to="{ name: 'ManagementTax' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementTax') }">세금계산서 발행</span>
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <li style="display: block" :class="{ on: isMenuActive('ManagementReport') }">
+          <router-link :to="{ name: 'ManagementReport' }">
+            <img v-if="!store.getters['getNav'] && !isMenuActive('ManagementReport')" class="side-icon" alt="approval" src="../../assets/icon/fill/fill_setting.svg" />
+            <img v-if="store.getters['getNav'] || isMenuActive('ManagementReport')" class="side-icon" alt="setting" src="../../assets/icon/setting.svg" />
+            <h3 class="check-tit hiden">점검관리</h3>
+          </router-link>
+          <ul v-if="!store.getters['getNav'] && isMenuActive('ManagementReport')" class="subtit-ul">
+            <li class="subtit-li" style="padding-bottom: 15px">
+              <router-link :to="{ name: 'ManagementReport' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementReport') }">점검관리</span>
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <li
+          style="display: block"
+          :class="{ on: isMenuActive('ManagementCompanyinfo') || isMenuActive('ManagementCompanylicene') || isMenuActive('ManagementUser') || isMenuActive('ManagementDepartment') }"
+        >
+          <router-link :to="{ name: 'ManagementCompanyinfo' }">
+            <img
+              v-if="
+                !store.getters['getNav'] &&
+                !isMenuActive('ManagementCompanyinfo') &&
+                !isMenuActive('ManagementCompanylicene') &&
+                !isMenuActive('ManagementUser') &&
+                !isMenuActive('ManagementDepartment')
+              "
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/fill/fill_approval.svg"
+            />
+            <img
+              v-if="
+                store.getters['getNav'] || isMenuActive('ManagementCompanyinfo') || isMenuActive('ManagementCompanylicene') || isMenuActive('ManagementUser') || isMenuActive('ManagementDepartment')
+              "
+              class="side-icon"
+              alt="approval"
+              src="../../assets/icon/approval.svg"
+            />
+            <h3 class="check-tit hiden">사업자 관리</h3>
+          </router-link>
+          <ul
+            v-if="
+              !store.getters['getNav'] && (isMenuActive('ManagementCompanyinfo') || isMenuActive('ManagementCompanylicene') || isMenuActive('ManagementUser') || isMenuActive('ManagementDepartment'))
+            "
+            class="subtit-ul"
+          >
+            <li class="subtit-li">
+              <router-link :to="{ name: 'ManagementCompanyinfo' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementCompanyinfo') }">기본정보 관리</span>
+              </router-link>
+            </li>
+            <li class="subtit-mi">
+              <router-link :to="{ name: 'ManagementCompanylicene' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementCompanylicene') }">보유면허 관리</span>
+              </router-link>
+            </li>
+            <li class="subtit-mi">
+              <router-link :to="{ name: 'ManagementUser' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementUser') }">소속회원 관리</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link :to="{ name: 'ManagementDepartment' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementDepartment') }">팀 관리</span>
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <!-- 커뮤니케이션
+        <li style="display: block" :class="{ on: isMenuActive('ManagementDashboard') }">
+          <router-link :to="{ name: 'ManagementDashboard' }" >
+            <img class="side-icon" alt="conversation" src="../../assets/icon/conversation.svg" />
+          </router-link>
+        </li> -->
+      </ul>
+    </nav>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { Company } from "~/models"
+import { Company } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
@@ -65,63 +183,25 @@ const route = useRoute()
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   company: {
-    type: 0
-  }
+    type: 0,
+  },
+  user: {
+    name: '홍길동',
+  },
 })
 
 onMounted(async () => {
   data.session = store.getters['getUser']
   data.company = store.getters['getCompany']
+  console.log(data.session)
 })
 
 const isWork = () => data.company.type == Company.type.work
 const isBuilding = () => data.company.type == Company.type.building
 const isAdmin = () => data.session.level == 4
 
-const clickMenu = async (key: string, keyPath: string[]) => {
-  console.log(key)
-  if (key == '5') {
-    router.push('/management/dashboard')
-  } else if (key == '1-4') {
-    router.push('/management/department')
-  } else if (key == '1-3') {
-    router.push('/management/user')
-  } else if (key == '1-2') {
-    router.push('/management/companylicense')
-  } else if (key == '5') {
-    router.push('/management/license')
-  } else if (key == '3-2') {
-    router.push('/management/customer')
-  } else if (key == '3-3') {
-    router.push('/management/contract')    
-  } else if (key == '3-1') {
-    router.push('/management/customercompany')
-  } else if (key == '4-1') {
-    router.push('/management/statistics')
-  } else if (key == '4-2') {
-    router.push('/management/billing')
-  } else if (key == '4-3') {
-      router.push('/management/tax')    
-  } else if (key == '1-1') {
-    router.push('/management/companyinfo')
-  } else if (key == '10') {
-    router.push('/management/report')
-  } else if (key == '2-2') {
-    router.push('/management/report')
-  }
-}
-
+const isMenuActive = routeName => routeName === route.name
 </script>
-<style>
-.el-sub-menu {
-  margin: 0px 0px !important;
-  papdding: 0px 0px !important;
-}
-
-.el-menu-item {
-  margin: 0px 0px 0px 8px !important;
-}
-</style>

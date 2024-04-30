@@ -45,19 +45,19 @@
   </div>
 
   <div style="margin-top: 10px; margin-bottom: 20px; display: flex; justify-content: space-evenly">
-    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
       <p style="float: center; font-weight: 700; font-size: 16px">계약유지 고객수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.currentuser }}</p>
     </div>
-    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
       <p style="float: center; font-weight: 700; font-size: 16px">계약해지 고객수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.user }}</p>
     </div>
-    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
       <p style="float: center; font-weight: 700; font-size: 16px">매출액</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ util.money(data.status.money) }}</p>
     </div>
-    <div style="float: left; width: 280px; padding-top: 0px; border: 1px solid">
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
       <p style="float: center; font-weight: 700; font-size: 16px">관리점수 현황</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.score }}</p>
     </div>

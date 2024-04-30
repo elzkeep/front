@@ -1,4 +1,4 @@
-<template>
+<template>  
   <div class="flex-container">
     <el-card class="box-card">
       <el-form label-width="120px">
@@ -9,7 +9,7 @@
           <el-input v-model="item.passwd" show-password @keyup.enter.native="clickSignin" />
         </el-form-item>
         <el-button type="primary" @click="clickSignin">Sign In</el-button>
-        <div>
+        <div style="margin-top:10px;">
           <el-link :underline="false" @click="clickSignup">가입신청</el-link> | <el-link :underline="false" @click="clickId">아이디 찾기</el-link> |
           <el-link :underline="false" @click="clickPasswd">비밀번호 찾기</el-link>
         </div>

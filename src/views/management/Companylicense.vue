@@ -23,18 +23,17 @@
 
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
 
-    <div style="flex:1;text-align:right;gap:5;">
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right:-5px;">삭제</el-button>
+    <div style="flex: 1; text-align: right; gap: 5">
+      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: -5px">삭제</el-button>
       <el-button size="small" type="success" @click="clickInsert">등록</el-button>
     </div>
   </div>
-
 
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />    
     <el-table-column label="면허 종류" align="left">
       <template #default="scope">
-        {{getLicensecategory(scope.row.licensecategory)}}
+        {{ getLicensecategory(scope.row.licensecategory) }}
       </template>
     </el-table-column>
     <el-table-column label="취득일" align="center" width="120">
@@ -46,7 +45,6 @@
     <el-table-column prop="number" label="면허번호" align="center" />
     <el-table-column prop="date" label="등록일" align="center" width="150" />
   </el-table>
-
 
   <el-dialog
     v-model="data.visible"
@@ -104,13 +102,10 @@
         <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
       </template>
   </el-dialog>
-
 </template>
 
-
 <script setup lang="ts">
-
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size }  from "~/global"
 import { User, Company, Companylicense, Companylicensecategory } from "~/models"
@@ -139,7 +134,7 @@ const item = {
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   id: 0,
   mode: 'normal',
@@ -151,10 +146,11 @@ const data = reactive({
   visible: false,
   search: {
     company: 0,
-    licensecategory: 0
+    licensecategory: 0,
   },
   companys: [],
-  licensecategorys: []
+  licensecategorys: [],
+  licenselevels: [],
 })
 
 async function clickSearch() {
@@ -163,10 +159,10 @@ async function clickSearch() {
 
 async function initData() {
   let res = await Company.find({
-    orderby: 'c_name'
+    orderby: 'c_name',
   })
 
-  data.companys = [{id: 0, name: ' '}, ...res.items]
+  data.companys = [{ id: 0, name: ' ' }, ...res.items]
 
   res = await Companylicensecategory.find({
     orderby: 'cc_name'
@@ -185,7 +181,7 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     licensecategory: data.search.licensecategory,
-    orderby: 'l_id desc'
+    orderby: 'l_id desc',
   })
 
   if (res.items == null) {
@@ -239,28 +235,28 @@ function clickCancel() {
 
 const listRef = ref<InstanceType<typeof ElTable>>()
 const listSelection = ref([])
-const toggleListSelection = (rows) => {
+const toggleListSelection = rows => {
   if (rows) {
-    rows.forEach((row) => {
+    rows.forEach(row => {
       listRef.value!.toggleRowSelection(row, undefined)
     })
   } else {
     listRef.value!.clearSelection()
   }
 }
-const changeList = (val) => {
+const changeList = val => {
   listSelection.value = val
 }
 
 function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function() {
+  util.confirm('삭제하시겠습니까', async function () {
     util.loading(true)
 
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
       let item = {
-        id: value.id
+        id: value.id,
       }
 
       await model.remove(item)

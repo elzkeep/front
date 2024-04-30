@@ -1,6 +1,6 @@
 <template>
   <Title title="팀 관리" />
-  <div style="display: flex">
+  <div style="display: flex; width: 100%; height: 100%">
     <div style="flex-grow: 0; margin-right: 10px; border: 1px solid #ddd; width: 300px">
       <el-tree
         ref="treeRef"
@@ -33,7 +33,7 @@
       </el-descriptions>
 
       <el-table :data="data.users" border :height="height(170)" ref="listRef">
-        <el-table-column prop="index" label="번호" align="left" />
+        <el-table-column prop="index" label="번호" width="100" align="center" />
         <el-table-column prop="name" label="이름" align="left" />
         <el-table-column label="직책/직급" align="left">
           <template #default="scope">

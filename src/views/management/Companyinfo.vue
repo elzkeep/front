@@ -1,13 +1,12 @@
 <template>
   <Title title="기본 정보 관리" />
 
-
-  <y-table>
+  <y-table style="width: 100%">
     <y-tr>
-      <y-th style="width:100px;">구분</y-th>
+      <y-th>구분</y-th>
       <y-td>
-        <span v-if="data.item.type==1">점검회사</span>
-        <span v-if="data.item.type==2">건물</span>
+        <span v-if="data.item.type == 1">점검회사</span>
+        <span v-if="data.item.type == 2">건물</span>
       </y-td>
     </y-tr>
     <y-tr>
@@ -60,158 +59,131 @@
     </y-tr>
   </y-table>
 
-  <div style="margin-top:10px;display:flex;justify-content:space-between;">
+  <div style="margin-top: 10px; display: flex; justify-content: space-between">
     <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>
-    <div style="display:flex;gap:5px;">
-    <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
-    <el-upload
-      :action="external.upload"
-      :headers="headers"
-      :show-file-list="false"
-      :on-success="handleFileSuccessUser"
-      :auto-upload="true"
-      :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
-    >
-            <el-button size="small" type="success">외부 데이터 회원 연동</el-button>
-    </el-upload>
+    <div style="display: flex; gap: 5px">
+      <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
+      <el-upload
+        :action="external.upload"
+        :headers="headers"
+        :show-file-list="false"
+        :on-success="handleFileSuccessUser"
+        :auto-upload="true"
+        :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+      >
+        <el-button size="small" type="success">외부 데이터 회원 연동</el-button>
+      </el-upload>
     </div>
   </div>
 
-<el-dialog
-    v-model="data.visible"
-    width="800px"
-  >
+  <el-dialog v-model="data.visible" width="800px">
+    <y-table>
+      <y-tr v-if="data.session.level == User.level.rootadmin">
+        <y-th>업체</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.company" placeholder="업체" style="width: 150px" @change="changeCompany">
+            <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>팀</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.department" placeholder="팀" style="width: 150px">
+            <el-option v-for="item in data.departments" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>로그인아이디</y-th>
+        <y-td>
+          <el-input v-model="data.item.loginid" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>비밀번호</y-th>
+        <y-td>
+          <el-input v-model="data.item.passwd" show-password />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>비밀번호 확인</y-th>
+        <y-td>
+          <el-input v-model="data.item.passwd2" show-password />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>이름</y-th>
+        <y-td>
+          <el-input v-model="data.item.name" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>이메일</y-th>
+        <y-td>
+          <el-input v-model="data.item.email" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>연락처</y-th>
+        <y-td>
+          <el-input v-model="data.item.tel" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>주소</y-th>
+        <y-td>
+          <el-input v-model="data.item.address" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상세주소</y-th>
+        <y-td>
+          <el-input v-model="data.item.addressetc" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>입사일</y-th>
+        <y-td>
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.joindate" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>경력</y-th>
+        <y-td> <el-input v-model="data.item.careeryear" style="width: 50px" /> 년 <el-input v-model="data.item.careermonth" style="width: 50px" /> 월 </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>권한</y-th>
+        <y-td>
+          <el-select v-model.number="data.item.level" placeholder="권한" style="width: 150px">
+            <el-option v-for="item in data.levels" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상태</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.status">
+            <el-radio-button size="small" value="1">사용</el-radio-button>
+            <el-radio-button size="small" value="2">사용중지</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>점수</y-th>
+        <y-td>
+          <el-input v-model="data.item.score" />
+        </y-td>
+      </y-tr>
+    </y-table>
 
-      <y-table>
-        <y-tr v-if="data.session.level == User.level.rootadmin">
-          <y-th>업체</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;" @change="changeCompany">           
-              <el-option
-                v-for="item in data.companys"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>            
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>팀</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.department" placeholder="팀" style="width:150px;">           
-              <el-option
-                v-for="item in data.departments"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>            
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>로그인아이디</y-th>
-          <y-td>
-            <el-input v-model="data.item.loginid" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>비밀번호</y-th>
-          <y-td>
-            <el-input v-model="data.item.passwd" show-password />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>비밀번호 확인</y-th>
-          <y-td>
-            <el-input v-model="data.item.passwd2" show-password />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>이름</y-th>
-          <y-td>
-            <el-input v-model="data.item.name" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>이메일</y-th>
-          <y-td>
-            <el-input v-model="data.item.email" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>연락처</y-th>
-          <y-td>
-            <el-input v-model="data.item.tel" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>주소</y-th>
-          <y-td>
-            <el-input v-model="data.item.address" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>상세주소</y-th>
-          <y-td>
-            <el-input v-model="data.item.addressetc" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>입사일</y-th>
-          <y-td>            
-            <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.joindate" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>경력</y-th>
-          <y-td>
-            <el-input v-model="data.item.careeryear" style="width:50px;" /> 년
-            <el-input v-model="data.item.careermonth" style="width:50px;" /> 월
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>권한</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.level" placeholder="권한" style="width:150px;">           
-              <el-option
-                v-for="item in data.levels"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>            
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>상태</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.status">
-              <el-radio-button size="small" value="1">사용</el-radio-button>
-              <el-radio-button size="small" value="2">사용중지</el-radio-button>
-            </el-radio-group>
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>점수</y-th>
-          <y-td>
-            <el-input v-model="data.item.score" />
-          </y-td>
-        </y-tr>
-      </y-table>
-
-      <template #footer>
-        <el-button size="small" @click="clickCancel">취소</el-button>
-        <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
-      </template>
+    <template #footer>
+      <el-button size="small" @click="clickCancel">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
+    </template>
   </el-dialog>
 
-
-  <el-dialog
-    v-model="external.visible"
-    width="800px"
-  >
-
+  <el-dialog v-model="external.visible" width="800px">
     <y-table>
       <y-tr>
         <y-th>구분</y-th>
@@ -238,27 +210,23 @@
             <el-icon v-if="external.filename" class="file-uploader-icon"><Document /></el-icon>
             <el-icon v-else class="file-uploader-icon"><Plus /></el-icon>
           </el-upload>
-          
         </y-td>
       </y-tr>
     </y-table>
-    
+
     <template #footer>
-        <el-button size="small" @click="clickDataCancel">취소</el-button>
-        <el-button size="small" type="primary" @click="clickDataSubmit">등록</el-button>
+      <el-button size="small" @click="clickDataCancel">취소</el-button>
+      <el-button size="small" type="primary" @click="clickDataSubmit">등록</el-button>
     </template>
   </el-dialog>
-
 </template>
 
-
 <script setup lang="ts">
-
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { util, size }  from "~/global"
-import { Company } from "~/models"
-import Extra from "~/models/extra"
+import { util, size } from '~/global'
+import { Company } from '~/models'
+import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -270,7 +238,7 @@ const store = useStore()
 const route = useRoute()
 
 const headers = {
-  Authorization: 'Bearer ' + store.state.token
+  Authorization: 'Bearer ' + store.state.token,
 }
 
 const model = Company
@@ -283,7 +251,7 @@ const item = {
   address: '',
   addressetc: '',
   type: 1,
-  date: ''
+  date: '',
 }
 
 const external = reactive({
@@ -291,13 +259,13 @@ const external = reactive({
   filename: '',
   originalfilename: '',
   upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
-  files: []
+  files: [],
 })
 
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   id: 0,
   mode: 'normal',
@@ -306,25 +274,23 @@ const data = reactive({
   page: 1,
   pagesize: 0,
   item: util.clone(item),
-  visible: false,  
+  visible: false,
   search: {
     text: '',
-    type: 0
+    type: 0,
   },
   types: [
-    {id: 0, name: ' '},
-    {id: 1, name: '점검회사'},
-    {id: 2, name: '건물'}
-  ]
-
+    { id: 0, name: ' ' },
+    { id: 1, name: '점검회사' },
+    { id: 2, name: '건물' },
+  ],
 })
 
 async function clickSearch() {
   await getItems(true)
 }
 
-async function initData() {
-}
+async function initData() {}
 
 async function getItems() {
   let res = await model.get(data.session.company)
@@ -363,28 +329,28 @@ function clickCancel() {
 
 const listRef = ref<InstanceType<typeof ElTable>>()
 const listSelection = ref([])
-const toggleListSelection = (rows) => {
+const toggleListSelection = rows => {
   if (rows) {
-    rows.forEach((row) => {
+    rows.forEach(row => {
       listRef.value!.toggleRowSelection(row, undefined)
     })
   } else {
     listRef.value!.clearSelection()
   }
 }
-const changeList = (val) => {
+const changeList = val => {
   listSelection.value = val
 }
 
 function clickDeleteMulti() {
-  util.confirm('삭제하시겠습니까', async function() {
+  util.confirm('삭제하시겠습니까', async function () {
     util.loading(true)
 
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
       let item = {
-        id: value.id
+        id: value.id,
       }
 
       await model.remove(item)
@@ -419,18 +385,18 @@ function clickData() {
   external.visible = true
 }
 
-const handleFileSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 
   console.log(response)
-  console.log(response.filename);
-  console.log(response.originalfilename);
-  external.filename = response.filename;
-  external.originalfilename = response.originalfilename;
+  console.log(response.filename)
+  console.log(response.originalfilename)
+  external.filename = response.filename
+  external.originalfilename = response.originalfilename
 }
 
-const beforeFileUpload: UploadProps["beforeUpload"] = rawFile => {
-  return true;
+const beforeFileUpload: UploadProps['beforeUpload'] = rawFile => {
+  return true
   /*
      if (rawFile.type !== "image/jpeg") {
      return false;
@@ -447,9 +413,9 @@ function clickDataCancel() {
 
 async function clickDataSubmit() {
   util.loading(true)
-  
+
   let filenames = external.files.map(item => item.response.filename)
-  await Extra.external(external.type, filenames) 
+  await Extra.external(external.type, filenames)
   external.visible = false
 
   util.alert('저장되었습니다')
@@ -459,13 +425,13 @@ async function clickDataSubmit() {
   util.loading(false)
 }
 
-const handleFileSuccessUser: UploadProps["onSuccess"] = async (response, uploadFile) => {
+const handleFileSuccessUser: UploadProps['onSuccess'] = async (response, uploadFile) => {
   //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 
-  util.loading(true)  
-  await Extra.externaluser(response.filename)   
+  util.loading(true)
+  await Extra.externaluser(response.filename)
   util.alert('저장되었습니다')
 
-  util.loading(false)  
+  util.loading(false)
 }
 </script>

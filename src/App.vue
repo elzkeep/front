@@ -10,7 +10,6 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script setup lang="ts">
@@ -39,8 +38,8 @@ watchEffect(() => {
   } else if (s[1] == 'building') {
     data.menu = s[1]
   } else {
-    data.menu = s[2]    
-  }  
+    data.menu = s[2]
+  }
 })
 
 function getLevel() {
@@ -53,7 +52,7 @@ function getLevel() {
 
 </script>
 
-<style>
+<!-- <style>
 body {
   display: flex;
   flex-direction: column;
@@ -95,4 +94,9 @@ body {
   text-align: center;
 }
 
+</style> -->
+
+<style lang="css">
+@import '../src/assets/css/reset.css';
+@import '../src/assets/css/main.css';
 </style>
