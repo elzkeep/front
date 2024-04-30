@@ -1,19 +1,32 @@
-<template>  
+<template>
   <div class="flex-container">
     <el-card class="box-card">
-      <el-form label-width="120px">
-        <el-form-item label="Loginid">
-          <el-input v-model="item.loginid" />
-        </el-form-item>
-        <el-form-item label="Password">
-          <el-input v-model="item.passwd" show-password @keyup.enter.native="clickSignin" />
-        </el-form-item>
-        <el-button type="primary" @click="clickSignin">Sign In</el-button>
-        <div style="margin-top:10px;">
-          <el-link :underline="false" @click="clickSignup">가입신청</el-link> | <el-link :underline="false" @click="clickId">아이디 찾기</el-link> |
-          <el-link :underline="false" @click="clickPasswd">비밀번호 찾기</el-link>
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 5px">
+        <h1 style="display: flex; justify-content: center">여러분의 안전,</h1>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px">
+        <h2><img alt="zkeep" src="../assets/logo.png" /></h2>
+        <h1 style="font-weight: bold">지킴E</h1>
+        <h1>에 오신걸 환영합니다.</h1>
+      </div>
+      <div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.loginid" placeholder="아이디를 입력하세요." style="width: 400px; height: 40px" :prefix-icon="Lock" />
         </div>
-      </el-form>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.passwd" placeholder="비밀번호를 입력하세요." show-password @keyup.enter.native="clickSignin" style="width: 400px; height: 40px" :prefix-icon="Lock" />
+        </div>
+        <button style="width: 400px; height: 40px; background-color: #ee5f39; color: white" @click="clickSignin">LOGIN</button>
+        <div style="margin-top: 10px; display: flex; justify-content: center">
+          <el-link :underline="false" @click="clickSignup" style="margin-right: 10px; margin-left: 10px">가입신청</el-link>|<el-link
+            :underline="false"
+            @click="clickId"
+            style="margin-right: 10px; margin-left: 10px"
+            >아이디 찾기</el-link
+          >|
+          <el-link :underline="false" @click="clickPasswd" style="margin-left: 10px">비밀번호 찾기</el-link>
+        </div>
+      </div>
     </el-card>
   </div>
 </template>
@@ -24,6 +37,7 @@ import { useStore } from 'vuex'
 import { util } from '~/global'
 import { Login, Company, User } from '~/models'
 import router from '~/router'
+import { Lock } from '@element-plus/icons-vue'
 
 const store = useStore()
 

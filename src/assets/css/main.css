@@ -220,7 +220,7 @@ body {
   overflow-x: hidden;
   background-color: #ffffff;
   min-height: 100vh;
-  display: flex;
+  /* display: flex; */
   position: relative;
 }
 .menu ul {
@@ -457,4 +457,11 @@ BaseTab
   font-weight: 500;
   color: #a9a9a9;
   position: relative;
+}
+/*=================================================================================================
+SignIn
+===================================================================================================*/
+h2 img {
+  width: 35px;
+  height: 40px;
 }
