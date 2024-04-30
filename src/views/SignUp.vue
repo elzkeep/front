@@ -1,35 +1,49 @@
 <template>
-  <el-form label-width="120px">
-    <el-form-item label="Loginid">
-      <el-input v-model="item.loginid" />
-    </el-form-item>
-    <el-form-item label="Password">
-      <el-input v-model="item.passwd" />
-    </el-form-item>
-    <el-form-item label="Password2">
-      <el-input v-model="item.passwd2" />
-    </el-form-item>
-    <el-form-item label="tel">
-      <el-input v-model="item.tel" />
-    </el-form-item>
-    <el-form-item label="email">
-      <el-input v-model="item.email" />
-    </el-form-item>
-    <el-form-item label="사업자 번호">
-      <el-input v-model="item.companyno" />
-    </el-form-item>
-    <el-form-item label="사업장명">
-      <el-input v-model="item.companyname" />
-    </el-form-item>
-    <el-form-item label="대표자명">
-      <el-input v-model="item.ceo" />
-    </el-form-item>
-    <el-form-item label="주소">
-      <el-input v-model="item.address" />
-      <el-input v-model="item.addressetc" />
-    </el-form-item>
-    <el-button type="primary" @click="clickSignup">가입신청 완료</el-button>
-  </el-form>
+  <div class="flex-container" style="margin-top: 15%">
+    <el-card class="box-card">
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 5px">
+        <h1 style="display: flex; justify-content: center">여러분의 안전,</h1>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px">
+        <h2><img alt="zkeep" src="../assets/logo.png" /></h2>
+        <h1 style="font-weight: bold">지킴E</h1>
+        <h1>에 오신걸 환영합니다.</h1>
+      </div>
+      <div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.loginid" placeholder="아이디를 입력하세요." style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.passwd" placeholder="비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.passwd2" placeholder="비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.tel" placeholder="전화번호를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.email" placeholder="이메일를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.companyno" placeholder="사업자번호를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.companyname" placeholder="사업장명를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.ceo" placeholder="대표자명를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.address" placeholder="주소를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.addressetc" placeholder="상세주소를 입력하세요." show-password style="width: 400px; height: 40px" />
+        </div>
+        <button style="width: 400px; height: 40px; background-color: #ee5f39; color: white" @click="clickSignup">가입신청 완료</button>
+      </div>
+    </el-card>
+  </div>
 </template>
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue'

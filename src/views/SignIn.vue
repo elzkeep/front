@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-container">
+  <div class="flex-container" style="margin-top: 15%">
     <el-card class="box-card">
       <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 5px">
         <h1 style="display: flex; justify-content: center">여러분의 안전,</h1>
@@ -11,7 +11,7 @@
       </div>
       <div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.loginid" placeholder="아이디를 입력하세요." style="width: 400px; height: 40px" :prefix-icon="Lock" />
+          <el-input v-model="item.loginid" placeholder="아이디를 입력하세요." style="width: 400px; height: 40px" :prefix-icon="UserFilled" />
         </div>
         <div style="margin-bottom: 10px">
           <el-input v-model="item.passwd" placeholder="비밀번호를 입력하세요." show-password @keyup.enter.native="clickSignin" style="width: 400px; height: 40px" :prefix-icon="Lock" />
@@ -37,7 +37,7 @@ import { useStore } from 'vuex'
 import { util } from '~/global'
 import { Login, Company, User } from '~/models'
 import router from '~/router'
-import { Lock } from '@element-plus/icons-vue'
+import { Lock, UserFilled } from '@element-plus/icons-vue'
 
 const store = useStore()
 

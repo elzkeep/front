@@ -17,7 +17,10 @@
               <span style="font-size: 14px; font-weight: 500">{{ data.session.name }}</span>
             </div>
             <div style="margin-top: 5px">
-              <span style="font-size: 12px; font-weight: 400">회사명 + 부서명</span>
+              <span style="font-size: 12px; font-weight: 500">{{ data.companyName }}</span>
+            </div>
+            <div style="margin-top: 5px">
+              <span style="font-size: 12px; font-weight: 400">{{ data.departmentName }}</span>
             </div>
           </div>
         </div>
@@ -173,7 +176,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { Company } from '~/models'
+import { Company, Department } from '~/models'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
@@ -191,12 +194,17 @@ const data = reactive({
   user: {
     name: '홍길동',
   },
+  companyName: '',
+  departmentName: '',
 })
 
 onMounted(async () => {
   data.session = store.getters['getUser']
+  let res = await Company.get(store.getters['getUser'].company)
+  data.companyName = res.item.name
+  let res2 = await Department.get(store.getters['getUser'].department)
+  data.departmentName = res2.item.name
   data.company = store.getters['getCompany']
-  console.log(data.session)
 })
 
 const isWork = () => data.company.type == Company.type.work
