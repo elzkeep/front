@@ -65,6 +65,7 @@
 
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
+    <el-table-column prop="number" width="60" align="right" label="NO" />
     <el-table-column label="건물명" align="left">
       <template #default="scope">
         {{ scope.row.extra.building.name }}
@@ -195,7 +196,13 @@
   <el-dialog v-model="data.single" width="800px">
     <y-table>
       <y-tr>
-        <y-th style="width:100px;">사업자명</y-th>
+        <y-th style="width:120px;">고객NO</y-th>
+        <y-td>
+          {{data.item.number}}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>사업자명</y-th>
         <y-td>
           <el-select v-model.number="data.item.company" size="small" placeholder="사업자명" style="width: 250px" @change="changeCompany">
             <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
@@ -300,11 +307,6 @@
       <y-tr>
         <y-th>점검 담당자</y-th>
         <y-td>
-			<!--
-          <el-select v-model.number="data.item.user" size="small" placeholder="점검 담당자" style="width: 150px">
-            <el-option v-for="item in data.users" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-		  -->
           <el-input v-model="data.inspect.name" readonly @click="clickInspector" />
         </y-td>
       </y-tr>
@@ -452,7 +454,7 @@
   <el-dialog v-model="data.visibleInspector" width="800px">
     <y-table style="margin: 10px 0px">
       <y-tr>
-        <y-th>이름</y-th>
+        <y-th style="width: 80px;">이름</y-th>
         <y-td>
           {{ getUser(data.inspector).name }}
         </y-td>
@@ -469,8 +471,11 @@
           {{ getUser(data.inspector).tel }}
         </y-td>
       </y-tr>
+      
     </y-table>
     <template #footer>
+      <el-button size="small" type="primary" @click="clickInspector">담당자 변경</el-button>
+      <el-button size="small" type="success" v-if="data.inspectorchange" @click="clickInspectorSave">저장</el-button>
       <el-button size="small" @click="data.visibleInspector = false">취소</el-button>
     </template>
   </el-dialog>
@@ -501,7 +506,7 @@
     </el-table>
     <template #footer>
       <el-button size="small" @click="data.visibleInspectors = false">취소</el-button>
-      <el-button size="small" type="primary" @click="clickSubmitInspector">등록</el-button>
+      <!--<el-button size="small" type="primary" @click="clickSubmitInspector">등록</el-button>-->
     </template>
   </el-dialog>
 </template>
@@ -530,6 +535,7 @@ const model = Customer
 
 const item = {
   id: 0,
+  number: 0,
   type: Customer.type.outsourcing,
   checkdate: 1,
   managername: '',
@@ -657,7 +663,8 @@ const data = reactive({
   ],
   building: {
     companyno: ''
-  }
+  },
+  inspectorchange: false
 })
 
 async function clickSearch() {
@@ -793,9 +800,13 @@ async function getInspectors(reset) {
   data.inspectorpage++
 }
 
-function clickSingle() {
+async function clickSingle() {  
   data.item = util.clone(item)
-  data.buildings = []
+
+  let res = await Extra.maxnumber(data.session.company)
+  data.item.number = res.max
+  
+  data.buildings = [{id: 0, name: ' '}]
   data.single = true
   data.visible = false
 }
@@ -818,7 +829,7 @@ async function clickUpdate(item, index) {
     return
   }
 
-  if (index.no == 9) {
+  if (index.no == 10) {
     util.loading(true)
     getBusiness(item.salesuser)
     util.loading(false)
@@ -826,13 +837,16 @@ async function clickUpdate(item, index) {
     return
   }
 
-  if (index.no == 10) {
+  if (index.no == 11) {
+    data.item = util.clone(item)
+
+    data.inspectorchange = false
     data.inspector = item.user
     data.visibleInspector = true
     return
   }
 
-  if (index.no == 12) {
+  if (index.no == 13) {
     return
   }
 
@@ -851,8 +865,14 @@ async function clickUpdate(item, index) {
   data.item = util.clone(item)
   
   res = await User.get(item.user)
-  data.inspect = res.item
-
+  if (res.item != null) {
+    data.inspect = res.item
+  } else {
+    data.inspect = util.clone(user)
+  }
+  console.log(res)
+  
+  
   data.single = true
 }
 
@@ -895,7 +915,10 @@ const changeList = val => {
 }
 
 const changeInspectorList = val => {
+  console.log(val)
   data.dummyInspector = val
+  data.inspector = val.id
+  data.inspectorchange = true
   clickSubmitInspector()
 }
 
@@ -955,6 +978,7 @@ async function clickSubmit() {
   item.type = util.getInt(item.type)
   item.billingtype = util.getInt(item.billingtype)
   item.checkdate = util.getInt(item.checkdate)
+  item.number = util.getInt(item.number)
 
   item.contractstartdate = util.convertDBDate(item.contractstartdate)
   item.contractenddate = util.convertDBDate(item.contractenddate)
@@ -1123,7 +1147,7 @@ const bill = reactive({
     { id: 1, name: '기간별' },
     { id: 2, name: '지정월' },
   ],
-  durationtype: 1  
+  durationtype: 1
 })
 
 function clickBill() {
@@ -1176,5 +1200,20 @@ function getCompanyInfo(item) {
   }
   
   return `${item.name} (${item.companyno})`
+}
+
+async function clickInspectorSave() {
+  util.loading(true)
+  
+  let item = util.clone(data.item)
+
+  item.user = util.getInt(data.inspector)
+
+  await model.update(item)
+  
+  await getItems(true)
+
+  data.visibleInspector = false
+  util.loading(false)
 }
 </script>

@@ -107,4 +107,13 @@ export default class Extra {
 
         return res
     }
+
+    static async maxnumber(id: number) {        
+        const res = await request({
+            method: 'GET',
+            url: `/api/customer/maxnumber/${id}`
+        })
+
+        return res
+    }
 }

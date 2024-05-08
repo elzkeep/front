@@ -29,7 +29,7 @@
     </y-tr>
     <y-tr>
       <y-th>용량</y-th>
-      <y-td> <el-input v-model="data.item.value5" style="width: 50px" /> V </y-td>
+      <y-td> <el-input v-model="data.item.value5" style="width: 50px" /> kW </y-td>
     </y-tr>
   </y-table>
 

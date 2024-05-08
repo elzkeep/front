@@ -127,7 +127,7 @@
       <y-tr>
         <y-th>입사일</y-th>
         <y-td>
-          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.joindate" />
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.joindate" @change="changeJoindate" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -146,8 +146,8 @@
         <y-th>상태</y-th>
         <y-td>
           <el-radio-group v-model.number="data.item.status">
-            <el-radio-button size="small" label="1">사용</el-radio-button>
-            <el-radio-button size="small" label="2">사용중지</el-radio-button>
+            <el-radio-button size="small" value="1">사용</el-radio-button>
+            <el-radio-button size="small" value="2">사용중지</el-radio-button>
           </el-radio-group>
         </y-td>
       </y-tr>
@@ -182,8 +182,8 @@
 
   <el-dialog v-model="data.approval.visible" width="800px">
     <el-radio-group v-model.number="data.approval.status" style="display: flex; margin-bottom: 10px">
-      <el-radio-button size="small" label="1" @click="getApproval(1)">거래처 신청</el-radio-button>
-      <el-radio-button size="small" label="2" @click="getApproval(2)">거절</el-radio-button>
+      <el-radio-button size="small" value="1" @click="getApproval(1)">거래처 신청</el-radio-button>
+      <el-radio-button size="small" value="2" @click="getApproval(2)">거절</el-radio-button>
     </el-radio-group>
     <el-table v-if="data.approval.status == 1" :data="data.approval.items" border :height="'500px'" @row-click="clickApproval">
       <el-table-column prop="joindate" label="신청일시" align="left" width="100" />
@@ -420,8 +420,8 @@
         <y-th>상태</y-th>
         <y-td>
           <el-radio-group v-model.number="data.item.status">
-            <el-radio-button size="small" label="1">사용</el-radio-button>
-            <el-radio-button size="small" label="2">사용중지</el-radio-button>
+            <el-radio-button size="small" value="1">사용</el-radio-button>
+            <el-radio-button size="small" value="2">사용중지</el-radio-button>
           </el-radio-group>
         </y-td>
       </y-tr>
@@ -853,26 +853,26 @@ async function clickSubmit() {
   }
 
   /*
-  if (item.email == '') {
-    util.alert('이메일을 입력하세요')
-    return
-  }
+     if (item.email == '') {
+     util.alert('이메일을 입력하세요')
+     return
+     }
 
-  if (item.tel == '') {
-    util.alert('연락처를 입력하세요')
-    return
-  }
+     if (item.tel == '') {
+     util.alert('연락처를 입력하세요')
+     return
+     }
 
-  if (item.address == '') {
-    util.alert('주소를 입력하세요')
-    return
-  }
+     if (item.address == '') {
+     util.alert('주소를 입력하세요')
+     return
+     }
 
-  if (item.address == '') {
-    util.alert('주소를 입력하세요')
-    return
-  }
-  */
+     if (item.address == '') {
+     util.alert('주소를 입력하세요')
+     return
+     }
+   */
 
   if (item.passwd != item.passwd2) {
     util.alert('비밀번호가 정확하지 않습니다')
@@ -880,11 +880,11 @@ async function clickSubmit() {
   }
 
   /*
-  if (item.joindate == '') {
-    util.alert('입사일을 입력하세요')
-    return
-  }
-  */
+     if (item.joindate == '') {
+     util.alert('입사일을 입력하세요')
+     return
+     }
+   */
 
   if (item.level == 0) {
     util.alert('권한을 선택하세요')
@@ -973,5 +973,21 @@ async function clickView(item) {
 
 function clickCancelView() {
   data.visibleView = false
+}
+
+function changeJoindate() {
+  console.log('change')
+  console.log(data.item.joindate)
+
+  let joindate = moment(data.item.joindate)
+  console.log(joindate)
+  let now = moment()
+  console.log(now)
+  let diff = moment.duration(now.diff(joindate))
+  let year = parseInt(diff.asYears())
+  let month = parseInt(diff.asMonths() - year * 12)
+
+  data.item.careeryear = year
+  data.item.careermonth = month
 }
 </script>

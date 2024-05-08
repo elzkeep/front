@@ -416,14 +416,7 @@ function clickInsert() {
 }
 
 function clickUpdate(item, index) {
-  return
-
-  if (index.no == 0) {
-    return
-  }
-
-  data.item = util.clone(item)
-  data.visible = true
+  router.push(`/management/report/${item.id}`)
 }
 
 onMounted(async () => {

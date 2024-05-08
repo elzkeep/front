@@ -1,4 +1,4 @@
-<template>
+q<template>
   <y-table>
     <y-tr>
       <y-th style="width: 200px">수전설비 설치여부</y-th>
