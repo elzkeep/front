@@ -20,25 +20,25 @@
           <el-input v-model="item.passwd2" placeholder="비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.tel" placeholder="전화번호를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.tel" placeholder="전화번호를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.email" placeholder="이메일를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.email" placeholder="이메일를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.companyno" placeholder="사업자번호를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.companyno" placeholder="사업자번호를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.companyname" placeholder="사업장명를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.companyname" placeholder="사업장명를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.ceo" placeholder="대표자명를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.ceo" placeholder="대표자명를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.address" placeholder="주소를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.address" placeholder="주소를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.addressetc" placeholder="상세주소를 입력하세요." show-password style="width: 400px; height: 40px" />
+          <el-input v-model="item.addressetc" placeholder="상세주소를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <button style="width: 400px; height: 40px; background-color: #ee5f39; color: white" @click="clickSignup">가입신청 완료</button>
       </div>
@@ -91,12 +91,18 @@ async function clickSignup() {
     return
   }
 
+  res = await User.find({ email: item.email })
+  if (res.items.length > 0) {
+    util.alert('이미 등록된 이메일 입니다')
+    return
+  }
+
   if (item.passwd != item.passwd2) {
     util.alert('비밀번호가 정확하지 않습니다')
     return
   }
 
-  let ress = await Company.find({ comapnyno: item.companyno })
+  res = await Company.find({ companyno: item.companyno })
   if (res.items.length > 0) {
     util.alert('이미 등록된 사업장입니다.')
     return
@@ -119,7 +125,7 @@ async function clickSignup() {
 
   util.loading(true)
 
-  let resCom = await Company.insert({
+  res = await Company.insert({
     name: item.companyname,
     companyno: item.companyno,
     ceo: item.ceo,
@@ -138,10 +144,10 @@ async function clickSignup() {
     tel: item.tel,
     address: item.address,
     addressetc: item.addressetc,
-    level: 3,
-    appproval: 3,
-    status: 1,
-    company: resCom.id,
+    level: User.level.admin,
+    approval: User.approval.complete,
+    status: User.status.use,
+    company: res.id,
   })
 
   util.loading(false)
