@@ -116,4 +116,16 @@ export default class Extra {
 
         return res
     }
+
+    static async updateBilling(item: any) {
+        const res = await request({
+            method: 'PUT',
+            url: '/api/billing/process',
+            data: item
+        })
+
+        return res
+    }
+
+    
 }

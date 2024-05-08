@@ -1,5 +1,6 @@
 export {default as Login} from './login'
 export {default as Billing} from './billing'
+export {default as Billinghistory} from './billinghistory'
 export {default as Billinglist} from './billinglist'
 export {default as Billinguserlist} from './billinguserlist'
 export {default as Building} from './building'

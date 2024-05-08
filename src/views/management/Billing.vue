@@ -455,7 +455,7 @@ function clickStatusMulti(status) {
 
       let res = await Billing.get(value.id)
       res.item.status = status
-      await Billing.update(res.item)
+      await Extra.updateBilling(res.item)
     }
 
     //util.info('삭제되었습니다')
