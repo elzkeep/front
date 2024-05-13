@@ -127,5 +127,13 @@ export default class Extra {
         return res
     }
 
+    static async score(id: number) {
+        const res = await request({
+            method: 'POST',
+            url: `/api/building/score/${id}`            
+        })
+
+        return res
+    }
     
 }

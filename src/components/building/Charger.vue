@@ -239,6 +239,8 @@ async function clickSubmit() {
 
     await model.insert(item);
   }
+  
+  await Extra.score(data.id);
 
   util.alert("저장되었습니다");
 
