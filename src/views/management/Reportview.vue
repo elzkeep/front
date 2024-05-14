@@ -37,7 +37,7 @@
 
     <div v-for="(subitem, subindex) in item.items">
       <div v-if="subitem.type == text && isVisible(index, subindex)" style="display:flex;margin:5px 5px;">
-        <div style="width:50px;">{{subitem.title}}</div> <el-input style="width:200px;" v-mode="form.items[index].items[subindex].value" /> &nbsp;{{subitem.unit}}
+        <div style="width:50px;">{{subitem.title}}</div> <el-input style="width:200px;" v-model="form.items[index].items[subindex].value" /> &nbsp;{{subitem.unit}}
       </div>
       <div v-if="subitem.type == select">
         <div style="margin:10px 0px 5px 0px;font-size:14px;" v-if="subitem.title != ''">{{subitem.title}}</div>
@@ -66,7 +66,7 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { Report, Data } from "~/models"
+import { Report, Data, Item } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
@@ -250,15 +250,7 @@ async function initData() {
   let res = await Report.get(data.id)
   data.report = res.item
   console.log(res.item)
-  
-  res = await Data.find({
-    report: data.id,
-    orderby: 'd_topcategory,d_order'
-  })
-  console.log(res)
-  
-  data.topcategorys = [...new Set(res.items.map(item => item.topcategory))].sort(function(a, b){ return a-b; })
-  
+
   let items = util.clone(item)
 
   for (let i = 0; i < items.length; i++) {
@@ -274,7 +266,21 @@ async function initData() {
   form.items = items
 }
 
-async function getItems() {
+async function getItems() {  
+  let res = await Data.find({
+    report: data.id,
+    orderby: 'd_topcategory,d_order'
+  })
+  console.log(res)
+  
+  data.topcategorys = [...new Set(res.items.map(item => item.topcategory))].sort(function(a, b){ return a-b; })
+  
+
+ res = await Item.find({
+    report: data.id,
+    orderby: 'i_topcategory,i_order'
+  })
+  console.log(res)
 }
 
 onMounted(async () => {
