@@ -123,7 +123,8 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
-import { Company, Facility, Building, Extra } from "~/models"
+import { Company, Facility, Building } from "~/models"
+import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
