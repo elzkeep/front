@@ -274,7 +274,7 @@ onMounted(async () => {
   util.loading(true)
 
   await initData()
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -314,7 +314,7 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -361,7 +361,7 @@ async function clickSubmit() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -417,7 +417,7 @@ function clickStatusMulti(status) {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -429,7 +429,7 @@ function clickGiroMulti() {
 
     let ids = listSelection.value.map(item => item.id)
 
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
 
@@ -464,7 +464,7 @@ async function clickSubmitSetting() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visibleSetting = false
   util.loading(false)

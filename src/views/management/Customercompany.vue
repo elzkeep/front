@@ -2,9 +2,9 @@
   <Title title="고객 현황" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-    <el-date-picker v-model="data.search.startdate" type="date" size="small" style="width: 120px" />
+    <el-date-picker v-model="data.search.startdate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
     ~
-    <el-date-picker v-model="data.search.enddate" type="date" size="small" style="width: 120px" />
+    <el-date-picker v-model="data.search.enddate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
 
     <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="margin-left: 5px; width: 300px" @keypress.enter.native="clickSearch" />
 
@@ -30,7 +30,7 @@
         {{ scope.row.buildingcount }}
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="150" />
+    <el-table-column prop="date" label="등록일" align="center" width="150" :formatter="util.tableDatetime" />
   </el-table>
 
   <el-dialog v-model="data.visible" width="400px">
@@ -93,7 +93,7 @@
     <Title title="기본 정보" />
     <y-table>
       <y-tr>
-        <y-th style="width: 80px">사업자명<span style="color: red">*</span></y-th>
+        <y-th style="width: 90px">사업자명<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="data.item.name" />
         </y-td>
@@ -101,7 +101,7 @@
       <y-tr>
         <y-th>사업자번호<span style="color: red">*</span></y-th>
         <y-td>
-          <el-input v-model="data.item.companyno" />
+          <el-input v-model="data.item.companyno" placeholder="000-00-00000" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -173,7 +173,7 @@
         <y-th>사업자번호<span style="color: red">*</span></y-th>
         <y-td>
           <el-checkbox v-model="building.check" label="고객정보와 동일" @click="clickCheck" />
-          <el-input v-model="building.companyno" v-bind:disabled="building.check" />
+          <el-input v-model="building.companyno" v-bind:disabled="building.check"  placeholder="000-00-00000" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -366,6 +366,11 @@ async function clickSubmit() {
 
   let item = util.clone(data.item)
 
+  if (/^[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9][0-9]$/.test(item.companyno) == false) {
+    alert('사업자번호 양식이 맞지 않습니다')
+    return    
+  }
+
   if (item.id > 0) {
     await modelCustomer.update(item)
   } else {
@@ -488,6 +493,11 @@ async function clickSubmitSingle() {
     return
   }
 
+  if (/^[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9][0-9]$/.test(item.companyno) == false) {
+    alert('사업자번호 양식이 맞지 않습니다')
+    return    
+  }
+
   if (item.address == '') {
     util.alert('주소를 입력하세요')
     return
@@ -600,6 +610,10 @@ async function clickSubmitBuilding() {
     return
   }
 
+  if (/^[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9][0-9]$/.test(item.companyno) == false) {
+    alert('사업자번호 양식이 맞지 않습니다')
+    return    
+  }
   /*
      if (item.id > 0) {
      await Building.update(item)

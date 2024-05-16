@@ -1,6 +1,6 @@
-import {single, multi, status, select, text} from './base'
+import {single, multi, status, select, text, none} from './base'
 
-const changes = [
+export const change = [
   {    
     type: multi,
     title: '변압기 (TR 1)',

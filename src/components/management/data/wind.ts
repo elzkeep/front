@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const wind = [  
+export const wind = [  
   {
     type: single,
     title: '풍차 설비',            

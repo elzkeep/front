@@ -1,6 +1,6 @@
 import {single, multi, status, select, text} from './base'
 
-const charger = [
+export const charger = [
     {
         type: single,
         title: '인입선 전선의 종류, 굵기, 지상고 등의 상태',

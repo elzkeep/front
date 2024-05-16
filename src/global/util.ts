@@ -81,7 +81,7 @@ export default class util {
     }
 
     d.setTime(d.getTime() + 9 * 60 * 60 * 1000)
-    return moment(d).format('YYYY-MM-DD')
+    return moment(d).format('YYYY.MM.DD')
   }
 
   static getYear(d: string) {
@@ -249,7 +249,7 @@ export default class util {
       })
   }
 
-  static convertDate(value: any) {
+  static convertDate(value: any): string {
     if (this.isNull(value) || value == '') {
       return ''
     }
@@ -283,6 +283,20 @@ export default class util {
     return '1000-01-01'
   }
 
+  static tableDate(row: any, col: any, value: string) {
+    if (value == '' || value == '0000-00-00' || value == '1000-01-01') {
+      return ''
+    }
+
+    let temp = value.split('-')
+
+    return `${temp[0]}.${temp[1]}.${temp[2]}`
+  }
+
+  static tableDatetime(row: any, col: any, value: string) {
+    return value.replaceAll('-', '.')
+  }
+  
   static viewDate(value: string) {
     if (this.isNull(value) || value == '' || value == '0000-00-00' || value == '1000-01-01') {
       return ''
@@ -290,7 +304,11 @@ export default class util {
 
     let temp = value.split('-')
 
-    return `${temp[0]}년 ${temp[1]}월 ${temp[2]}일`
+    return `${temp[0]}.${temp[1]}.${temp[2]}`
+  }
+
+  static viewDatetime(value: string): string {
+    return value.replaceAll('-', '.')    
   }
 
   static getImagePath(filename: string, dir: string) {

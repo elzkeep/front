@@ -24,7 +24,7 @@
 
   <div style="display:flex;justify-content: space-between;gap:5px;margin-bottom:10px;">
 
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
+    <el-select size="small" v-model.number="data.search.company" placeholder="업체" style="width:150px;" v-if="data.session.level == User.level.rootadmin">
       <el-option
         v-for="item in data.companys"
         :key="item.id"
@@ -33,7 +33,7 @@
       />
     </el-select>
 
-    <el-select v-model.number="data.search.building" placeholder="건물" style="width:150px;">
+    <el-select size="small" v-model.number="data.search.building" placeholder="건물" style="width:150px;">
       <el-option
         v-for="item in data.buildings"
         :key="item.id"
@@ -42,7 +42,7 @@
       />
     </el-select>
 
-    <el-select v-model.number="data.search.user" placeholder="점검자" style="width:150px;">
+    <el-select size="small" v-model.number="data.search.user" placeholder="점검자" style="width:150px;">
       <el-option
         v-for="item in data.users"
         :key="item.id"
@@ -51,7 +51,7 @@
       />
     </el-select>
 
-    <el-select v-model.number="data.search.status" placeholder="상태" style="width:100px;">
+    <el-select size="small" v-model.number="data.search.status" placeholder="상태" style="width:100px;">
       <el-option
         v-for="item in data.statuss"
         :key="item.id"
@@ -98,10 +98,14 @@
     </el-table-column>
     <el-table-column label="점검일" align="center" width="140">
       <template #default="scope">
-        {{scope.row.checkdate}} {{scope.row.checktime}}
+        {{scope.row.checkdate.replaceAll('-', '.')}} {{scope.row.checktime}}
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="140" />
+    <el-table-column label="등록일" align="center" width="140">
+      <template #default="scope">
+        {{util.viewDatetime(scope.row.date)}}
+      </template>
+    </el-table-column>    
   </el-table>
 
 
@@ -109,126 +113,9 @@
     v-model="data.visible"
     width="800px"
   >
-
-      <y-table>
-        <y-tr v-if="data.session.level == User.level.rootadmin">
-          <y-th>업체</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.company" placeholder="업체" style="width:150px;">
-              <el-option
-                v-for="item in data.companys"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>고객명</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.building" placeholder="고객명" style="width:150px;">
-              <el-option
-                v-for="item in data.buildings"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>관리형태</y-th>
-          <y-td>
-            <el-radio-group v-model.number="data.item.type">
-              <el-radio-button size="small" label="1">직영</el-radio-button>
-              <el-radio-button size="small" label="2">위탁관리</el-radio-button>
-            </el-radio-group>
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>점검일</y-th>
-          <y-td>
-            매월 <el-input v-model="data.item.checkdate" style="width:50px;" /> 일
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>담당자</y-th>
-          <y-td>
-            <el-input v-model="data.item.managername" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>담당자 연락처</y-th>
-          <y-td>
-            <el-input v-model="data.item.managertel" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>담당자 이메일</y-th>
-          <y-td>
-            <el-input v-model="data.item.manageremail" />
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계악일</y-th>
-          <y-td>
-            <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractstartdate" /> ~ <el-date-picker style="margin: 0px 0px;height: 24px;width:150px;" v-model="data.item.contractenddate" />
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계약금액</y-th>
-          <y-td>
-            <el-input v-model="data.item.contractprice" />
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>청구일</y-th>
-          <y-td>
-            매월 <el-input v-model="data.item.contractday" style="width:50px;" /> 일
-          </y-td>
-        </y-tr>
-
-        <y-tr>
-          <y-th>계약담당자</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingname" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>계약담당자 연락처</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingtel" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>계약담당자 이메일</y-th>
-          <y-td>
-            <el-input v-model="data.item.billingemail" />
-          </y-td>
-        </y-tr>
-        <y-tr>
-          <y-th>점검 담당자</y-th>
-          <y-td>
-            <el-select v-model.number="data.item.user" placeholder="점검 담당자" style="width:150px;">
-              <el-option
-                v-for="item in data.users"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </y-td>
-        </y-tr>
-      </y-table>
-
+    <ReportInsert />
       <template #footer>
-        <el-button size="small" @click="clickCancel">취소</el-button>
-        <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
+        <el-button size="small" @click="clickCancel">닫기</el-button>        
       </template>
   </el-dialog>
 
@@ -416,7 +303,8 @@ function clickInsert() {
 }
 
 function clickUpdate(item, index) {
-  router.push(`/management/report/${item.id}`)
+  //router.push(`/management/report/${item.id}`)
+  data.visible = true
 }
 
 onMounted(async () => {
@@ -425,7 +313,7 @@ onMounted(async () => {
   util.loading(true)
 
   await initData()
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -465,7 +353,7 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -512,7 +400,7 @@ async function clickSubmit() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)

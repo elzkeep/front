@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const sunlight = [
+export const sunlight = [
   {        
     parent: '전압 및 전류 계측정보',
     type: single,

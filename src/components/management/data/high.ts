@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const high = [  
+export const high = [  
   {
     type: single,
     title: '전압 및 전류 계측값',            

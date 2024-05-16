@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const etc = [
+export const etc = [
   {
     type: single,
     title: '한전 인입강선 상태',

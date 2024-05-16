@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const ups = [
+export const ups = [
   {
     type: single,
     title: '일반사항',            

@@ -50,7 +50,11 @@
     <el-table-column label="점수" align="center" width="70">
       <template #default="scope"> {{ scope.row.totalscore }} / {{ scope.row.score }} </template>
     </el-table-column>
-    <el-table-column prop="date" label="등록일" align="center" width="140" />
+    <el-table-column label="등록일" align="center" width="140">
+      <template #default="scope">
+        {{util.viewDatetime(scope.row.date)}}
+      </template>
+    </el-table-column>
     <el-table-column label="고객배치현황" align="center" width="80">
       <template #default="scope">
         <el-button size="small" type="primary" @click="clickView(scope.row)" style="margin-right: -5px">보기</el-button>
@@ -63,7 +67,7 @@
       <y-tr v-if="data.session.level == User.level.rootadmin">
         <y-th>업체</y-th>
         <y-td>
-          <el-select v-model.number="data.item.company" placeholder="업체" style="width: 150px" @change="changeCompany">
+          <el-select size="small" v-model.number="data.item.company" placeholder="업체" style="width: 150px" @change="changeCompany">
             <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
@@ -71,7 +75,7 @@
       <y-tr>
         <y-th>팀</y-th>
         <y-td>
-          <el-select v-model.number="data.item.department" placeholder="팀" style="width: 150px">
+          <el-select size="small" v-model.number="data.item.department" placeholder="팀" style="width: 150px">
             <el-option v-for="item in data.departments" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
@@ -127,7 +131,7 @@
       <y-tr>
         <y-th>입사일</y-th>
         <y-td>
-          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.joindate" @change="changeJoindate" />
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.joindate" @change="changeJoindate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -137,7 +141,7 @@
       <y-tr>
         <y-th>권한</y-th>
         <y-td>
-          <el-select v-model.number="data.item.level" placeholder="권한" style="width: 150px">
+          <el-select size="small" v-model.number="data.item.level" placeholder="권한" style="width: 150px">
             <el-option v-for="item in data.levels" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </y-td>
@@ -695,7 +699,7 @@ function clickInsert() {
 
   data.item = util.clone(item)
   data.item.passwd2 = data.item.passwd
-  data.item.joindate = moment().format('YYYY-MM-DD')
+  data.item.joindate = moment().format('YYYY.MM.DD')
   data.visible = true
 }
 
@@ -803,7 +807,7 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -911,7 +915,7 @@ async function clickSubmit() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -976,13 +980,8 @@ function clickCancelView() {
 }
 
 function changeJoindate() {
-  console.log('change')
-  console.log(data.item.joindate)
-
   let joindate = moment(data.item.joindate)
-  console.log(joindate)
   let now = moment()
-  console.log(now)
   let diff = moment.duration(now.diff(joindate))
   let year = parseInt(diff.asYears())
   let month = parseInt(diff.asMonths() - year * 12)

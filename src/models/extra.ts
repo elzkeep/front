@@ -135,5 +135,14 @@ export default class Extra {
 
         return res
     }
-    
+
+    static async dataitemProcess(item: any) {
+        const res = await request({
+            method: 'POST',
+            url: `/api/dataitem/process`,
+            data: item
+        })
+
+        return res
+    }    
 }

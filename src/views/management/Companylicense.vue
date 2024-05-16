@@ -42,8 +42,12 @@
       </template>
     </el-table-column>
     <el-table-column prop="educationinstitution" label="발급기관" />
-    <el-table-column prop="number" label="면허번호" align="center" />
-    <el-table-column prop="date" label="등록일" align="center" width="150" />
+    <el-table-column prop="number" label="면허번호" align="center" />    
+    <el-table-column label="등록일" align="center" width="140">
+      <template #default="scope">
+        {{util.viewDatetime(scope.row.date)}}
+      </template>
+    </el-table-column>
   </el-table>
 
   <el-dialog
@@ -68,7 +72,7 @@
         <y-tr>
           <y-th>면허 종류</y-th>
           <y-td>
-            <el-select v-model.number="data.item.licensecategory" placeholder="면허 종류">
+            <el-select size="small" v-model.number="data.item.licensecategory" placeholder="면허 종류">
               <el-option
                 v-for="item in data.licensecategorys"
                 :key="item.id"
@@ -82,7 +86,7 @@
         <y-tr>
           <y-th>취득일</y-th>
           <y-td>
-            <el-date-picker v-model="data.item.takingdate" type="date" size="small" style="width: 120px" />            
+            <el-date-picker v-model="data.item.takingdate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />            
           </y-td>
         </y-tr>
         <y-tr>
@@ -223,7 +227,7 @@ onMounted(async () => {
   util.loading(true)
 
   await initData()
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -263,7 +267,7 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -300,7 +304,7 @@ async function clickSubmit() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)

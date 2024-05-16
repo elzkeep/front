@@ -21,8 +21,8 @@
       </template>
       <div style="display: flex; justify-content: space-between">
         <div>
-          <el-date-picker style="margin: 0px 5px 0px 0px; height: 24px; width: 150px" v-model="data.search.startdate" />
-          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.enddate" />
+          <el-date-picker style="margin: 0px 5px 0px 0px; height: 24px; width: 150px" v-model="data.search.startdate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.enddate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
         </div>
         <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
       </div>
@@ -71,7 +71,7 @@
       </template>
     </el-table-column> -->
     <el-table-column prop="index" label="번호" width="100" align="center" />
-    <el-table-column prop="billdate" label="기간" align="center" />
+    <el-table-column prop="billdate" label="기간" align="center" :formatter="util.tableDate" />
     <el-table-column prop="buildingname" label="건물명" align="left" />      
     <el-table-column prop="price" label="금액" align="right">
       <template #default="scope">
@@ -313,7 +313,7 @@ async function getMasters() {
 }
 
 function clickSearch() {
-  getItems()
+  getItems(true)
 }
 
 function clickInsert() {
@@ -331,7 +331,7 @@ function clickDelete(pos, item) {
     let res = await Company.remove(item)
     if (res.code === 'ok') {
       util.info('삭제되었습니다')
-      getItems()
+      getItems(true)
     }
   })
 }
@@ -358,7 +358,7 @@ async function clickSubmit() {
 
   if (res.code === 'ok') {
     util.info('등록되었습니다')
-    getItems()
+    getItems(true)
     data.visible = false
   } else {
     util.error('오류가 발생했습니다')
@@ -375,7 +375,7 @@ onMounted(async () => {
   util.loading(true)
 
   await getDepartments()
-  await getItems()
+  await getItems(true)
 
   util.loading(false)
 })
@@ -384,12 +384,12 @@ async function clickRow(item) {
   if (data.mode == 'company') {
     data.mode = 'year'
     data.company = item.id
-    await getItems()
+    await getItems(true)
   } else if (data.mode == 'year') {
     data.mode = 'month'
     data.company = item.id
     data.duration = item.duration
-    await getItems()
+    await getItems(true)
   } else if (data.mode == 'month') {
     /*
        data.mode = 'day'
@@ -402,17 +402,17 @@ async function clickRow(item) {
 
 function clickBackYear() {
   data.mode = 'company'
-  getItems()
+  getItems(true)
 }
 
 function clickBackMonth() {
   data.mode = 'year'
-  getItems()
+  getItems(true)
 }
 
 function clickBackDay() {
   data.mode = 'month'
-  getItems()
+  getItems(true)
 }
 
 function clickDownload() {}

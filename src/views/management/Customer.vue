@@ -2,9 +2,9 @@
   <Title title="건물 및 계약 관리" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-    <el-date-picker v-model="data.search.startdate" type="date" size="small" style="width: 120px" />
+    <el-date-picker v-model="data.search.startdate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
     ~
-    <el-date-picker v-model="data.search.enddate" type="date" size="small" style="width: 120px" />
+    <el-date-picker v-model="data.search.enddate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
 
     <el-select v-model.number="data.search.status" placeholder="상태" size="small" style="margin-left: 5px; width: 100px">
       <el-option v-for="item in data.statuss" :key="item.id" :label="item.name" :value="item.id" />
@@ -77,7 +77,7 @@
       </template>
     </el-table-column>
     <el-table-column label="계약기간" align="center" width="160">
-      <template #default="scope"> {{ scope.row.contractstartdate }} ~ {{ scope.row.contractenddate }} </template>
+      <template #default="scope"> {{ util.viewDate(scope.row.contractstartdate) }} ~ {{ util.viewDate(scope.row.contractenddate) }} </template>
     </el-table-column>
     <el-table-column label="계약용량" align="right" width="70">
       <template #default="scope">
@@ -244,8 +244,8 @@
       <y-tr>
         <y-th>계악일</y-th>
         <y-td>
-          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.contractstartdate" /> ~
-          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.contractenddate" />
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.contractstartdate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" /> ~
+          <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.item.contractenddate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
         </y-td>
       </y-tr>
 

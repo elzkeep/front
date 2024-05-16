@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const fuel = [
+export const fuel = [
   {
     type: single,
     title: '일반 사항',

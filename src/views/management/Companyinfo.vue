@@ -18,7 +18,7 @@
     <y-tr>
       <y-th>사업자번호</y-th>
       <y-td>
-        <el-input v-model="data.item.companyno" />
+        <el-input v-model="data.item.companyno" placeholder="000-00-00000" />
       </y-td>
     </y-tr>
     <y-tr>
@@ -364,10 +364,15 @@ function clickDeleteMulti() {
 }
 
 async function clickSubmit() {
-  util.loading(true)
-
   let item = util.clone(data.item)
+    
+  if (/^[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9][0-9]$/.test(item.companyno) == false) {
+    alert('사업자번호 양식이 맞지 않습니다')
+    return    
+  }
 
+  util.loading(true)
+  
   item.type = util.getInt(item.type)
 
   await model.update(item)

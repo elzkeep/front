@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const ess = [
+export const ess = [
   {
     type: single,
     title: '일반사항',

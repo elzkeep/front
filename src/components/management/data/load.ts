@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const load = [
+export const load = [
   {
     type: multi,
     title: '전열기구 운용상태',            

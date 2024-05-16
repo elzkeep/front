@@ -293,7 +293,7 @@ onMounted(async () => {
   util.loading(true)
   
   await initData()
-  await getItems()
+  await getItems(true)
 
   util.loading(false)
 })

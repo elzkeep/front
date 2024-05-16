@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const thermography = [
+export const thermography = [
   {
     type: multi,
     title: '열화상 카메라',            

@@ -1,6 +1,6 @@
 import {single, multi, status, select, text, none} from './base'
 
-const generator = [
+export const generator = [
   {
     type: multi,
     title: '발전기',

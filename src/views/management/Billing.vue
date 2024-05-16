@@ -4,10 +4,36 @@
   <el-descriptions class="margin-top" :column="3" border style="margin-bottom: 10px">
     <el-descriptions-item>
       <template #label>
+        <div style="text-align: center">대상</div>
+      </template>
+
+
+      <el-select size="small" v-model.number="data.search.company" placeholder="사업자" style="width:150px;margin-right:5px;" @change="changeCompany">
+        <el-option
+          v-for="item in data.companys"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
+
+      <el-select size="small" v-model.number="data.search.building" placeholder="건물" style="width:150px;">
+        <el-option
+          v-for="item in data.buildings"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
+
+      
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
         <div style="text-align: center">청구일</div>
       </template>
-      <el-date-picker style="margin: 0px 10px 0px 0px; height: 24px; width: 150px" v-model="data.search.startbilldate" />
-      <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.endbilldate" />
+      <el-date-picker style="margin: 0px 10px 0px 0px; height: 24px; width: 150px" v-model="data.search.startbilldate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
+      <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.endbilldate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -38,7 +64,11 @@
 
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column prop="month" label="청구대상 월" align="center" width="100" />
+    <el-table-column label="청구대상 월" align="center" width="140">
+      <template #default="scope">
+        {{scope.row.month.replaceAll('-', '.')}} ~ {{scope.row.endmonth.replaceAll('-', '.')}} 
+      </template>
+    </el-table-column>
     <el-table-column label="기간" align="center" width="70">
       <template #default="scope"> {{ scope.row.period }}개월분 </template>
     </el-table-column>
@@ -52,7 +82,7 @@
         {{ getBuilding(scope.row.building) }}
       </template>
     </el-table-column>
-    <el-table-column prop="billdate" label="청구일" align="center" width="100" />
+    <el-table-column prop="billdate" label="청구일" align="center" width="100" :formatter="util.tableDate" />
     <el-table-column label="금액" align="right" width="100">
       <template #default="scope"> {{ util.money(scope.row.price) }} 원 </template>
     </el-table-column>
@@ -194,13 +224,20 @@ const data = reactive({
     type: 0,
     startbilldate: '',
     endbilldate: '',
+    duration: 1
   },
   buildings: [],
+  allbuildings: [],
   statuss: [
     { id: 0, name: ' ' },
     { id: 1, name: '미수금' },
     { id: 2, name: '수금' },
   ],
+  durations: [
+    { id: 1, name: '기간별' },
+    { id: 2, name: '연도별' },
+    { id: 3, name: '월별' }
+  ]
 })
 
 const setting = reactive({
@@ -244,11 +281,12 @@ async function initData() {
   })
 
   let items = res.items.map(item => item.extra.building)
-  data.buildings = [{ id: 0, name: ' ' }, ...items]
+  data.buildings = [{ id: 0, name: ' ' }]
+  data.allbuildings = [{ id: 0, name: ' ' }, ...items]
 
   res = await Company.find({})
 
-  data.companys = res.items
+  data.companys = [{ id: 0, name: ' ' }, ...res.items]  
 
   let company = 0
 
@@ -265,11 +303,7 @@ async function initData() {
   }
 }
 
-async function getItems() {
-  if (data.session.level != User.level.rootadmin) {
-    data.search.company = data.session.company
-  }
-
+async function getItems() {  
   let res = await model.find({
     name: data.search.text,
     page: data.page,
@@ -316,7 +350,7 @@ onMounted(async () => {
   util.loading(true)
 
   await initData()
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -356,7 +390,7 @@ function clickDeleteMulti() {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -403,7 +437,7 @@ async function clickSubmit() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visible = false
   util.loading(false)
@@ -420,7 +454,7 @@ function getCompany(id) {
 }
 
 function getBuilding(id) {
-  let items = data.buildings.filter(item => item.id == id)
+  let items = data.allbuildings.filter(item => item.id == id)
 
   if (items.length == 0) {
     return ''
@@ -459,7 +493,7 @@ function clickStatusMulti(status) {
     }
 
     //util.info('삭제되었습니다')
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
   })
@@ -471,7 +505,7 @@ function clickGiroMulti() {
 
     let ids = listSelection.value.map(item => item.id)
 
-    await getItems()
+    await getItems(true)
 
     util.loading(false)
 
@@ -506,9 +540,21 @@ async function clickSubmitSetting() {
 
   //util.info('등록되었습니다')
 
-  await getItems()
+  await getItems(true)
 
   data.visibleSetting = false
   util.loading(false)
+}
+
+async function changeCompany(item) {
+  console.log(item)
+  let res = await Building.find({
+    company: item,
+    orderby: 'b_name',
+  })
+
+  data.buildings = [{ id: 0, name: ' ' }, ...res.items]
+  
+  data.search.building = 0  
 }
 </script>
