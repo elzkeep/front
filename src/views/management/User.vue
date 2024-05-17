@@ -53,7 +53,7 @@
     </el-table-column>
     <el-table-column label="등록일" align="center" width="140">
       <template #default="scope">
-        {{util.viewDatetime(scope.row.date)}}
+        {{ util.viewDatetime(scope.row.date) }}
       </template>
     </el-table-column>
     <el-table-column label="고객배치현황" align="center" width="80">
@@ -187,8 +187,8 @@
 
   <el-dialog v-model="data.approval.visible" width="800px">
     <el-radio-group v-model.number="data.approval.status" style="display: flex; margin-bottom: 10px">
-      <el-radio-button size="small" value="1" @click="getApproval(1)">거래처 신청</el-radio-button>
-      <el-radio-button size="small" value="2" @click="getApproval(2)">거절</el-radio-button>
+      <el-radio-button size="small" value="1" @click="getApproval(1)" label="거래처 신청" />
+      <el-radio-button size="small" value="2" @click="getApproval(2)" label="거절" />
     </el-radio-group>
     <el-table v-if="data.approval.status == 1" :data="data.approval.items" border :height="'500px'" @row-click="clickApproval">
       <el-table-column prop="joindate" label="신청일시" align="left" width="100" />
@@ -260,7 +260,7 @@
       </y-tr>
     </y-table>
     <Title title="자격정보" />
-    <y-table v-for="item in data.license.items" :key="item.id">
+    <y-table v-for="item in data.license.items" :key="item.id" style="margin-bottom: 10px">
       <y-tr>
         <y-th rowspan="2" colspan="1">기술자격증명</y-th>
         <y-td> (자격명) </y-td>
@@ -353,7 +353,7 @@
       </y-tr>
     </y-table>
     <Title title="자격정보" />
-    <y-table v-for="item in data.license.items" :key="item.id">
+    <y-table v-for="item in data.license.items" :key="item.id" style="margin-bottom: 10px">
       <y-tr>
         <y-th rowspan="2" colspan="1">기술자격증명</y-th>
         <y-td> (자격명) </y-td>
@@ -444,7 +444,6 @@
     </template>
   </el-dialog>
 
-
   <el-dialog v-model="data.visibleSelect" width="400px">
     <div style="margin-top: 20px" />
     <el-button size="large" type="success" @click="clickInsert">단건 등록</el-button>
@@ -454,7 +453,6 @@
       <el-button size="small" @click="data.visibleSelect = false">취소</el-button>
     </template>
   </el-dialog>
-
 
   <el-dialog v-model="data.visibleMulti" width="800px">
     <y-table>
@@ -506,7 +504,6 @@
       <el-button size="small" type="primary" @click="clickMultiSubmit">등록</el-button>
     </template>
   </el-dialog>
-  
 </template>
 
 <script setup lang="ts">
@@ -654,7 +651,7 @@ async function getItems(reset) {
     approval: 3,
     orderby: 'u_id',
   })
-  
+
   if (res.items == null) {
     res.items = []
   }
@@ -766,7 +763,7 @@ function clickApproval(item, index) {
 
 function clickInsert() {
   data.visibleSelect = false
-  
+
   if (data.session.level == User.level.rootadmin) {
     data.departments = []
   }
@@ -1065,7 +1062,7 @@ function changeJoindate() {
 }
 
 function getTotalscore(value) {
-  if (value == 0 ) {
+  if (value == 0) {
     return 0
   }
 
@@ -1109,7 +1106,6 @@ function clickDownloadExcelExample() {
   util.download(store, url, filename)
 }
 
-
 const external = reactive({
   type: 1,
   filename: '',
@@ -1127,5 +1123,4 @@ const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   external.filename = response.filename
   external.originalfilename = response.originalfilename
 }
-
 </script>

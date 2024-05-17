@@ -490,6 +490,7 @@ const changeMasterList = val => {
 
 async function clickSubmit() {
   let item = util.clone(data.item)
+  let tree = data.departmentItem
 
   if (item.name == '') {
     util.alert('명칭을 입력하세요')
@@ -514,8 +515,16 @@ async function clickSubmit() {
 
   if (item.id > 0) {
     await model.update(item)
+    if (item.master != 0) {
+      data.master.department = item.id
+      await User.update(data.master)
+    }
   } else {
-    await model.insert(item)
+    let res = await model.insert(item)
+    if (item.master != 0) {
+      data.master.department = res.id
+      await User.update(data.master)
+    }
   }
 
   //util.info('등록되었습니다')
@@ -523,6 +532,8 @@ async function clickSubmit() {
   await getItems()
 
   data.visible = false
+  data.departmentItem = tree
+  getUsers()
   util.loading(false)
   data.master = util.clone(user)
 }

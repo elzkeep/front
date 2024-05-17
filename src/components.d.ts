@@ -46,6 +46,7 @@ declare module 'vue' {
     FacilityInsert: typeof import('./components/management/FacilityInsert.vue')['default']
     Fuel: typeof import('./components/building/Fuel.vue')['default']
     Generator: typeof import('./components/building/Generator.vue')['default']
+    KakaoMap: typeof import('./components/kakao/KakaoMap.vue')['default']
     Low: typeof import('./components/report/Low.vue')['default']
     PageTitle: typeof import('./components/PageTitle.vue')['default']
     ReportInsert: typeof import('./components/management/ReportInsert.vue')['default']
