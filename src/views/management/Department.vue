@@ -32,7 +32,7 @@
         </el-descriptions-item>
       </el-descriptions>
 
-      <el-table :data="data.users" border :height="height(170)" ref="listRef">
+      <el-table :data="data.users" border style="width: 1150px" :height="height(170)" ref="listRef">
         <el-table-column prop="index" label="번호" width="100" align="center" />
         <el-table-column prop="name" label="이름" align="left" />
         <el-table-column label="직책/직급" align="left">
@@ -138,7 +138,7 @@
       <y-tr>
         <y-th>휴대폰번호</y-th>
         <y-td>
-          <el-input v-model="data.sns.to" />
+          <el-input type="tel" v-model="data.sns.to" maxlength="11" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -211,8 +211,8 @@ const user = {
 
 const sns = {
   to: '',
-  message: `지킴E 가입 URL\n팀명: \nURL: http://dev.zkeep.space/signup`,
-  url: 'http://dev.zkeep.space/signup',
+  message: `지킴E 가입 URL\n팀명: \nURL: https://app.zkeep.space/#/join/user`,
+  url: 'https://app.zkeep.space/#/join/user',
 }
 
 const data = reactive({
@@ -274,7 +274,7 @@ const filterNode = (value: string, data: Tree) => {
 
 const handleNodeClick = (tree: Tree) => {
   data.departmentItem = tree
-  data.sns.url = `http://dev.zkeep.space/signup?company=${data.departmentItem.company}&id=${data.departmentItem.id}`
+  data.sns.url = `https://app.zkeep.space/#/join/user?company=${data.departmentItem.company}&department=${data.departmentItem.id}`
   data.sns.message = `지킴E 가입 URL\n팀명: ${data.departmentItem.name}\nURL: ${data.sns.url}`
   if (data.departmentItem.id == 0) {
     return
@@ -331,6 +331,8 @@ async function getItems() {
 
   let item = { label: '', children: [] }
   item.id = 0
+  item.company = data.company.id
+  item.name = data.company.name
   item.label = data.company.name
   item.children = items
 
@@ -563,8 +565,9 @@ function clickCopyUrl() {
 
 async function clickSNS() {
   let result = /^(01[016789]{1})-[0-9]{3,4}-[0-9]{4}$/
-  if (!result.test(data.sns.to)) {
-    util.alert('휴대폰 번호를 정확하게 입력하세요 (-을 넣어서 입력하세요)')
+  let phoneNum = data.sns.to.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3')
+  if (!result.test(phoneNum)) {
+    util.alert('휴대폰 번호를 정확하게 입력하세요.')
     return
   }
   util.loading(true)
