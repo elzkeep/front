@@ -22,7 +22,7 @@
   </y-table>
 
   <div style="margin-top:10px;">
-    <span v-for="(item, index) in topcategorys"><el-button @click="clickTopcategory(index)" v-if="index != 0 && index != 13" style="margin-right:5px;">{{topcategorys[index]}}</el-button></span>
+    <span v-for="(item, index) in topcategorys"><el-button @click="clickTopcategory(index)" v-if="index != 0 && index != 13" style="margin-right:5px;margin-bottom:5px;">{{topcategorys[index]}}</el-button></span>
   </div>
 
 
@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted, watch } from "vue"
 import router from '~/router'
 import { util, size }  from "~/global"
 import { Report, Data, Item } from "~/models"
@@ -115,6 +115,9 @@ import { thermography } from './data/thermography'
 import { ups } from './data/ups'
 import { wind } from './data/wind'
 
+defineExpose({
+  readData
+})
 
 const { width, height } = size()
 
@@ -209,7 +212,6 @@ const form = reactive({
   topcategory: 0
 })
 
-
 async function clickSearch() {
   await getItems(true)
 }
@@ -227,14 +229,16 @@ async function getItems() {
 
 onMounted(async () => {
   data.session = store.getters['getUser']
-  data.id = util.getInt(route.params.id)
+  /*
+     data.id = util.getInt(route.params.id)
 
-  util.loading(true)
-  
-  await initData()
-  await getItems()
+     util.loading(true)
+     
+     await initData()
+     await getItems()
 
-  util.loading(false)
+     util.loading(false)
+   */
 })
 
 async function clickTopcategory(id) {
@@ -427,4 +431,14 @@ function clickCancel() {
   form.visible = false
 }
 
+async function readData(id) {
+  data.id = id
+
+  util.loading(true)
+  
+  await initData()
+  await getItems()
+
+  util.loading(false)    
+}
 </script>

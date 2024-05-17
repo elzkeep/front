@@ -98,4 +98,20 @@ export default class License {
 
     
 
+
+     static async deleteByUser(user) {
+        let item = {
+          user
+        }
+        
+        const res = await request({
+            method: 'DELETE',
+            url: '/api/license/byuser',
+            data: item
+        })
+
+        return res
+    }
+    
+
 }

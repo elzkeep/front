@@ -11,8 +11,9 @@
     <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
 
     <div style="flex: 1; text-align: right; gap: 5">
+      <el-button size="small" type="warning" @click="clickExcel" style="margin-right: -5px">엑셀</el-button>
       <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: -5px">삭제</el-button>
-      <el-button size="small" type="success" @click="clickInsert">등록</el-button>
+      <el-button size="small" type="success" @click="clickInsertSelect">등록</el-button>
       <el-button size="small" type="success" @click="clickApprovalManage">승인관리</el-button>
     </div>
   </div>
@@ -48,7 +49,7 @@
       </template>
     </el-table-column>
     <el-table-column label="점수" align="center" width="70">
-      <template #default="scope"> {{ scope.row.totalscore }} / {{ scope.row.score }} </template>
+      <template #default="scope"> {{ getTotalscore(scope.row.totalscore) }} / {{ scope.row.score }} </template>
     </el-table-column>
     <el-table-column label="등록일" align="center" width="140">
       <template #default="scope">
@@ -442,6 +443,70 @@
       <el-button size="small" type="primary" @click="clickApprovalRealOk">승인</el-button>
     </template>
   </el-dialog>
+
+
+  <el-dialog v-model="data.visibleSelect" width="400px">
+    <div style="margin-top: 20px" />
+    <el-button size="large" type="success" @click="clickInsert">단건 등록</el-button>
+    <el-button size="large" type="success" @click="clickMulti">일괄 등록</el-button>
+
+    <template #footer>
+      <el-button size="small" @click="data.visibleSelect = false">취소</el-button>
+    </template>
+  </el-dialog>
+
+
+  <el-dialog v-model="data.visibleMulti" width="800px">
+    <y-table>
+      <y-tr>
+        <y-th>*파일등록</y-th>
+        <y-td>
+          <el-row>
+            <el-col :span="12">
+              <el-text tag="b"> 설정대상 <br /><br /></el-text>
+              <el-text style="font-size: 12px">
+                A열 = 팀<br />
+                B열 = 로그인아이디<br />
+                C열 = 이름<br />
+                D열 = 이메일<br />
+                E열 = 연락처<br />
+                F열 = 주소<br />
+                G열 = 권한<br />
+                H열 = 상태<br />
+                I열 = 점수<br />
+                J열 = 등록일<br />
+              </el-text>
+            </el-col>
+            <el-col :span="12">
+              <div style="flex: 1; text-align: right; gap: 5">
+                <el-upload
+                  class="upload"
+                  :action="external.upload"
+                  :headers="headers"
+                  :show-file-list="true"
+                  :on-success="handleFileSuccess"
+                  :auto-upload="true"
+                  :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                  v-model:file-list="external.files"
+                  :limit="1"
+                >
+                  <template #trigger>
+                    <el-button type="success" style="margin-right: 10px"> 엑셀 등록 </el-button>
+                  </template>
+                  <el-button type="primary" @click="clickDownloadExcelExample"> 예제파일 다운로드 </el-button>
+                </el-upload>
+              </div>
+            </el-col>
+          </el-row>
+        </y-td>
+      </y-tr>
+    </y-table>
+    <template #footer>
+      <el-button size="small" @click="data.visibleMulti = false">취소</el-button>
+      <el-button size="small" type="primary" @click="clickMultiSubmit">등록</el-button>
+    </template>
+  </el-dialog>
+  
 </template>
 
 <script setup lang="ts">
@@ -449,6 +514,7 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
 import { User, Userlist, Company, Department, Customer, License } from '~/models'
+import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
@@ -458,6 +524,10 @@ const { width, height } = size()
 
 const store = useStore()
 const route = useRoute()
+
+const headers = {
+  Authorization: 'Bearer ' + store.state.token,
+}
 
 const model = User
 
@@ -496,6 +566,8 @@ const data = reactive({
   item: util.clone(item),
   visible: false,
   visibleView: false,
+  visibleSelect: false,
+  visibleMulti: false,
   search: {
     text: '',
     company: 0,
@@ -582,7 +654,7 @@ async function getItems(reset) {
     approval: 3,
     orderby: 'u_id',
   })
-
+  
   if (res.items == null) {
     res.items = []
   }
@@ -693,6 +765,8 @@ function clickApproval(item, index) {
 }
 
 function clickInsert() {
+  data.visibleSelect = false
+  
   if (data.session.level == User.level.rootadmin) {
     data.departments = []
   }
@@ -989,4 +1063,69 @@ function changeJoindate() {
   data.item.careeryear = year
   data.item.careermonth = month
 }
+
+function getTotalscore(value) {
+  if (value == 0 ) {
+    return 0
+  }
+
+  return value.toFixed(1)
+}
+
+function clickExcel() {
+  let url = '/api/download/user'
+  let filename = `소속회원-${moment().format('YYYY-MM-DD')}.xlsx`
+  util.download(store, url, filename)
+}
+
+function clickInsertSelect() {
+  data.visibleSelect = true
+}
+
+function clickMulti() {
+  data.visibleSelect = false
+  data.visibleMulti = true
+}
+
+async function clickMultiSubmit() {
+  util.loading(true)
+
+  let filename = external.files[0].response.filename
+  await Extra.user(filename)
+
+  data.visibleSelect = false
+  data.visibleMulti = false
+
+  util.alert('저장되었습니다')
+
+  await getItems(true)
+
+  util.loading(false)
+}
+
+function clickDownloadExcelExample() {
+  let url = '/api/download/userexample'
+  let filename = `소속회원.xlsx`
+  util.download(store, url, filename)
+}
+
+
+const external = reactive({
+  type: 1,
+  filename: '',
+  originalfilename: '',
+  upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
+  files: [],
+})
+
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+
+  console.log(response)
+  console.log(response.filename)
+  console.log(response.originalfilename)
+  external.filename = response.filename
+  external.originalfilename = response.originalfilename
+}
+
 </script>

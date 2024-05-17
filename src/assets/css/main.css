@@ -44,7 +44,7 @@ input {
   margin: 0 0;
   display: inline-block;
   outline: none;
-  bordre: none;
+  border: none;
 }
 input[type='text'],
 input[type='search'],

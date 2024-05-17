@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(300)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="청구대상 월" align="center" width="140">
       <template #default="scope">

@@ -707,6 +707,8 @@ async function initData() {
 
   res = await Extra.customerstatus(company)
 
+  console.log(res)
+  res.score = res.score.toFixed(1)
   data.status = res
 
   res = await Department.find({

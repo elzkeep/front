@@ -113,7 +113,7 @@
     v-model="data.visible"
     width="800px"
   >
-    <ReportInsert />
+    <ReportInsert ref="reportInsert" />
       <template #footer>
         <el-button size="small" @click="clickCancel">닫기</el-button>        
       </template>
@@ -179,7 +179,7 @@ const data = reactive({
   page: 1,
   pagesize: 0,
   item: util.clone(item),
-  visible: false,
+  visible: true,
   search: {
     company: 0,
     building: 0,
@@ -201,8 +201,11 @@ const data = reactive({
     {id: 2, name: '점검중'},
     {id: 3, name: '점검완료'},
     {id: 4, name: '작성완료'}
-  ]
+  ],
+  target: 0
 })
+
+const reportInsert = ref({})
 
 async function clickSearch() {
   await getItems(true)
@@ -224,12 +227,8 @@ async function initData() {
 
   let company = 0
 
-  if (data.session.level != User.level.rootadmin) {
-    company = data.session.company
-  }
-
   res = await User.find({
-    company: company,
+    company: data.sesion.company,
     orderby: 'u_name'
   })
 
@@ -265,17 +264,13 @@ async function initData() {
 }
 
 async function getItems() {
-  if (data.session.level != User.level.rootadmin) {
-    data.search.company = data.session.company
-  }
-
   let res = await model.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
-    user: data.search.user,
+    user: data.session.user,
     status: data.search.status,
     orderby: 'r_id desc'
   })
@@ -305,17 +300,20 @@ function clickInsert() {
 function clickUpdate(item, index) {
   //router.push(`/management/report/${item.id}`)
   data.visible = true
+  console.log(reportInsert.value)
+  reportInsert.value?.readData(item.id)
+  
 }
 
 onMounted(async () => {
+  data.visible = false
   data.session = store.getters['getUser']
 
   util.loading(true)
 
   await initData()
   await getItems(true)
-
-  data.visible = false
+  
   util.loading(false)
 })
 

@@ -32,7 +32,6 @@ import ManagementBuilding from '~/views/management/Building.vue'
 import ManagementCustomer from '~/views/management/Customer.vue'
 import ManagementBilling from '~/views/management/Billing.vue'
 import ManagementReport from '~/views/management/Report.vue'
-import ManagementReportview from '~/views/management/Reportview.vue'
 import ManagementStatistics from '~/views/management/Statistics.vue'
 import ManagementCustomercompany from '~/views/management/Customercompany.vue'
 import ManagementContract from '~/views/management/Contract.vue'
@@ -265,13 +264,7 @@ const routes = [
     name: 'Adminjoin',
     meta: { authorization: ['admin'] },
     component: AdminJoin,
-  },
-  {
-    path: '/management/report/:id',
-    name: 'ManagementReportview',
-    meta: { authorization: ['admin'] },
-    component: ManagementReportview,
-  }
+  }  
 ]
 
 const router = createRouter({
