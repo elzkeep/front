@@ -32,7 +32,7 @@
         </el-descriptions-item>
       </el-descriptions>
 
-      <el-table :data="data.users" border style="width: 1150px" :height="height(170)" ref="listRef">
+      <el-table :data="data.users" border style="width: 1150px" :height="height(235)" ref="listRef">
         <el-table-column prop="index" label="번호" width="100" align="center" />
         <el-table-column prop="name" label="이름" align="left" />
         <el-table-column label="직책/직급" align="left">

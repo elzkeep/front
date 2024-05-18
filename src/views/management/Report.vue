@@ -54,7 +54,7 @@
 
   <KakaoMap :positions="[[33.450701, 126.570667]]" style="margin-bottom: 30px" />
 
-  <el-table :data="data.items" border :height="height(245)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(858)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column prop="id" label="ID" align="center" width="80" />
     <el-table-column label="업체" align="left" width="200" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
