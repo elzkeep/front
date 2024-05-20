@@ -62,6 +62,9 @@
   <div style="margin-top: 10px; display: flex; justify-content: space-between">
     <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>
     <div style="display: flex; gap: 5px">
+      <el-button size="small" type="primary" @click="data.visibleMulti = true">일괄 데이터 등록</el-button>
+      
+      
       <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
       <el-upload
         :action="external.upload"
@@ -219,6 +222,39 @@
       <el-button size="small" type="primary" @click="clickDataSubmit">등록</el-button>
     </template>
   </el-dialog>
+
+<el-dialog v-model="data.visibleMulti" width="400px">
+    <y-table>
+      <y-tr>        
+        <y-td>
+          
+              <div style="margin-top:10px;flex: 1; justify-content:center; gap: 5; text-align:center;">
+                <el-upload
+                  class="upload"
+                  :action="external.upload"
+                  :headers="headers"
+                  :show-file-list="true"
+                  :on-success="handleFileSuccessTotal"
+                  :auto-upload="true"
+                  :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                  v-model:file-list="external.files"
+                  :limit="1"
+                >
+                  <template #trigger>
+                    <el-button type="success" style="margin-right: 10px"> 엑셀 등록 </el-button>
+                  </template>
+                  <el-button type="primary" @click="clickDownloadExcel"> 데이터 다운로드 </el-button>
+                </el-upload>
+              </div>
+          
+        </y-td>
+      </y-tr>
+    </y-table>
+    <template #footer>
+      <el-button size="small" @click="data.visibleMulti = false">취소</el-button>
+      <el-button size="small" type="primary" @click="clickMultiSubmit">등록</el-button>
+    </template>
+</el-dialog>  
 </template>
 
 <script setup lang="ts">
@@ -231,6 +267,7 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
 import type { UploadProps } from 'element-plus'
+import moment from 'moment'
 
 const { width, height } = size()
 
@@ -275,6 +312,7 @@ const data = reactive({
   pagesize: 0,
   item: util.clone(item),
   visible: false,
+  visibleMulti: false,
   search: {
     text: '',
     type: 0,
@@ -365,7 +403,7 @@ function clickDeleteMulti() {
 
 async function clickSubmit() {
   let item = util.clone(data.item)
-    
+  
   if (/^[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9][0-9]$/.test(item.companyno) == false) {
     alert('사업자번호 양식이 맞지 않습니다')
     return    
@@ -438,5 +476,25 @@ const handleFileSuccessUser: UploadProps['onSuccess'] = async (response, uploadF
   util.alert('저장되었습니다')
 
   util.loading(false)
+}
+
+const handleFileSuccessTotal: UploadProps['onSuccess'] = async (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+
+  util.loading(true)
+  await Extra.externalall(response.filename)
+  util.alert('저장되었습니다')
+
+  util.loading(false)
+}
+
+async function clickDownloadExcel() {  
+  let url = '/api/download/all'
+  let filename = `일괄데이터-${moment().format('YYYY-MM-DD')}.xlsx`
+  util.download(store, url, filename)
+}
+
+async function clickMultiSubmit() {
+  
 }
 </script>

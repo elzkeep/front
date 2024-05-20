@@ -287,6 +287,9 @@ router.beforeEach(function (to, from, next) {
 
   const level = store.getters['getLevel']
 
+  console.log(level)
+  console.log(authorization)
+
   if (authorization != undefined && !authorization.includes(level)) {
     next('/not-found')
 

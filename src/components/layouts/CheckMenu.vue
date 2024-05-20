@@ -203,7 +203,9 @@ onMounted(async () => {
   let res = await Company.get(store.getters['getUser'].company)
   data.companyName = res.item.name
   let res2 = await Department.get(store.getters['getUser'].department)
-  data.departmentName = res2.item.name
+  if (res2.item != null) {
+    data.departmentName = res2.item.name
+  }
   data.company = store.getters['getCompany']
 })
 

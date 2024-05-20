@@ -1,4 +1,4 @@
-<template>
+S<template>
   <Title title="소속회원 관리" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
@@ -611,26 +611,24 @@ async function initData() {
 
   data.companys = [{ id: 0, name: ' ' }, ...res.items]
 
-  if (data.session.level != User.level.rootadmin) {
-    let res = await Department.find({
-      page: 0,
-      pagesize: data.pagesize,
-      company: data.session.company,
-      orderby: 'de_order,de_name',
-    })
+  res = await Department.find({
+    page: 0,
+    pagesize: data.pagesize,
+    company: data.session.company,
+    orderby: 'de_order,de_name',
+  })
 
-    let ress = await Company.get(data.session.company)
-    data.company = ress.item
+  let ress = await Company.get(data.session.company)
+  data.company = ress.item
 
-    data.departments = [{ id: 0, name: data.company.name }, ...res.items]
+  data.departments = [{ id: 0, name: data.company.name }, ...res.items]
 
-    data.levels = [
-      { id: 0, name: ' ' },
-      { id: 1, name: '일반' },
-      { id: 2, name: '팀장' },
-      { id: 3, name: '관리자' },
-    ]
-  }
+  data.levels = [
+    { id: 0, name: ' ' },
+    { id: 1, name: '일반' },
+    { id: 2, name: '팀장' },
+    { id: 3, name: '관리자' },
+  ]
 }
 
 async function getItems(reset) {

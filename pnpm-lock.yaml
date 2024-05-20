@@ -42,8 +42,8 @@ dependencies:
     specifier: ^0.26.1
     version: 0.26.1
   element-plus:
-    specifier: ^2.6.2
-    version: 2.6.3(vue@3.4.21)
+    specifier: ^2.7.2
+    version: 2.7.3(vue@3.4.21)
   less:
     specifier: ^4.1.3
     version: 4.2.0
@@ -1338,8 +1338,8 @@ packages:
       domhandler: 4.3.1
     dev: true
 
-  /element-plus@2.6.3(vue@3.4.21):
-    resolution: {integrity: sha512-U4L/mr+1r+EmAUYUHrs0V/8hHMdBGP07rPymSC72LZCN4jK1UwygQYICegTQ5us4mxeqBvW6wfoEfo003fwCqw==}
+  /element-plus@2.7.3(vue@3.4.21):
+    resolution: {integrity: sha512-OaqY1kQ2xzNyRFyge3fzM7jqMwux+464RBEqd+ybRV9xPiGxtgnj/sVK4iEbnKnzQIa9XK03DOIFzoToUhu1DA==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
