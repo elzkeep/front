@@ -9,7 +9,7 @@
     <y-tr>
       <y-th>출력전압</y-th>
       <y-td>
-        <el-select v-model="data.item.value2" placeholder="" style="width: 150px">
+        <el-select size="small" v-model="data.item.value2" placeholder="" style="width: 150px">
           <el-option v-for="item in data.volts" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
 
@@ -20,7 +20,16 @@
       <y-th>정격용량</y-th>
       <y-td> <el-input v-model="data.item.value4" style="width: 50px" /> kW </y-td>
     </y-tr>
-    <y-tr>
+        <y-tr>
+      <y-th>형태</y-th>
+      <y-td>
+        <el-radio-group v-model="data.item.type">
+          <el-radio-button size="small" value="1">저압</el-radio-button>
+          <el-radio-button size="small" value="2">특고압</el-radio-button>
+        </el-radio-group>
+      </y-td>
+        </y-tr>
+        <y-tr>
       <y-th>입력전압</y-th>
       <y-td> 최소 <el-input v-model="data.item.value5" style="width: 50px" /> V ~ 최대 <el-input v-model="data.item.value6" style="width: 50px" /> V </y-td>
     </y-tr>
@@ -52,7 +61,7 @@
     <y-tr>
       <y-th>종류</y-th>
       <y-td>
-        <el-select v-model="data.item.value12" placeholder="" style="width: 150px">
+        <el-select size="small" v-model="data.item.value12" placeholder="" style="width: 150px">
           <el-option v-for="item in data.types" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
 
@@ -123,6 +132,7 @@ const category = 50;
 
 const item = {
   id: 0,
+  type: 1,
   value1: "",
   value2: "",
   value3: "",

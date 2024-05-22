@@ -17,7 +17,7 @@
             </y-td>
             <y-th style="width:100px;">사용가스</y-th>
             <y-td>
-              <el-select v-model="data.items[index].value2" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value2" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.gass"
                   :key="item.id"
@@ -40,8 +40,15 @@
             </y-td>
           </y-tr>
           <y-tr>
+            <y-th>형태</y-th>
+            <y-td>
+              <el-radio-group v-model="data.items[index].type">
+                <el-radio-button size="small" value="1">저압</el-radio-button>
+                <el-radio-button size="small" value="2">특고압</el-radio-button>
+              </el-radio-group>
+            </y-td>
             <y-th>가스입력범위</y-th>
-            <y-td colspan="3">
+            <y-td>
               최소 <el-input v-model="data.items[index].value6" style="width:50px;" /> pPa ~ 최대 <el-input v-model="data.items[index].value7" style="width:50px;" /> kPa
             </y-td>
           </y-tr>
@@ -68,7 +75,7 @@
           <y-tr>
             <y-th>계통연계</y-th>
             <y-td>
-              <el-select v-model="data.items[index].value12" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value12" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.types"
                   :key="item.id"
@@ -80,7 +87,7 @@
             </y-td>
             <y-th>설치위치</y-th>
             <y-td>
-              <el-select v-model="data.items[index].value13" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value13" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.positions"
                   :key="item.id"
@@ -160,6 +167,7 @@ const category = 70
 
 const item = {
   id: 0,
+  type: 1,
   value1: '',
   value2: '',
   value3: '',

@@ -9,7 +9,27 @@
     </y-tr>
     <y-tr v-for="(item, index) in data.items">
       <y-td>
-        <el-input v-model="data.items[index].name" />
+        
+
+        <y-table>
+          <y-tr>
+            <y-th style="width:70px;">명칭</y-th>
+            <y-td>
+              <el-input v-model="data.items[index].name" />
+            </y-td>
+          </y-tr>
+          <y-tr>
+            <y-th>형태</y-th>
+            <y-td>
+              <el-radio-group v-model="data.items[index].type">
+                <el-radio-button size="small" value="1">저압</el-radio-button>
+                <el-radio-button size="small" value="2">특고압</el-radio-button>
+              </el-radio-group>
+            </y-td>
+          </y-tr>
+        </y-table>
+        
+      
       </y-td>
       <y-td>
         <y-table>
@@ -40,7 +60,7 @@
           <y-tr>
             <y-th>냉각방식</y-th>
             <y-td>
-              <el-select v-model="data.items[index].value8" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value8" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.coolings"
                   :key="item.id"
@@ -53,7 +73,7 @@
           <y-tr>
             <y-th>기동방식</y-th>
             <y-td>
-              <el-select v-model="data.items[index].value9" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value9" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.activations"
                   :key="item.id"
@@ -66,7 +86,7 @@
           <y-tr>
             <y-th>차단기종류</y-th>
             <y-td>
-              <el-select v-model="data.items[index].value10" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value10" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.types"
                   :key="item.id"
@@ -168,6 +188,7 @@ const category = 20
 
 const item = {
   id: 0,
+  type: 1,
   value1: '',
   value2: '',
   value3: '',

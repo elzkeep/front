@@ -23,7 +23,7 @@
             <y-th style="width:100px;">설치장소</y-th>
             <y-td>
               
-              <el-select v-model="data.items[index].value1" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value1" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.positions"
                   :key="item.id"
@@ -39,7 +39,7 @@
             <y-th style="width:100px;">CCTV</y-th>
             <y-td>
               
-              <el-select v-model="data.items[index].value3" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value3" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.cctvs"
                   :key="item.id"
@@ -53,7 +53,7 @@
             <y-th style="width:100px;">상시운영정보 보관기간</y-th>
             <y-td>
               
-              <el-select v-model="data.items[index].value4" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value4" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.keeps"
                   :key="item.id"
@@ -69,7 +69,7 @@
             <y-th style="width:100px;">용도</y-th>
             <y-td>
               
-              <el-select v-model="data.items[index].value6" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value6" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.usages"
                   :key="item.id"
@@ -85,7 +85,7 @@
             <y-th style="width:100px;">방식</y-th>
             <y-td>
               
-              <el-select v-model="data.items[index].value8" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value8" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.types"
                   :key="item.id"
@@ -99,7 +99,7 @@
             <y-th style="width:100px;">비상전원공급 공급시간</y-th>
             <y-td>
               
-              <el-select v-model="data.items[index].value9" placeholder="" style="width:150px;">
+              <el-select size="small" v-model="data.items[index].value9" placeholder="" style="width:150px;">
                 <el-option
                   v-for="item in data.times"
                   :key="item.id"
@@ -128,6 +128,15 @@
             </y-td>
           </y-tr>
           <y-tr>
+            <y-th>형태</y-th>
+            <y-td>
+              <el-radio-group v-model="data.items[index].type">
+                <el-radio-button size="small" value="1">저압</el-radio-button>
+                <el-radio-button size="small" value="2">특고압</el-radio-button>
+              </el-radio-group>
+            </y-td>
+          </y-tr>
+              <y-tr>
             <y-th>제조사</y-th>
             <y-td colspan="3">
               <el-input v-model="data.items[index].value13" />
@@ -217,6 +226,7 @@ const category = 60
 
 const item = {
   id: 0,
+  type: 1,
   name: '',
   value1: '',
   value2: '',

@@ -79,6 +79,15 @@
             </y-td>
           </y-tr>
           <y-tr>
+            <y-th>형태</y-th>
+            <y-td colspan="3">
+              <el-radio-group v-model="data.items[index].type">
+                <el-radio-button size="small" value="1">저압</el-radio-button>
+                <el-radio-button size="small" value="2">특고압</el-radio-button>
+              </el-radio-group>
+            </y-td>
+          </y-tr>
+          <y-tr>
             <y-th>제조사</y-th>
             <y-td colspan="3">
               <el-input v-model="data.items[index].value14" />
@@ -171,6 +180,7 @@ const category = 80
 
 const item = {
   id: 0,
+  type: 1,
   value1: '',
   value2: '',
   value3: '',
