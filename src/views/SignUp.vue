@@ -19,16 +19,16 @@
           <el-input v-model="item.passwd2" placeholder="비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.tel" placeholder="전화번호를 입력하세요." style="width: 400px; height: 40px" />
+          <el-input v-model="item.tel" placeholder="대표 전화번호를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.email" placeholder="이메일를 입력하세요." style="width: 400px; height: 40px" />
+          <el-input v-model="item.email" placeholder="대표 이메일를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
           <el-input v-model="item.companyno" placeholder="사업자번호를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.companyname" placeholder="사업장명를 입력하세요." style="width: 400px; height: 40px" />
+          <el-input v-model="item.companyname" placeholder="사업자명를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
           <el-input v-model="item.ceo" placeholder="대표자명를 입력하세요." style="width: 400px; height: 40px" />
