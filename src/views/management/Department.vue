@@ -272,14 +272,48 @@ const filterNode = (value: string, data: Tree) => {
   return data.label.includes(value)
 }
 
-const handleNodeClick = (tree: Tree) => {
+const handleNodeClick = async (tree: Tree) => {
   data.departmentItem = tree
   data.sns.url = `https://app.zkeep.space/#/join/user?company=${data.departmentItem.company}&department=${data.departmentItem.id}`
   data.sns.message = `지킴E 가입 URL\n팀명: ${data.departmentItem.name}\nURL: ${data.sns.url}`
   if (data.departmentItem.id == 0) {
     return
   }
-  getUsers()
+  getDepartmentUsers(tree)
+}
+
+async function getDepartmentUsers(tree) {
+  data.userTotal = 0
+  data.users = []
+  await dfs(tree)
+  masterFirst(tree)
+}
+
+async function dfs(tree) {
+  await getUsers(tree.id)
+  for (var child of tree.children) {
+    dfs(child)
+  }
+}
+
+function masterFirst(tree) {
+  if (tree.master != 0) {
+    let targetItem
+    for (let i = 0; i < data.users.length; i++) {
+      if (data.users[i]['id'] == tree.master) {
+        targetItem = data.users.splice(i, 1)[0]
+        break
+      }
+    }
+
+    if (targetItem != null) {
+      data.users.unshift(targetItem)
+    }
+
+    for (let i = 0; i < data.users.length; i++) {
+      data.users[i].index = i + 1
+    }
+  }
 }
 
 async function initData() {
@@ -349,12 +383,12 @@ async function getItems() {
   data.departmentItem = util.clone(item)
 }
 
-async function getUsers() {
+async function getUsers(departmentId) {
   let res = await User.find({
     page: data.userpage,
     pagesize: data.userpagesize,
     company: data.session.company,
-    department: data.departmentItem.id,
+    department: departmentId,
     approval: 3,
     status: 1,
     orderby: 'u_id desc',
@@ -368,12 +402,12 @@ async function getUsers() {
 
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
-    item.index = i + 1
+    item.index = data.users.length + i + 1
     items.push(item)
   }
 
-  data.userTotal = res.total
-  data.users = items
+  data.userTotal += res.total
+  data.users = data.users.concat(items)
 }
 
 async function getMasters(reset) {
@@ -533,7 +567,9 @@ async function clickSubmit() {
 
   data.visible = false
   data.departmentItem = tree
-  getUsers()
+  data.userTotal = 0
+  data.users = []
+  getUsers(data.departmentItem.id)
   util.loading(false)
   data.master = util.clone(user)
 }
@@ -560,6 +596,7 @@ function clickSubmitMaster() {
   data.master = data.dummyMaster
   data.visibleMaster = false
   data.dummyMaster = util.clone(user)
+  getDepartmentUsers(data.departmentItem)
 }
 
 function clickCopyUrl() {
