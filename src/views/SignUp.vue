@@ -5,8 +5,7 @@
         <h1 style="display: flex; justify-content: center">여러분의 안전,</h1>
       </div>
       <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px">
-        <h2><img alt="zkeep" src="../assets/logo.png" /></h2>
-        <h1 style="font-weight: bold">지킴E</h1>
+        <img alt="zkeep" src="../assets/logo.svg" />
         <h1>에 오신걸 환영합니다.</h1>
       </div>
       <div>

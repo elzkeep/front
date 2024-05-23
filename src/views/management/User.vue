@@ -884,84 +884,50 @@ function clickDeleteMulti() {
 
 async function clickSubmit() {
   let item = util.clone(data.item)
+  
+  item.company = data.session.company
 
-  if (data.session.level == User.level.rootadmin) {
-    if (item.company == 0) {
-      util.alert('업체를 선택하세요')
+  if (item.status == 1) {
+    if (item.department == 0) {
+      util.alert('팀을 선택하세요')
       return
     }
-  } else {
-    item.company = data.session.company
-  }
 
-  if (item.department == 0) {
-    util.alert('팀을 선택하세요')
-    return
-  }
+    if (item.loginid == '') {
+      util.alert('로그인아이디를 입력하세요')
+      return
+    }
 
-  if (item.loginid == '') {
-    util.alert('로그인아이디를 입력하세요')
-    return
-  }
+    let res = await User.find({ loginid: item.loginid })
+    if ((item.id == 0 && res.items.length > 0) || (item.id != 0 && res.items.length > 1)) {
+      util.alert('이미 등록된 로그인아이디 입니다')
+      return
+    }
 
-  let res = await User.find({ loginid: item.loginid })
-  if ((item.id == 0 && res.items.length > 0) || (item.id != 0 && res.items.length > 1)) {
-    util.alert('이미 등록된 로그인아이디 입니다')
-    return
-  }
+    if (item.passwd == '') {
+      util.alert('비밀번호를 입력하세요')
+      return
+    }
 
-  if (item.passwd == '') {
-    util.alert('비밀번호를 입력하세요')
-    return
-  }
+    if (item.passwd2 == '') {
+      util.alert('비밀번호를 입력하세요')
+      return
+    }
 
-  if (item.passwd2 == '') {
-    util.alert('비밀번호를 입력하세요')
-    return
-  }
+    if (item.name == '') {
+      util.alert('이름을 입력하세요')
+      return
+    }
 
-  if (item.name == '') {
-    util.alert('이름을 입력하세요')
-    return
-  }
+    if (item.passwd != item.passwd2) {
+      util.alert('비밀번호가 정확하지 않습니다')
+      return
+    }
 
-  /*
-     if (item.email == '') {
-     util.alert('이메일을 입력하세요')
-     return
-     }
-
-     if (item.tel == '') {
-     util.alert('연락처를 입력하세요')
-     return
-     }
-
-     if (item.address == '') {
-     util.alert('주소를 입력하세요')
-     return
-     }
-
-     if (item.address == '') {
-     util.alert('주소를 입력하세요')
-     return
-     }
-   */
-
-  if (item.passwd != item.passwd2) {
-    util.alert('비밀번호가 정확하지 않습니다')
-    return
-  }
-
-  /*
-     if (item.joindate == '') {
-     util.alert('입사일을 입력하세요')
-     return
-     }
-   */
-
-  if (item.level == 0) {
-    util.alert('권한을 선택하세요')
-    return
+    if (item.level == 0) {
+      util.alert('권한을 선택하세요')
+      return
+    }
   }
 
   util.loading(true)

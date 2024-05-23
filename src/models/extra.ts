@@ -146,9 +146,13 @@ export default class Extra {
     }
 
     static async score(id: number) {
+        const item = {
+            id: id
+        }
         const res = await request({
             method: 'POST',
-            url: `/api/building/score/${id}`            
+            url: `/api/building/score`,
+            data: item
         })
 
         return res

@@ -81,7 +81,12 @@
     </el-table-column>
     <el-table-column label="계약용량" align="right" width="70">
       <template #default="scope">
-        {{ scope.row.extra.building.totalweight }}
+        <span v-if="scope.row.status == 1">{{ scope.row.extra.building.totalweight }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="관리점수" align="right" width="70">
+      <template #default="scope">
+        <span v-if="scope.row.status == 1">{{ scope.row.extra.building.score.toFixed(1) }}</span>
       </template>
     </el-table-column>
     <el-table-column label="계약금액" align="right" width="80">
@@ -217,7 +222,32 @@
           </el-select>          
           &nbsp;&nbsp;&nbsp;<span v-if="data.building.companyno != ''">사업자번호 : {{data.building.companyno}}</span>
         </y-td>
-      </y-tr>      
+      </y-tr>
+
+      <y-tr>
+        <y-th>계약형태</y-th>
+        <y-td>
+          <el-radio-group v-model.number="data.item.contracttype">
+            <el-radio-button size="small" value="1">안전관리</el-radio-button>
+            <el-radio-button size="small" value="2">유지보수</el-radio-button>
+            <el-radio-button size="small" value="3">안전관리 + 유지보수</el-radio-button>
+          </el-radio-group>
+        </y-td>
+      </y-tr>
+
+      
+      <y-tr v-if="data.item.contracttype != 2">
+        <y-th>한전 고객번호</y-th>
+        <y-td>
+          <el-input v-model="data.item.kepconumber" />
+        </y-td>
+      </y-tr>
+      <y-tr v-if="data.item.contracttype != 2">
+        <y-th>안전공사 고객번호</y-th>
+        <y-td>
+          <el-input v-model="data.item.kesconumber" />
+        </y-td>
+      </y-tr>
       <y-tr>
         <y-th>점검일</y-th>
         <y-td> 매월 <el-input v-model="data.item.companyno" style="width: 50px" /> 일 </y-td>
@@ -254,8 +284,9 @@
         <y-td> <el-input v-model="data.item.contractprice" style="width: 100px" /> 원, VAT <el-input v-model="data.item.contractvat" style="width: 100px" /> 원 </y-td>
       </y-tr>
 
+      
       <y-tr>
-        <y-th>관리형태</y-th>
+        <y-th>청구형태</y-th>
         <y-td>
           <el-radio-group v-model.number="data.item.billingtype">
             <el-radio-button size="small" value="1">지로</el-radio-button>
@@ -536,6 +567,8 @@ const model = Customer
 const item = {
   id: 0,
   number: 0,
+  kepconumber: '',
+  kesconumber: '',
   type: Customer.type.outsourcing,
   checkdate: 1,
   managername: '',
@@ -544,6 +577,7 @@ const item = {
   contractstartdate: null,
   contractendate: null,
   contractprice: 0,
+  contracttype: 1,
   billingdate: 1,
   billingname: '',
   billingtel: '',
@@ -987,8 +1021,57 @@ async function clickSubmit() {
 
   item.contractprice = util.getInt(item.contractprice)
   item.contractday = util.getInt(item.contractday)
+  item.contracttype = util.getInt(item.contracttype)
 
   item.status = util.getInt(item.status)
+  
+  if ((item.kepconumber != '' || item.kesconumber != '') && item.contracttype != 2) {
+    let res = await model.find({
+    })
+
+    let flag = true
+    let flag2 = true
+    
+    for (let i = 0; i < res.items.length; i++) {
+      let d = res.items[i]
+
+      if (d.kepconumber == item.kepconumber) {
+        if (item.id > 0) {
+          if (d.id != item.id) {
+            flag = false
+            break
+          }
+        } else {
+          flag = false
+          break
+        }
+      }
+
+      if (d.kesconumber == item.kesconumber) {
+        if (item.id > 0) {
+          if (d.id != item.id) {
+            flag2 = false
+            break
+          }
+        } else {
+          flag2 = false
+          break
+        }
+      }
+    }
+
+    if (flag == false) {
+      util.alert('이미 등록된 한전 고객번호입니다')
+      util.loading(false)
+      return
+    }
+
+    if (flag2 == false) {
+      util.alert('이미 등록된 안전공사 고객번호입니다')
+      util.loading(false)
+      return
+    }
+  }
 
   if (item.id > 0) {
     await model.update(item)
@@ -1199,9 +1282,9 @@ function clickDownloadExcelExample() {
 function getCompanyInfo(item) {
   if (item.id == 0) {
     return ''
-  }
-  
-  return `${item.name} (${item.companyno})`
+}
+    
+    return `${item.name} (${item.companyno})`
 }
 
 async function clickInspectorSave() {

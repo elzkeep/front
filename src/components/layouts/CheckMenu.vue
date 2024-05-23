@@ -6,8 +6,7 @@
         <div :class="{ profile: !store.getters['getNav'] }" class="hiden">
           <div class="profile-top">
             <div class="profile-logo">
-              <img src="../../assets/logo.png" width="19" height="19" />
-              <span class="hiden">지킴</span>
+              <img src="../../assets/logo.svg" />
             </div>
             <div class="profile-icon" @click="store.commit('setNav')"><img class="side-icon" alt="menu" src="../../assets/icon/menu.svg" /></div>
           </div>

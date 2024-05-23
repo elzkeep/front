@@ -23,7 +23,8 @@
 
             <el-input v-model="data.item.value4" style="margin-left: 5px; width: 100px" v-if="data.item.value3 == '4'" />
           </div>
-          <el-button size="small" class="filter-item" type="success" @click="clickRead">수배전설비와 동일</el-button>
+
+          <el-checkbox v-model="data.item.value25" label="수배전설비와 동일" size="small" />
         </div>
       </y-td>
     </y-tr>
@@ -147,6 +148,7 @@ const item = {
   value18: "",
   value19: "",
   value20: "",
+  value25: false,
   building: 0,
 };
 
@@ -186,6 +188,11 @@ async function getItems() {
   });
 
   if (res.items.length > 0) {
+    if (res.items[0].value25 == 1) {
+      res.items[0].value25 = true
+    } else {
+      res.items[0].value25 = false
+    }
     data.item = res.items[0];
   } else {
     res = await Building.get(data.id);
@@ -235,6 +242,12 @@ async function clickSubmit() {
   item.building = data.id;
   item.category = category;
 
+  if (item.value25 == true) {
+    item.value25 = 1
+  } else {
+    item.value25 = 0
+  }
+  
   if (item.id > 0) {
     await model.update(item);
   } else {
@@ -283,6 +296,7 @@ function changeValue() {
   data.total = total;
 }
 
+/*
 async function clickRead() {
   let res = await model.find({
     building: data.id,
@@ -307,4 +321,5 @@ async function clickRead() {
     data.item.value4 = item.value6;
   }
 }
+*/
 </script>
