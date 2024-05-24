@@ -16,13 +16,7 @@
           <el-input v-model="item.passwd" placeholder="비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
-          <el-input v-model="item.passwd2" placeholder="비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
-        </div>
-        <div style="margin-bottom: 10px">
-          <el-input v-model="item.tel" placeholder="대표 전화번호를 입력하세요." style="width: 400px; height: 40px" />
-        </div>
-        <div style="margin-bottom: 10px">
-          <el-input v-model="item.email" placeholder="대표 이메일를 입력하세요." style="width: 400px; height: 40px" />
+          <el-input v-model="item.passwd2" placeholder="한번 더 비밀번호를 입력하세요." show-password style="width: 400px; height: 40px" />
         </div>
         <div style="margin-bottom: 10px">
           <el-input v-model="item.companyno" placeholder="사업자번호를 입력하세요." style="width: 400px; height: 40px" />
@@ -38,6 +32,12 @@
         </div>
         <div style="margin-bottom: 10px">
           <el-input v-model="item.addressetc" placeholder="상세주소를 입력하세요." style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.tel" placeholder="대표 전화번호를 입력하세요." style="width: 400px; height: 40px" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="item.email" placeholder="대표 이메일를 입력하세요." style="width: 400px; height: 40px" />
         </div>
         <button style="width: 400px; height: 40px; background-color: #ee5f39; color: white" @click="clickSignup">가입신청 완료</button>
       </div>
