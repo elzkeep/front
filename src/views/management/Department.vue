@@ -12,6 +12,16 @@
         :filter-node-method="filterNode"
         :expand-on-click-node="false"
         @node-click="handleNodeClick"
+        draggable
+        node-key="id"
+        :allow-drop="allowDrop"
+        :allow-drag="allowDrag"
+        @node-drag-start="handleDragStart"
+        @node-drag-enter="handleDragEnter"
+        @node-drag-leave="handleDragLeave"
+        @node-drag-over="handleDragOver"
+        @node-drag-end="handleDragEnd"
+        @node-drop="handleDrop"
       />
     </div>
 
@@ -165,6 +175,8 @@ import { useRoute } from 'vue-router'
 import { ElTable, ElTree } from 'element-plus'
 import Sns from '~/models/sns'
 import Extra from '~/models/extra'
+import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
+import type { AllowDropType, NodeDropType } from 'element-plus/es/components/tree/src/tree.type'
 
 interface Tree {
   [key: string]: any
@@ -280,6 +292,54 @@ const handleNodeClick = async (tree: Tree) => {
     return
   }
   getDepartmentUsers(tree)
+}
+
+const handleDragStart = (node: Node, ev: DragEvents) => {
+  // console.log('drag start', node)
+}
+const handleDragEnter = (draggingNode: Node, dropNode: Node, ev: DragEvents) => {
+  // console.log('tree drag enter:', dropNode.label)
+}
+const handleDragLeave = (draggingNode: Node, dropNode: Node, ev: DragEvents) => {
+  // console.log('tree drag leave:', dropNode.label)
+}
+const handleDragOver = (draggingNode: Node, dropNode: Node, ev: DragEvents) => {
+  // console.log('tree drag over:', dropNode.label)
+}
+const handleDragEnd = async (draggingNode: Node, dropNode: Node, dropType: NodeDropType, ev: DragEvents) => {
+  // console.log('tree drag end:', dropNode && dropNode.label, dropType)
+  // console.log('tree drag end:', dropNode)
+  // console.log(draggingNode.data)
+  // console.log(dropNode.data)
+  let item = draggingNode.data
+  if (dropType == 'before' || dropType == 'after') {
+    item.parent = dropNode.data.parent
+    for (let i = 0; i < dropNode.parent.data.children.length; i++) {
+      dropNode.parent.data.children[i].order = i + 1
+      await model.update(dropNode.parent.data.children[i])
+    }
+  } else {
+    item.parent = dropNode.data.id
+    item.order = dropNode.data.children.length
+    await model.update(item)
+  }
+}
+const handleDrop = (draggingNode: Node, dropNode: Node, dropType: NodeDropType, ev: DragEvents) => {
+  // console.log('tree drop:', dropNode.label, dropType)
+}
+const allowDrop = (draggingNode: Node, dropNode: Node, type: AllowDropType) => {
+  if (draggingNode.data.status !== dropNode.data.status) {
+    return false
+  } else {
+    return true
+  }
+}
+const allowDrag = (draggingNode: Node) => {
+  if (draggingNode.data.id == 0) {
+    return false
+  } else {
+    return true
+  }
 }
 
 async function getDepartmentUsers(tree) {
