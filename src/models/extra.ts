@@ -33,15 +33,27 @@ export default class Extra {
         return res
     }
 
-    static async externalall(filename: string) {
+    static async externalall(category: number, filename: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/external/all/${filename}`
+            url: `/api/external/all/${category}?filename=${filename}`
         })
 
         return res
     }
 
+    static async externalgiro(filename: any) {
+        const res = await request({
+            method: 'POST',
+            url: `/api/external/giro`,
+            data: {
+                filename: filename
+            }
+        })
+
+        return res
+    }
+    
     static async company(filename: string) {
         const res = await request({
             method: 'GET',

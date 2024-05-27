@@ -1,13 +1,13 @@
 import request from '~/global/request'
 
-export default class Licenselevel {
+export default class Giro {
         
     
     
     static async insert(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/licenselevel',
+            url: '/api/giro',
             data: item
         })
 
@@ -17,7 +17,7 @@ export default class Licenselevel {
     static async insertbatch(item: any) {
         const res = await request({
             method: 'POST',
-            url: '/api/licenselevel/batch',
+            url: '/api/giro/batch',
             data: item
         })
 
@@ -27,7 +27,7 @@ export default class Licenselevel {
     static async update(item: any) {
         const res = await request({
             method: 'PUT',
-            url: '/api/licenselevel',
+            url: '/api/giro',
             data: item
         })
 
@@ -37,7 +37,7 @@ export default class Licenselevel {
     static async remove(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/licenselevel',
+            url: '/api/giro',
             data: item
         })
 
@@ -47,7 +47,7 @@ export default class Licenselevel {
     static async removebatch(item: any) {
         const res = await request({
             method: 'DELETE',
-            url: '/api/licenselevel/batch',
+            url: '/api/giro/batch',
             data: item
         })
 
@@ -57,7 +57,7 @@ export default class Licenselevel {
     static async find(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/licenselevel',
+            url: '/api/giro',
             params: params
         })
 
@@ -70,7 +70,7 @@ export default class Licenselevel {
     static async count(params: any) {
         const res = await request({
             method: 'GET',
-            url: '/api/licenselevel/count',
+            url: '/api/giro/count',
             params: params
         })
         
@@ -80,7 +80,7 @@ export default class Licenselevel {
     static async get(id: number) {
         const res = await request({
             method: 'GET',
-            url: `/api/licenselevel/${id}`
+            url: `/api/giro/${id}`
         })
 
         return res
@@ -89,13 +89,11 @@ export default class Licenselevel {
     static async sum(params: string) {
         const res = await request({
             method: 'GET',
-            url: `/api/licenselevel/sum?${params}`
+            url: `/api/giro/sum?${params}`
         })
 
         return res
     }
 
-
-    
 
 }

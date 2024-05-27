@@ -54,7 +54,7 @@
       </li>
       <li class="tab">
         <router-link class="tab-title" :to="{ name: 'ManagementCompanylicene' }">
-          <h2 :class="isMenuActive('ManagementCompanylicene') ? 'tab-tit' : 'tab-subtit'">보유먼허 관리</h2>
+          <h2 :class="isMenuActive('ManagementCompanylicene') ? 'tab-tit' : 'tab-subtit'">보유면허 관리</h2>
         </router-link>
       </li>
       <li class="tab">

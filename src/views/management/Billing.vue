@@ -56,9 +56,10 @@
     <div style="flex: 1; text-align: right; gap: 5">
       <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: 20px">삭제</el-button>
       <el-button size="small" type="primary" @click="clickSetting" style="margin-right: 20px">출력설정</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">미수금</el-button>
-      <el-button size="small" type="success" @click="clickStatusMulti(2)" style="margin-right: -5px">수금</el-button>
-      <el-button size="small" type="success" @click="clickGiroMulti">지로발행</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">미수금 처리</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(2)">수금 처리</el-button>
+      <el-button size="small" type="primary" @click="clickGiroMultiInput" style="margin-right: -5px">e지로 업로드</el-button>
+      <el-button size="small" type="primary" @click="clickGiroMulti">지로발행</el-button>
     </div>
   </div>
 
@@ -172,6 +173,25 @@
       <el-button size="small" type="primary" @click="clickSubmitSetting">등록</el-button>
     </template>
   </el-dialog>
+
+  <el-dialog v-model="data.visibleGiro" width="800px">
+    <el-upload
+      :action="data.upload"
+      :headers="headers"
+      :multiple="true"
+      :show-file-list="true"
+      :on-success="handleFileSuccess"
+      :auto-upload="true"
+      v-model:file-list="data.files"
+    >
+      <el-button size="small" type="success">지로 수금 파일 업로드</el-button>
+    </el-upload>
+    <template #footer>
+      <el-button size="small" @click="clickCancelGiro">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitGiro">등록</el-button>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script setup lang="ts">
@@ -190,6 +210,10 @@ const { width, height } = size()
 
 const store = useStore()
 const route = useRoute()
+
+const headers = {
+  Authorization: 'Bearer ' + store.state.token,
+}
 
 const model = Billinglist
 
@@ -217,6 +241,7 @@ const data = reactive({
   item: util.clone(item),
   visible: false,
   visibleSetting: false,
+  visibleGiro: false,
   search: {
     company: 0,
     building: 0,
@@ -237,7 +262,9 @@ const data = reactive({
     { id: 1, name: '기간별' },
     { id: 2, name: '연도별' },
     { id: 3, name: '월별' }
-  ]
+  ],
+  upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
+  files: []
 })
 
 const setting = reactive({
@@ -529,12 +556,14 @@ async function clickSubmitSetting() {
   util.loading(true)
 
   let res = await Company.get(data.session.company)
-  let item = util.clone(res.item)
+  let item = util.clone(res.item)  
 
   for (let i = 1; i <= 13; i++) {
     item[`x${i}`] = util.getFloat(setting[`x${i}`])
     item[`y${i}`] = util.getFloat(setting[`y${i}`])
   }
+
+  item.content = setting.content
 
   await Company.update(item)
 
@@ -557,4 +586,35 @@ async function changeCompany(item) {
   
   data.search.building = 0  
 }
+
+async function clickGiroMultiInput() {
+  data.files = []
+  data.visibleGiro = true
+}
+
+function clickCancelGiro() {
+  data.visibleGiro = false  
+}
+
+async function clickSubmitGiro() {
+  util.loading(true)
+
+  let filenames = data.files.map(item => item.response.filename)
+
+  await Extra.externalgiro(filenames)
+  util.alert('등록되었습니다')
+  data.visibleGiro = false
+  await getItems(true)
+  util.loading(false)
+}
+
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+
+  console.log(response)
+  console.log(response.filename)
+  console.log(response.originalfilename)
+
+}
+
 </script>

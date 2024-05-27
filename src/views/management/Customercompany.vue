@@ -1,3 +1,4 @@
+
 <template>
   <Title title="고객 현황" />
 
@@ -183,6 +184,12 @@
         </y-td>
       </y-tr>
       <y-tr>
+        <y-th>우편번호</y-th>
+        <y-td>
+          <el-input v-model="building.zip" />
+        </y-td>
+      </y-tr>
+      <y-tr>
         <y-th>주소<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="building.address" />
@@ -233,6 +240,7 @@ const item = {
   ceo: '',
   tel: '',
   email: '',
+  zip: '',
   address: '',
   addressetc: '',
   type: 2,

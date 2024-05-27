@@ -326,6 +326,12 @@
         </y-td>
       </y-tr>
       <y-tr>
+        <y-th>정기점검일</y-th>
+        <y-td>
+          <el-date-picker v-model="data.item.lastdate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />          
+        </y-td>
+      </y-tr>
+      <y-tr>
         <y-th>상태</y-th>
         <y-td>
           <el-radio-group v-model.number="data.item.status">
@@ -1018,6 +1024,8 @@ async function clickSubmit() {
 
   item.contractstartdate = util.convertDBDate(item.contractstartdate)
   item.contractenddate = util.convertDBDate(item.contractenddate)
+
+  item.lastdate = util.convertDBDate(item.lastdate)
 
   item.contractprice = util.getInt(item.contractprice)
   item.contractday = util.getInt(item.contractday)

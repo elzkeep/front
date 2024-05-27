@@ -62,7 +62,7 @@
   <div style="margin-top: 10px; display: flex; justify-content: space-between">
     <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>
     <div style="display: flex; gap: 5px">
-      <el-button size="small" type="primary" @click="data.visibleMulti = true">일괄 데이터 등록</el-button>
+      <el-button size="small" type="primary" @click="clickMultiView">지킴e 일괄 데이터 등록</el-button>
       
       
       <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
@@ -74,7 +74,7 @@
         :auto-upload="true"
         :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
       >
-        <el-button size="small" type="success">외부 데이터 회원 연동</el-button>
+        <!--<el-button size="small" type="success">외부 데이터 회원 연동</el-button>-->
       </el-upload>
     </div>
   </div>
@@ -223,9 +223,10 @@
     </template>
   </el-dialog>
 
-<el-dialog v-model="data.visibleMulti" width="400px">
+<el-dialog v-model="data.visibleMulti" width="500px">
     <y-table>
-      <y-tr>        
+      <y-tr>
+        <y-th style="width:140px;">고객현황 + 소속회원</y-th>
         <y-td>
           
               <div style="margin-top:10px;flex: 1; justify-content:center; gap: 5; text-align:center;">
@@ -233,26 +234,76 @@
                   class="upload"
                   :action="external.upload"
                   :headers="headers"
-                  :show-file-list="true"
-                  :on-success="handleFileSuccessTotal"
+                  :show-file-list="false"
+                  :on-success="handleFileSuccessTotal0"
                   :auto-upload="true"
                   :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
                   v-model:file-list="external.files"
                   :limit="1"
                 >
                   <template #trigger>
-                    <el-button type="success" style="margin-right: 10px"> 엑셀 등록 </el-button>
+                    <el-button type="success" style="margin-right: 10px">엑셀 등록</el-button>
                   </template>
-                  <el-button type="primary" @click="clickDownloadExcel"> 데이터 다운로드 </el-button>
+                  <el-button type="primary" @click="clickDownloadExcel(0)">데이터 다운로드</el-button>
                 </el-upload>
               </div>
           
         </y-td>
       </y-tr>
+      <y-tr>
+        <y-th style="width:140px;">고객현황</y-th>
+        <y-td>
+          
+              <div style="margin-top:10px;flex: 1; justify-content:center; gap: 5; text-align:center;">
+                <el-upload
+                  class="upload"
+                  :action="external.upload"
+                  :headers="headers"
+                  :show-file-list="false"
+                  :on-success="handleFileSuccessTotal1"
+                  :auto-upload="true"
+                  :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                  v-model:file-list="external.files"
+                  :limit="1"
+                >
+                  <template #trigger>
+                    <el-button type="success" style="margin-right: 10px">엑셀 등록</el-button>
+                  </template>
+                  <el-button type="primary" @click="clickDownloadExcel(1)">데이터 다운로드</el-button>
+                </el-upload>
+              </div>
+              
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th style="width:140px;">소속회원</y-th>
+        <y-td>
+          
+              <div style="margin-top:10px;flex: 1; justify-content:center; gap: 5; text-align:center;">
+                <el-upload
+                  class="upload"
+                  :action="external.upload"
+                  :headers="headers"
+                  :show-file-list="false"
+                  :on-success="handleFileSuccessTotal2"
+                  :auto-upload="true"
+                  :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                  v-model:file-list="external.files"
+                  :limit="1"
+                >
+                  <template #trigger>
+                    <el-button type="success" style="margin-right: 10px">엑셀 등록</el-button>
+                  </template>
+                  <el-button type="primary" @click="clickDownloadExcel(2)">데이터 다운로드</el-button>
+                </el-upload>
+              </div>
+              
+        </y-td>
+      </y-tr>
     </y-table>
     <template #footer>
-      <el-button size="small" @click="data.visibleMulti = false">취소</el-button>
-      <el-button size="small" type="primary" @click="clickMultiSubmit">등록</el-button>
+      <el-button size="small" @click="data.visibleMulti = false">닫기</el-button>
+      <!--<el-button size="small" type="primary" @click="clickMultiSubmit">등록</el-button>-->
     </template>
 </el-dialog>  
 </template>
@@ -478,23 +529,60 @@ const handleFileSuccessUser: UploadProps['onSuccess'] = async (response, uploadF
   util.loading(false)
 }
 
-const handleFileSuccessTotal: UploadProps['onSuccess'] = async (response, uploadFile) => {
-  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+const handleFileSuccessTotal0: UploadProps['onSuccess'] = async (response, uploadFile) => {
+  uploadProcess(0, response)
+}
 
+const handleFileSuccessTotal1: UploadProps['onSuccess'] = async (response, uploadFile) => {
+  uploadProcess(1, response)
+}
+
+const handleFileSuccessTotal2: UploadProps['onSuccess'] = async (response, uploadFile) => {
+  uploadProcess(2, response)
+}
+
+async function uploadProcess(category, response) {
+  external.filename = response.filename
+  external.originalfilename = response.originalfilename
+    
+  if (response.filename == '') {
+    external.filename = ''
+    external.originalfilename = ''
+    external.files = []
+    return
+  }
+  
   util.loading(true)
-  await Extra.externalall(response.filename)
+  await Extra.externalall(category, external.filename)
+  util.alert('저장되었습니다')
+
+  util.loading(false)
+
+  external.filename = ''
+  external.originalfilename = ''
+  external.files = []
+}
+
+async function clickDownloadExcel(type) {  
+  let url = `/api/download/all/${type}`
+  let types = ['일괄데이터', '고객현황', '소속회원']
+  let filename = `${types[type]}-${moment().format('YYYY-MM-DD')}.xlsx`
+  util.download(store, url, filename)
+}
+
+async function clickMultiSubmit() {
+  util.loading(true)
+  await Extra.externalall(external.filename)
   util.alert('저장되었습니다')
 
   util.loading(false)
 }
 
-async function clickDownloadExcel() {  
-  let url = '/api/download/all'
-  let filename = `일괄데이터-${moment().format('YYYY-MM-DD')}.xlsx`
-  util.download(store, url, filename)
-}
-
-async function clickMultiSubmit() {
+function clickMultiView() {
+  external.filename = ''
+  external.originalfilename = ''
+  external.files = []
   
+  data.visibleMulti = true
 }
 </script>
