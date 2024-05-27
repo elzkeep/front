@@ -13,7 +13,8 @@
           <div class="profile-box">
             <div class="group"><img :src="data.user.profile" /></div>
             <div style="margin-top: 13px">
-              <span style="font-size: 14px; font-weight: 500">{{ data.session.name }}</span>
+              <span style="font-size: 14px; font-weight: 500" v-if="data.session.level == 3">관리자</span>
+              <span style="font-size: 14px; font-weight: 500" v-if="data.session.level != 3">{{ data.session.name }}</span>
             </div>
             <div style="margin-top: 5px">
               <span style="font-size: 12px; font-weight: 500">{{ data.companyName }}</span>

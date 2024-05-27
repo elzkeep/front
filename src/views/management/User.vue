@@ -1,4 +1,4 @@
-S<template>
+<template>
   <Title title="소속회원 관리" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
@@ -858,6 +858,12 @@ const toggleListSelection = rows => {
   }
 }
 const changeList = val => {
+  for (let i = 0; i < val.length; i++) {
+    if (val[i].id == data.session.id) {
+      listRef.value!.toggleRowSelection(val[i], undefined)
+      break
+    }
+  }
   listSelection.value = val
 }
 
@@ -884,7 +890,7 @@ function clickDeleteMulti() {
 
 async function clickSubmit() {
   let item = util.clone(data.item)
-  
+
   item.company = data.session.company
 
   if (item.status == 1) {
