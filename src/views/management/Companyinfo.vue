@@ -1,9 +1,12 @@
 <template>
-  <Title title="기본 정보 관리" />
+  <el-tabs v-model="data.menu" @tab-click="clickTab">
+    <el-tab-pane label="기본 정보" name="basic">
+      <div :style="{'height': data.height, 'overflow': 'auto'}">
 
-  <y-table style="width: 100%">
+
+        <y-table style="width: 100%">
     <y-tr>
-      <y-th>구분</y-th>
+      <y-th style="width:120px;">구분</y-th>
       <y-td>
         <span v-if="data.item.type == 1">점검회사</span>
         <span v-if="data.item.type == 2">건물</span>
@@ -39,8 +42,21 @@
         <el-input v-model="data.item.addressetc" />
       </y-td>
     </y-tr>
+  </y-table>
+
+  <div style="margin-top: 10px; display: flex; justify-content: space-between">
+    <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>    
+  </div>
+
+  
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="계좌/지로 정보" name="giro">
+      <div :style="{'height': data.height, 'overflow': 'auto'}">
+
+        <y-table style="width: 100%">
     <y-tr>
-      <y-th>은행명</y-th>
+      <y-th style="width:120px;">은행명</y-th>
       <y-td>
         <el-input v-model="data.item.bankname" />
       </y-td>
@@ -57,27 +73,55 @@
         <el-input v-model="data.item.giro" />
       </y-td>
     </y-tr>
-  </y-table>
+    <y-tr>
+      <y-th>e지로 아이디</y-th>
+      <y-td>
+        <el-input v-model="data.item.egirologinid" />
+      </y-td>
+    </y-tr>
+    <y-tr>
+      <y-th>e지로 비밀번호</y-th>
+      <y-td>
+        <el-input v-model="data.item.egiropasswd" />
+      </y-td>
+    </y-tr>
+        </y-table>
 
   <div style="margin-top: 10px; display: flex; justify-content: space-between">
-    <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>
-    <div style="display: flex; gap: 5px">
-      <el-button size="small" type="primary" @click="clickMultiView">지킴e 일괄 데이터 등록</el-button>
-      
-      
-      <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
-      <el-upload
-        :action="external.upload"
-        :headers="headers"
-        :show-file-list="false"
-        :on-success="handleFileSuccessUser"
-        :auto-upload="true"
-        :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
-      >
-        <!--<el-button size="small" type="success">외부 데이터 회원 연동</el-button>-->
-      </el-upload>
-    </div>
+    <el-button size="small" type="primary" @click="clickSubmit">저장</el-button>    
   </div>
+
+  
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="일괄 데이터 등록" name="external">
+      <div :style="{'height': data.height, 'overflow': 'auto'}">
+
+
+        <div style="margin-top: 10px; display: flex; justify-content: space-between">
+          <div style="display: flex; gap: 5px">
+            <el-button size="small" type="primary" @click="clickMultiView">지킴e 일괄 데이터 등록</el-button>
+            
+            
+            <el-button size="small" type="success" @click="clickData">외부 데이터 연동</el-button>
+            <el-upload
+              :action="external.upload"
+              :headers="headers"
+              :show-file-list="false"
+              :on-success="handleFileSuccessUser"
+              :auto-upload="true"
+              :accept="'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+            >
+              <!--<el-button size="small" type="success">외부 데이터 회원 연동</el-button>-->
+            </el-upload>
+          </div>
+        </div>
+
+        
+      </div>
+    </el-tab-pane>
+  </el-tabs>
+  
 
   <el-dialog v-model="data.visible" width="800px">
     <y-table>
@@ -339,6 +383,8 @@ const item = {
   address: '',
   addressetc: '',
   type: 1,
+  egirologinid: '',
+  erigopasswd: '',
   date: '',
 }
 
@@ -373,6 +419,7 @@ const data = reactive({
     { id: 1, name: '점검회사' },
     { id: 2, name: '건물' },
   ],
+  menu: 'basic'
 })
 
 async function clickSearch() {
@@ -584,5 +631,9 @@ function clickMultiView() {
   external.files = []
   
   data.visibleMulti = true
+}
+
+function clickTab(pos) {
+  console.log(pos.props.name)
 }
 </script>

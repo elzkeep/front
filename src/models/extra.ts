@@ -178,5 +178,16 @@ export default class Extra {
         })
 
         return res
-    }    
+    }
+
+    static async dashboard() {
+        const res = await request({
+            method: 'GET',
+            url: '/api/dashboard/initdata'
+        })
+
+        return res
+    }
+
+    
 }

@@ -249,6 +249,7 @@ async function clickSubmit() {
   let item = makeData(util.clone(data.item))
   item.building = data.id
   item.category = category
+  item.type = util.getInt(item.type)
   
   if (item.id > 0) {
     await model.update(item)

@@ -98,6 +98,15 @@ export default class Billing {
         return res
     }
 
+    static async init() {
+        const res = await request({
+            method: 'GET',
+            url: `/api/billing/initdata`
+        })
+
+        return res
+    }
+
     static async sum(params: string) {
         const res = await request({
             method: 'GET',

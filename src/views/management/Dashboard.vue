@@ -120,11 +120,12 @@
 <script setup lang="ts">
 
 import { ref, reactive, onMounted } from "vue";
-import { Calendarcompanylist, Notice, User, Company, Report, Customer, Dashboard } from "~/models"
+import { Calendarcompanylist, Notice, User, Company, Report, Customer } from "~/models"
 import { util, size }  from "~/global"
 import router from '~/router'
 import { useStore } from 'vuex'
 import moment from 'moment'
+import Extra from '~/models/extra'
 
 const store = useStore()
 
@@ -173,30 +174,8 @@ const textContent = (date) => {
   });
 };
 
-async function initData() {
-  let res = await Notice.find({
-    page: 1,
-    pagesize: 4,
-    orderby: 'n_id desc'
-  })
-
-  data.notices = res.items
-
-  res = await Company.get(data.session.company)
-  data.company = res.item
-
-  res = await Customer.find({company:data.session.company})
-  data.buildingscore = res.items.reduce((acc, cur, index) => {
-    return acc = cur.extra.building.score
-  }, 0)
-
-  res = await User.find({company:data.session.company})
-  data.userscore = res.items.reduce((acc, cur, index) => {
-    return acc = cur.score
-  }, 0)  
-}
-
 async function readCalendar(day) {
+  return
   let res = await Calendarcompanylist.find({company: data.session.company, month: day})
 
   let datas = {}
@@ -232,6 +211,9 @@ async function readCalendar(day) {
   data.calendars = items
 }
 
+async function initData() {  
+}
+
 async function getItems() {
   let d = moment()
   let day = d.format('YYYY-MM')
@@ -240,31 +222,14 @@ async function getItems() {
   
   await readCalendar(day)
 
-  /*
-     let res = await Report.find({company: data.session.company, duration: today, orderby: 'r_checkdate'})
-
-     let t = d.format('YYYY-MM-DD')
-     for (let i = 0; i < res.items.length; i++) {
-     let item = res.items[i]
-     if (item.checkdate == t) {
-     data.sales = item
-     }
-     }
-   */
-
   let today = moment().format('YYYY-MM-DD 00:00:00')
   let week = moment().subtract(7, 'day').format('YYYY-MM-DD 00:00:00')
   let month = moment().subtract(1, 'month').format('YYYY-MM-DD 00:00:00')
 
-  console.log(today)
-  console.log(week)
-  console.log(month)
-  
-  let res = await User.find({company: data.session.company, status: 1})
-  info.users = res.items.length
+  let res = await Extra.dashboard()  
 
-  res = await Customer.find({company: data.session.company, type: 1})  
-  let customer = res.items
+  info.users = res.users
+  let customer = res.customers
   
   info.customers = customer.length
   info.newcustomers = customer.filter(item => item.date > week).length
@@ -275,9 +240,11 @@ async function getItems() {
     info.avgprice = util.getInt(info.totalprice / totalscore)
   }
 
-  res = await Report.find({company: data.session.company})
-  let report = res.items
-
+  let report = res.reports
+  if (report == null || report.length == 0) {
+    return
+  }
+  
   info.todaytotal = report.filter(item => item.date > today).length
   info.weektotal = report.filter(item => item.date > week).length
   info.monthtotal = report.filter(item => item.date > month).length

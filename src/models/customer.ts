@@ -92,6 +92,15 @@ export default class Customer {
         return res
     }
 
+    static async init() {
+        const res = await request({
+            method: 'GET',
+            url: `/api/customer/initdata`
+        })
+
+        return res
+    }
+
     static async sum(params: string) {
         const res = await request({
             method: 'GET',

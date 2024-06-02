@@ -30,7 +30,7 @@
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
-        <div style="text-align: center">청구일</div>
+        <div style="text-align: center">납부기한</div>
       </template>
       <el-date-picker style="margin: 0px 10px 0px 0px; height: 24px; width: 150px" v-model="data.search.startbilldate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
       <el-date-picker style="margin: 0px 0px; height: 24px; width: 150px" v-model="data.search.endbilldate" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
@@ -75,15 +75,15 @@
     </el-table-column>
     <el-table-column label="사업자명" align="left" width="200">
       <template #default="scope">
-        {{ getCompany(scope.row.company) }}
+        {{ scope.row.companyname }}
       </template>
     </el-table-column>
     <el-table-column label="건물" align="left" width="200">
       <template #default="scope">
-        {{ getBuilding(scope.row.building) }}
+        {{ scope.row.buildingname }}
       </template>
     </el-table-column>
-    <el-table-column prop="billdate" label="청구일" align="center" width="100" :formatter="util.tableDate" />
+    <el-table-column prop="billdate" label="납부기한" align="center" width="100" :formatter="util.tableDate" />
     <el-table-column label="금액" align="right" width="100">
       <template #default="scope"> {{ util.money(scope.row.price) }} 원 </template>
     </el-table-column>
@@ -302,35 +302,47 @@ async function clickSearch() {
 }
 
 async function initData() {
-  let res = await Customer.find({
-    company: data.session.company,
-    orderby: 'b_name',
-  })
-
-  let items = res.items.map(item => item.extra.building)
+  let res = await model.init()
   data.buildings = [{ id: 0, name: ' ' }]
-  data.allbuildings = [{ id: 0, name: ' ' }, ...items]
 
-  res = await Company.find({})
+  data.companys = [{ id: 0, name: ' ' }, ...res.companys]
 
-  data.companys = [{ id: 0, name: ' ' }, ...res.items]  
-
-  let company = 0
-
-  if (data.session.level != User.level.rootadmin) {
-    company = data.session.company
-  }
-
-  res = await Company.get(data.session.company)
-  let item = res.item
+  let item = res.company
   setting.content = item.content
   for (let i = 1; i <= 13; i++) {
     setting[`x${i}`] = item[`x${i}`]
     setting[`y${i}`] = item[`y${i}`]
   }
-}
+    /*
+       let res = await Customer.find({
+       company: data.session.company,
+       orderby: 'b_name',
+       })
 
-async function getItems() {  
+       let items = res.items.map(item => item.extra.building)
+       data.buildings = [{ id: 0, name: ' ' }]
+
+       res = await Company.find({})
+
+       data.companys = [{ id: 0, name: ' ' }, ...res.items]  
+
+       let company = 0
+
+       if (data.session.level != User.level.rootadmin) {
+       company = data.session.company
+       }
+
+       res = await Company.get(data.session.company)
+       let item = res.item
+       setting.content = item.content
+       for (let i = 1; i <= 13; i++) {
+       setting[`x${i}`] = item[`x${i}`]
+       setting[`y${i}`] = item[`y${i}`]
+       }
+     */
+  }
+
+  async function getItems() {  
   let res = await model.find({
     name: data.search.text,
     page: data.page,
@@ -468,36 +480,6 @@ async function clickSubmit() {
 
   data.visible = false
   util.loading(false)
-}
-
-function getCompany(id) {
-  let items = data.companys.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
-}
-
-function getBuilding(id) {
-  let items = data.allbuildings.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
-}
-
-function getUser(id) {
-  let items = data.users.filter(item => item.id == id)
-
-  if (items.length == 0) {
-    return ''
-  }
-
-  return items[0].name
 }
 
 function clickStatusMulti(status) {

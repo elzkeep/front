@@ -86,6 +86,15 @@ export default class Calendarcompanylist {
         return res
     }
 
+    static async init() {
+        const res = await request({
+            method: 'GET',
+            url: `/api/calendarcompanylist/initdata`
+        })
+
+        return res
+    }
+
     static async sum(params: string) {
         const res = await request({
             method: 'GET',

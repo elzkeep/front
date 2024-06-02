@@ -386,6 +386,8 @@ async function getItems() {
     orderby: "f_id",
   });
 
+  console.log(res)
+
   if (res.items.length > 0) {
     data.item = res.items[0];
   }
@@ -475,7 +477,8 @@ async function clickSubmit() {
   let item = makeData(util.clone(data.item));
   item.building = data.id;
   item.category = 10;
-
+  item.type = util.getInt(item.type)
+  
   if (item.id > 0) {
     await model.update(item);
   } else {
@@ -533,7 +536,7 @@ const handleFileSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
 };
 
 const beforeFileUpload: UploadProps["beforeUpload"] = rawFile => {
-  if (rawFile.type !== "image/jpeg") {
+  if (rawFile.type  !== "image/jpeg") {
     return false;
   } else if (rawFile.size / 1024 / 1024 > 2) {
     return false;

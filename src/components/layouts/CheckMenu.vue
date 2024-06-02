@@ -34,7 +34,7 @@
           </router-link>
         </li>
         <li style="display: block" :class="{ on: isMenuActive('ManagementCustomercompany') || isMenuActive('ManagementCustomer') }">
-          <router-link :to="{ name: 'ManagementCustomercompany' }">
+          <router-link :to="{ name: 'ManagementCustomer' }">
             <div class="icon">
               <img
                 v-if="!store.getters['getNav'] && !isMenuActive('ManagementCustomercompany') && !isMenuActive('ManagementCustomer')"
@@ -60,7 +60,7 @@
           </ul>
         </li>
         <li style="display: block" :class="{ on: isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax') }">
-          <router-link :to="{ name: 'ManagementStatistics' }">
+          <router-link :to="{ name: 'ManagementBilling' }">
             <img
               v-if="!store.getters['getNav'] && !isMenuActive('ManagementStatistics') && !isMenuActive('ManagementBilling') && !isMenuActive('ManagementTax')"
               class="side-icon"
@@ -73,12 +73,12 @@
               alt="document"
               src="../../assets/icon/document.svg"
             />
-            <h3 class="check-tit hiden">매출 보고서</h3>
+            <h3 class="check-tit hiden">매출 관리</h3>
           </router-link>
           <ul v-if="!store.getters['getNav'] && (isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax'))" class="subtit-ul">
             <li class="subtit-li">
               <router-link :to="{ name: 'ManagementStatistics' }">
-                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementStatistics') }">매출보고서</span>
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementStatistics') }">매출 관리</span>
               </router-link>
             </li>
             <li class="subtit-mi">

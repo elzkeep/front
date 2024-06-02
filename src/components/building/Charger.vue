@@ -241,6 +241,7 @@ async function clickSubmit() {
   let item = makeData(util.clone(data.item));
   item.building = data.id;
   item.category = category;
+  item.type = util.getInt(item.type)
 
   if (item.value25 == true) {
     item.value25 = 1
@@ -260,6 +261,7 @@ async function clickSubmit() {
     let item = makeData(util.clone(data.items[i]));
     item.building = data.id;
     item.category = category + 1;
+    item.type = util.getInt(item.type)
 
     await model.insert(item);
   }

@@ -86,6 +86,15 @@ export default class Companylist {
         return res
     }
 
+    static async init() {
+        const res = await request({
+            method: 'GET',
+            url: `/api/companylist/initdata`
+        })
+
+        return res
+    }
+
     static async sum(params: string) {
         const res = await request({
             method: 'GET',

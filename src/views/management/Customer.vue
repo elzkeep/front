@@ -65,7 +65,7 @@
 
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
-    <el-table-column prop="number" width="60" align="right" label="NO" />
+    <el-table-column prop="number" width="60" align="right" label="코드번호" />
     <el-table-column label="건물명" align="left">
       <template #default="scope">
         {{ scope.row.extra.building.name }}
@@ -90,7 +90,7 @@
       </template>
     </el-table-column>
     <el-table-column label="계약금액" align="right" width="80">
-      <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
+      <template #default="scope"> {{ util.money(scope.row.contractprice + scope.row.contractvat) }} 원 </template>
     </el-table-column>
     <el-table-column label="상태" align="center" width="50">
       <template #default="scope">
@@ -101,20 +101,23 @@
 
     <el-table-column label="청구방법" align="center" width="60">
       <template #default="scope">
-        <span v-if="scope.row.billingtype == 1">지로</span>
-        <span v-if="scope.row.billingtype == 2">계산서</span>
+        {{data.billingtypes[scope.row.billingtype].name}}        
       </template>
     </el-table-column>
-
     <el-table-column label="청구일" align="center" width="70">
       <template #default="scope">
-        <span v-if="scope.row.collectday > 0">
-          <span v-if="scope.row.collecmonth == 1">당월</span>
-          <span v-else>차월</span>
-          {{ scope.row.collectday }} 일
-        </span>
+        <span v-if="scope.row.billingdate > 0">{{scope.row.billingdate}} 일</span>
       </template>
     </el-table-column>
+    <el-table-column label="납부기한" align="center" width="70">
+      <template #default="scope">
+        <span v-if="scope.row.collectday > 0">
+		    <span v-if="scope.row.collectmonth == 1">당월</span>
+            <span v-else>차월</span>
+            {{ scope.row.collectday }} 일
+          </span>
+        </template>
+      </el-table-column>
 
     <el-table-column label="영업자명" align="center" width="60">
       <template #default="scope">
@@ -201,7 +204,7 @@
   <el-dialog v-model="data.single" width="800px">
     <y-table>
       <y-tr>
-        <y-th style="width:120px;">고객NO</y-th>
+        <y-th style="width:120px;">코드번호</y-th>
         <y-td>
           {{data.item.number}}
         </y-td>
@@ -280,23 +283,50 @@
       </y-tr>
 
       <y-tr>
-        <y-th>계약금액</y-th>
-        <y-td> <el-input v-model="data.item.contractprice" style="width: 100px" /> 원, VAT <el-input v-model="data.item.contractvat" style="width: 100px" /> 원 </y-td>
-      </y-tr>
-
-      
-      <y-tr>
         <y-th>청구형태</y-th>
         <y-td>
-          <el-radio-group v-model.number="data.item.billingtype">
+          <el-radio-group v-model.number="data.item.billingtype" @change="changeBillingtype">
             <el-radio-button size="small" value="1">지로</el-radio-button>
             <el-radio-button size="small" value="2">계산서</el-radio-button>
+            <el-radio-button size="small" value="3">카드</el-radio-button>
+            <el-radio-button size="small" value="4">이체</el-radio-button>
           </el-radio-group>
+
+          &nbsp;&nbsp;<el-checkbox v-model="data.item.usevat" label="VAT 사용" size="small" v-if="data.item.billingtype == 4" />          
         </y-td>
       </y-tr>
 
       <y-tr>
-        <y-th>청구일</y-th>
+        <y-th>계약금액</y-th>
+        <y-td v-if="data.item.billingtype != 4">          
+          <el-input v-model="data.item.contractprice" style="width: 100px" /> 원, VAT <el-input v-model="data.item.contractvat" style="width: 100px" /> 원
+        </y-td>
+        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == true">          
+          <div><el-input v-model="data.item.contracttotalprice" style="width: 100px" @keyup="changeTotalprice" /> 원</div>
+          <div style="margin-top:3px;">계약금액 {{util.money(data.item.contractprice)}} 원, VAT {{util.money(data.item.contractvat)}} 원</div>
+        </y-td>
+        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == false">          
+          <el-input v-model="data.item.contractprice" style="width: 100px" /> 원
+        </y-td>
+      </y-tr>
+      
+      <y-tr>
+        <y-th>
+          청구일
+        </y-th>
+        <y-td>          
+          <el-input v-model="data.item.billingdate" style="width: 50px" /> 일
+        </y-td>
+      </y-tr>
+      
+      <y-tr>
+        <y-th>
+          <!--
+          <span v-if="data.item.billingtype == 2">청구일</span>
+          <span v-else>수금일</span>
+          -->
+          납부기한
+        </y-th>
         <y-td>
           <el-radio-group v-model.number="data.item.collectmonth">
             <el-radio-button size="small" value="1">당월</el-radio-button>
@@ -396,64 +426,45 @@
       </y-tr>
     </y-table>
 
-    <el-table :data="listSelection" border :height="400">
+    <el-table :data="listSelection" border :height="400" width="950px">
+      <el-table-column prop="number" label="코드번호" align="right" width="70"/>
       <el-table-column label="건물명" align="left">
         <template #default="scope">
           {{ scope.row.extra.building.name }}
         </template>
       </el-table-column>
-      <el-table-column label="사업자명" align="left">
+      <el-table-column label="고객명" align="left">
         <template #default="scope">
           {{ scope.row.extra.company.name }}
         </template>
-      </el-table-column>      
-      <!--<el-table-column label="점검자" align="left">
-           <template #default="scope">
-           {{getUser(scope.row.user)}}
-           </template>
-           </el-table-column>
-      -->
-      <el-table-column label="계약기간" align="center" width="160">
-        <template #default="scope"> {{ scope.row.contractstartdate }} ~ {{ scope.row.contractenddate }} </template>
       </el-table-column>
-      <el-table-column label="계약금액" align="right" width="80">
+      <el-table-column prop="extra.building.companyno" label="사업자번호" align="center" width="100" />
+      <el-table-column label="공급가액" align="right" width="80">
         <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
       </el-table-column>
-      <el-table-column label="상태" align="center" width="50">
+      <el-table-column label="부가세" align="right" width="80">
+        <template #default="scope"> {{ util.money(scope.row.contractvat) }} 원 </template>
+      </el-table-column>
+      <el-table-column label="합계금액" align="right" width="80">
+        <template #default="scope"> {{ util.money(scope.row.contractprice+scope.row.contractvat) }} 원 </template>
+      </el-table-column>
+      <el-table-column label="청구형태" align="center" width="60">
         <template #default="scope">
-          <span v-if="scope.row.status == 1">진행</span>
-          <span v-if="scope.row.status == 2">종료</span>
+          {{data.billingtypes[scope.row.billingtype].name}}          
         </template>
       </el-table-column>
-
-      <el-table-column label="청구일" align="center" width="70">
+      <el-table-column label="청구일" align="center" width="50">
         <template #default="scope">
-          <span v-if="scope.row.collectday > 0">
-            <span v-if="scope.row.collecmonth == 1">당월</span>
-            <span v-else>차월</span>
-            {{ scope.row.collectday }} 일
-          </span>
+          <span v-if="scope.row.billingdate > 0">{{scope.row.billingdate}} 일</span>          
         </template>
       </el-table-column>
-
-      <el-table-column label="담당자명" align="center" width="60">
+    
+      <el-table-column label="담당자" align="center" width="60">
         <template #default="scope">
           {{ getUser(scope.row.user).name }}
         </template>
       </el-table-column>
-
-      <el-table-column label="담당자연락처" align="center" width="100">
-        <template #default="scope">
-          {{ getUser(scope.row.user).tel }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="담당자이메일" align="left">
-        <template #default="scope">
-          {{ getUser(scope.row.user).email }}
-        </template>
-      </el-table-column>
-
+      
     </el-table>
 
     <template #footer>
@@ -593,6 +604,8 @@ const item = {
   company: 0,
   building: 0,
   user: 0,
+  contracttotalprice: 0,
+  usevat: false, 
   date: '',
   extra: {
     building: {
@@ -700,6 +713,8 @@ const data = reactive({
     { id: 0, name: '청구방법' },
     { id: 1, name: '지로' },
     { id: 2, name: '계산서' },
+    { id: 3, name: '카드' },
+    { id: 4, name: '이체' },
   ],
   building: {
     companyno: ''
@@ -716,46 +731,19 @@ function clickInspectorSearch() {
 }
 
 async function initData() {
-  let res = await Companylist.find({
-    company: data.session.company,
-    type: Company.type.building,
-    orderby: 'c_name',
-  })
-
-  data.companys = [{ id: 0, name: ' ' }, ...res.items]
-
-  /*
-     res = await Building.find({
-     orderby: 'b_name'
-     })
-
-     data.buildings = [{id: 0, name: ' '}, ...res.items]
-   */
-
-  let company = 0
-
-  if (data.session.level != User.level.rootadmin) {
-    company = data.session.company
-  }
-
-  res = await User.find({
-    company: company,
-    orderby: 'u_name',
-  })
-
-  data.users = [{ id: 0, name: ' ' }, ...res.items]
-
-  res = await Extra.customerstatus(company)
-
+  let res = await Customer.init()
   console.log(res)
+
+  let companys = res.companys.map(item => item.extra.company)
+  
+  data.companys = [{ id: 0, name: ' ' }, ...companys]
+  
+  data.users = [{ id: 0, name: ' ' }, ...res.users]
+  
   res.score = res.score.toFixed(1)
   data.status = res
 
-  res = await Department.find({
-    company: data.session.company,
-  })
-
-  data.departments = [{ id: 0, name: ' ' }, ...res.items]
+  data.departments = [{ id: 0, name: ' ' }, ...res.departments]
 }
 
 async function getItems(reset) {
@@ -871,7 +859,7 @@ async function clickUpdate(item, index) {
     return
   }
 
-  if (index.no == 10) {
+  if (index.no == 12) {
     util.loading(true)
     getBusiness(item.salesuser)
     util.loading(false)
@@ -879,7 +867,7 @@ async function clickUpdate(item, index) {
     return
   }
 
-  if (index.no == 11) {
+  if (index.no == 13) {
     data.item = util.clone(item)
 
     data.inspectorchange = false
@@ -888,7 +876,7 @@ async function clickUpdate(item, index) {
     return
   }
 
-  if (index.no == 13) {
+  if (index.no == 15) {
     return
   }
 
@@ -900,9 +888,15 @@ async function clickUpdate(item, index) {
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
 
   item.company = item.extra.company.id
-  item.building = item.extra.building.id
+  item.building = item.extra.building.id  
 
   changeBuilding(item.building)
+
+  if (item.usevat == 1) {
+    item.usevat = true
+  } else {
+    item.usevat = false
+  }
   
   data.item = util.clone(item)
   
@@ -1031,6 +1025,15 @@ async function clickSubmit() {
   item.contractday = util.getInt(item.contractday)
   item.contracttype = util.getInt(item.contracttype)
 
+  if (item.billingtype == 4) {
+    if (item.usevat == true) {
+      item.usevat = 1
+    } else {
+      item.usevat = 0
+    } 
+  } else {
+    item.usevat = 1
+  }
   item.status = util.getInt(item.status)
   
   if ((item.kepconumber != '' || item.kesconumber != '') && item.contracttype != 2) {
@@ -1290,9 +1293,9 @@ function clickDownloadExcelExample() {
 function getCompanyInfo(item) {
   if (item.id == 0) {
     return ''
-}
-    
-    return `${item.name} (${item.companyno})`
+  }
+  
+  return `${item.name} (${item.companyno})`
 }
 
 async function clickInspectorSave() {
@@ -1308,5 +1311,21 @@ async function clickInspectorSave() {
 
   data.visibleInspector = false
   util.loading(false)
+}
+
+function changeTotalprice(value) {  
+  let div = util.getFloat(data.item.contracttotalprice) / 11
+  data.item.contractprice = util.getInt(div * 10)
+  data.item.contractvat = data.item.contracttotalprice - data.item.contractprice   
+}
+
+function changeBillingtype(value) {
+  if (value != 4) {
+    return
+  }
+
+  if (data.item.contracttotalprice == 0) {
+    data.item.contracttotalprice = data.item.contractprice + data.item.contractvat 
+  } 
 }
 </script>

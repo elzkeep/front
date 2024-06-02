@@ -302,6 +302,7 @@ async function clickSubmit() {
     let item = makeData(util.clone(data.items[i]))
     item.building = data.id
     item.category = category
+    item.type = util.getInt(item.type)
 
     await model.insert(item)
   }
