@@ -50,6 +50,7 @@
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.currentuser }}</p>
     </div>
     <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
+
       <p style="float: center; font-weight: 700; font-size: 16px">계약해지 고객수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.user }}</p>
     </div>
@@ -90,7 +91,7 @@
       </template>
     </el-table-column>
     <el-table-column label="계약금액" align="right" width="80">
-      <template #default="scope"> {{ util.money(scope.row.contractprice + scope.row.contractvat) }} 원 </template>
+      <template #default="scope"> {{ util.money(util.getInt(scope.row.contractprice) + util.getInt(scope.row.contractvat)) }} 원 </template>
     </el-table-column>
     <el-table-column label="상태" align="center" width="50">
       <template #default="scope">
@@ -405,6 +406,7 @@
         <y-th v-if="bill.durationtype == 1">기준월</y-th>
         <y-td v-if="bill.durationtype == 1">
           <el-radio-group v-model.number="bill.base" size="small">
+            <el-radio-button value="3">지난달</el-radio-button>
             <el-radio-button value="1">이번달</el-radio-button>
             <el-radio-button value="2">다음달</el-radio-button>
           </el-radio-group>
@@ -439,14 +441,22 @@
         </template>
       </el-table-column>
       <el-table-column prop="extra.building.companyno" label="사업자번호" align="center" width="100" />
-      <el-table-column label="공급가액" align="right" width="80">
-        <template #default="scope"> {{ util.money(scope.row.contractprice) }} 원 </template>
+      <el-table-column label="공급가액" align="right" width="90">
+        <template #default="scope">
+          <div style="display:flex;">
+            <el-input v-model="listSelection[scope.row.index].contractprice" />&nbsp;원
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column label="부가세" align="right" width="80">
-        <template #default="scope"> {{ util.money(scope.row.contractvat) }} 원 </template>
+      <el-table-column label="부가세" align="right" width="90">
+        <template #default="scope">
+          <div style="display:flex;">
+            <el-input v-model="listSelection[scope.row.index].contractvat" />&nbsp;원
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="합계금액" align="right" width="80">
-        <template #default="scope"> {{ util.money(scope.row.contractprice+scope.row.contractvat) }} 원 </template>
+        <template #default="scope"> {{ util.money(util.getInt(scope.row.contractprice) + util.getInt(scope.row.contractvat)) }} 원 </template>
       </el-table-column>
       <el-table-column label="청구형태" align="center" width="60">
         <template #default="scope">
@@ -599,7 +609,7 @@ const item = {
   billingname: '',
   billingtel: '',
   billingemail: '',
-  billingtype: 2,
+  billingtype: 2,  
   status: 1,
   company: 0,
   building: 0,
@@ -1237,7 +1247,11 @@ const bill = reactive({
   base: 1,
   year: 2024,
   years: [    
-    { id: 2024, name: '2024' },
+    { id: 2024, name: '2020' },
+    { id: 2024, name: '2021' },
+    { id: 2024, name: '2022' },
+    { id: 2024, name: '2023' },
+    { id: 2024, name: '2024' }    
   ],
   durationtypes: [
     { id: 1, name: '기간별' },
@@ -1269,13 +1283,17 @@ async function clickBillSubmit() {
     util.loading(true)
 
     let ids = []
+    let prices = []
+    let vats = []
     for (let i = 0; i < listSelection.value.length; i++) {
       let value = listSelection.value[i]
 
       ids.push(value.extra.building.id)
-    }
+      prices.push(util.getInt(value.contractprice))
+      vats.push(util.getInt(value.contractvat))        
+  }
 
-    await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids)
+    await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids, prices, vats)
 
     util.alert('매출 실행되었습니다')
 
@@ -1316,7 +1334,7 @@ async function clickInspectorSave() {
 function changeTotalprice(value) {  
   let div = util.getFloat(data.item.contracttotalprice) / 11
   data.item.contractprice = util.getInt(div * 10)
-  data.item.contractvat = data.item.contracttotalprice - data.item.contractprice   
+  data.item.contractvat = util.getInt(data.item.contracttotalprice) - util.getInt(data.item.contractprice)   
 }
 
 function changeBillingtype(value) {
@@ -1325,7 +1343,7 @@ function changeBillingtype(value) {
   }
 
   if (data.item.contracttotalprice == 0) {
-    data.item.contracttotalprice = data.item.contractprice + data.item.contractvat 
+    data.item.contracttotalprice = util.getInt(data.item.contractprice) + util.getInt(data.item.contractvat) 
   } 
 }
 </script>

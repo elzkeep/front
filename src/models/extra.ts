@@ -94,11 +94,13 @@ export default class Extra {
         return res
     }
 
-    static async makebill(durationtype: number, base: number, year: number, month: number, durationmonth: any, items: any) {
+    static async makebill(durationtype: number, base: number, year: number, month: number, durationmonth: any, items: any, price: any, vat: any) {
         let data = {
             durationtype: durationtype,
             base: base,
             ids: items.join(','),
+            price: price.join(','),
+            vat: vat.join(','),
             month: month,
             durationmonth: durationmonth,
             year: year

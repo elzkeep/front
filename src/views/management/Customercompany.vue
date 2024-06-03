@@ -165,7 +165,7 @@
   <el-dialog v-model="building.visible" width="800px">
     <y-table>
       <y-tr>
-        <y-th style="width: 120px">건물명(점검대상)<span style="color: red">*</span></y-th>
+        <y-th style="width: 150px">건물명(점검대상)<span style="color: red">*</span></y-th>
         <y-td>
           <el-input v-model="building.name" />
         </y-td>
@@ -174,7 +174,7 @@
         <y-th>사업자번호<span style="color: red">*</span></y-th>
         <y-td>
           <el-checkbox v-model="building.check" label="고객정보와 동일" @click="clickCheck" />
-          <el-input v-model="building.companyno" v-bind:disabled="building.check"  placeholder="000-00-00000" />
+          <el-input v-model="building.companyno" v-bind:disabled="building.check" placeholder="000-00-00000" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -201,7 +201,36 @@
           <el-input v-model="building.addressetc" />
         </y-td>
       </y-tr>
+      
+      <y-tr>
+        <y-th>우편수령지 우편번호</y-th>
+        <y-td>
+          <el-checkbox v-model="building.checkpost" label="건물정보와 동일" @click="clickCheckPost" />
+          <el-input v-model="building.postzip" v-bind:disabled="building.checkpost" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>우편수령지</y-th>
+        <y-td>
+          <el-input v-model="building.postaddress" v-bind:disabled="building.checkpost" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>우편 수신자</y-th>
+        <y-td>
+          <el-input v-model="building.postname" v-bind:disabled="building.checkpost" />
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>우편수령지 전화번호</y-th>
+        <y-td>
+          <el-input v-model="building.posttel" v-bind:disabled="building.checkpost" />
+        </y-td>
+      </y-tr>
+
     </y-table>
+    
+    
 
     <template #footer>
       <el-button size="small" @click="clickCancelBuilding">취소</el-button>
@@ -250,11 +279,17 @@ const item = {
 const building = reactive({
   visible: false,
   check: false,
+  checkpost: false,
+  id: 0,
   name: '',
   companyno: '',
   ceo: '',
   address: '',
   addressetc: '',
+  postzip: '',
+  postaddress: '',
+  postname: '',
+  posttel: '',
   items: [],
 })
 
@@ -545,7 +580,46 @@ function clickExcel() {
   util.download(store, url, filename)
 }
 
-function clickUpdateBuilding(item, index) {}
+function clickUpdateBuilding(item, index) {
+  console.log(item)
+  if (item.check == 1) {
+    building.check = true
+  } else {
+    building.check = false
+  }
+
+  if (item.checkpost == 1) {
+    building.checkpost = true
+  } else {
+    building.checkpost = false
+  }
+
+  building.id = item.id
+  building.address = item.address
+  building.addressetc = item.addressetc
+  building.businesscondition = item.businesscondition
+  building.businessitem = item.businessitem
+
+  building.ceo = item.ceo
+  building.checkount = item.checkount
+  building.company = item.company
+  building.companyno = item.companyno
+  building.contractvolumn = item.contractvolumn
+  building.district = item.district
+  building.name = item.name
+  building.periodic = item.periodic
+  building.postzip = item.postzip
+  building.postaddress = item.postaddress
+  building.postname = item.postname
+  building.posttel = item.posttel
+  building.score = item.score
+  building.totalweight = item.totalweight
+  building.usage = item.usage
+  building.volttype = item.volttype
+  building.weight = item.weight
+  
+  building.visible = true
+}
 
 const bulidingRef = ref<InstanceType<typeof ElTable>>()
 const buildingSelection = ref([])
@@ -594,13 +668,21 @@ function clickCheck() {
   }
 }
 
+function clickCheckPost() {}
+
 async function clickInsertBuilding() {
   building.check = false
+  building.checkpost = false
+  building.id = 0
   building.name = ''
   building.companyno = ''
   building.ceo = ''
   building.address = ''
   building.addressetc = ''
+  building.postzip = ''
+  building.postaddress = ''
+  building.postname = ''
+  building.posttel = ''
   building.visible = true
 }
 
@@ -609,8 +691,6 @@ function clickCancelBuilding() {
 }
 
 async function clickSubmitBuilding() {
-  util.loading(true)
-
   let item = util.clone(building)
 
   if (item.name == '') {
@@ -622,14 +702,29 @@ async function clickSubmitBuilding() {
     alert('사업자번호 양식이 맞지 않습니다')
     return    
   }
-  /*
-     if (item.id > 0) {
-     await Building.update(item)
-     } else {
-   */
+  
   item.status = 1
   item.company = data.item.id
-  await Building.insert(item)
+
+  if (item.check == true) {
+    item.check = 1
+  } else {
+    item.check = 0
+  }
+  
+  if (item.checkpost == true) {
+    item.checkpost = 1
+  } else {
+    item.checkpost = 0
+  }
+
+  util.loading(true)
+  
+  if (item.id > 0) {
+    await Building.update(item)
+  } else {
+    await Building.insert(item)
+  }
 
   util.alert('저장되었습니다')
 
