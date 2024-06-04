@@ -289,6 +289,8 @@
                     <el-button type="success" style="margin-right: 10px">엑셀 등록</el-button>
                   </template>
                   <el-button type="primary" @click="clickDownloadExcel(0)">데이터 다운로드</el-button>
+
+                  <el-button type="warning" @click="clickDownloadExcel(3)">빈양식 다운로드</el-button>
                 </el-upload>
               </div>
           
@@ -314,6 +316,8 @@
                     <el-button type="success" style="margin-right: 10px">엑셀 등록</el-button>
                   </template>
                   <el-button type="primary" @click="clickDownloadExcel(1)">데이터 다운로드</el-button>
+
+                  <el-button type="warning" @click="clickDownloadExcel(4)">빈양식 다운로드</el-button>
                 </el-upload>
               </div>
               
@@ -339,6 +343,8 @@
                     <el-button type="success" style="margin-right: 10px">엑셀 등록</el-button>
                   </template>
                   <el-button type="primary" @click="clickDownloadExcel(2)">데이터 다운로드</el-button>
+
+                  <el-button type="warning" @click="clickDownloadExcel(5)">빈양식 다운로드</el-button>
                 </el-upload>
               </div>
               
@@ -612,7 +618,7 @@ async function uploadProcess(category, response) {
 
 async function clickDownloadExcel(type) {  
   let url = `/api/download/all/${type}`
-  let types = ['일괄데이터', '고객현황', '소속회원']
+  let types = ['일괄데이터', '고객현황', '소속회원', '일괄데이터', '고객현황', '소속회원']
   let filename = `${types[type]}-${moment().format('YYYY-MM-DD')}.xlsx`
   util.download(store, url, filename)
 }

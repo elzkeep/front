@@ -378,6 +378,13 @@
           <el-input v-model="data.inspect.name" readonly @click="clickInspector" />
         </y-td>
       </y-tr>
+
+      <y-tr>
+        <y-th>특이사항</y-th>
+        <y-td>
+          <el-input v-model="data.item.remark"  :rows="5" type="textarea" />
+        </y-td>
+      </y-tr>
     </y-table>
 
     <template #footer>
@@ -753,6 +760,10 @@ async function initData() {
   res.score = res.score.toFixed(1)
   data.status = res
 
+  if (res.departments == null) {
+    res.departments = []
+  }
+  
   data.departments = [{ id: 0, name: ' ' }, ...res.departments]
 }
 
@@ -890,16 +901,19 @@ async function clickUpdate(item, index) {
     return
   }
 
+  /*
   let res = await Building.find({
     company: item.company.id,
     orderby: 'b_name',
   })
 
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
-
+  */
+  
   item.company = item.extra.company.id
   item.building = item.extra.building.id  
 
+  changeCompany(item.company)
   changeBuilding(item.building)
 
   if (item.usevat == 1) {
@@ -910,7 +924,7 @@ async function clickUpdate(item, index) {
   
   data.item = util.clone(item)
   
-  res = await User.get(item.user)
+  let res = await User.get(item.user)
   if (res.item != null) {
     data.inspect = res.item
   } else {
