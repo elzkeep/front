@@ -642,7 +642,7 @@ async function clickRemove() {
     util.alert('팀원을 이동시킨후 삭제해 주세요.')
   } else {
     util.loading(true)
-    await model.remove(data.item.id)
+    await model.remove(data.item)
     await getItems()
     data.visible = false
     util.loading(false)
