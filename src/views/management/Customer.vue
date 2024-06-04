@@ -751,6 +751,14 @@ async function initData() {
   let res = await Customer.init()
   console.log(res)
 
+  if (res.companys == null) {
+    res.companys = []
+  }
+
+  if (res.users == null) {
+    res.users = []
+  }
+  
   let companys = res.companys.map(item => item.extra.company)
   
   data.companys = [{ id: 0, name: ' ' }, ...companys]

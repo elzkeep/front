@@ -607,10 +607,15 @@ async function uploadProcess(category, response) {
   
   util.loading(true)
   await Extra.externalall(category, external.filename)
-  util.alert('저장되었습니다')
+  //util.alert('저장되었습니다')
 
   util.loading(false)
+  data.visibleMulti = false
 
+  setTimeout(function() {
+    util.alert('저장되었습니다')
+  }, 100)
+  
   external.filename = ''
   external.originalfilename = ''
   external.files = []

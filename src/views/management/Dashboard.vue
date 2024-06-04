@@ -228,6 +228,14 @@ async function getItems() {
 
   let res = await Extra.dashboard()  
 
+  if (res.users == null) {
+    res.users = []
+  }
+
+  if (res.customers == null) {
+    res.customers = []
+  }
+  
   info.users = res.users
   let customer = res.customers
   
