@@ -2,8 +2,8 @@
   <Title title="소속회원 관리" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-    <el-select v-model.number="data.search.company" placeholder="업체" style="width: 150px" v-if="data.session.level == User.level.rootadmin">
-      <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
+    <el-select v-model.number="data.search.status" size="small" placeholder="" style="width: 90px">
+      <el-option v-for="item in data.statuss" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
 
     <el-input v-model="data.search.text" placeholder="검색할 내용을 입력해 주세요" style="width: 300px" @keyup.enter.native="clickSearch" />
@@ -567,12 +567,18 @@ const data = reactive({
   visibleMulti: false,
   search: {
     text: '',
+    status: 1,
     company: 0,
     department: 0,
   },
   company: {},
   companys: [],
   departments: [],
+  statuss: [
+    {id: 0, name: ' '},
+    {id: 1, name: '사용'},
+    {id: 2, name: '사용 안함'}
+  ],
   levels: [
     { id: 0, name: ' ' },
     { id: 1, name: '일반' },
@@ -647,7 +653,7 @@ async function getItems(reset) {
     pagesize: data.pagesize,
     company: data.search.company,
     approval: 3,
-    orderby: 'u_id',
+    orderby: 'u_name, u_id',
   })
 
   if (res.items == null) {

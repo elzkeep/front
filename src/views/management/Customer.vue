@@ -435,7 +435,7 @@
       </y-tr>
     </y-table>
 
-    <el-table :data="listSelection" border :height="400" width="950px">
+    <el-table :data="bill.items" border :height="400" width="950px">
       <el-table-column prop="number" label="코드번호" align="right" width="70"/>
       <el-table-column label="건물명" align="left">
         <template #default="scope">
@@ -451,14 +451,14 @@
       <el-table-column label="공급가액" align="right" width="90">
         <template #default="scope">
           <div style="display:flex;">
-            <el-input v-model="listSelection[scope.row.index].contractprice" />&nbsp;원
+            <el-input v-model.number="bill.items[scope.$index].contractprice" />&nbsp;원
           </div>
         </template>
       </el-table-column>
       <el-table-column label="부가세" align="right" width="90">
         <template #default="scope">
           <div style="display:flex;">
-            <el-input v-model="listSelection[scope.row.index].contractvat" />&nbsp;원
+            <el-input v-model.number="bill.items[scope.$index].contractvat" />&nbsp;원            
           </div>
         </template>
       </el-table-column>
@@ -689,7 +689,7 @@ const data = reactive({
     billingtype: 0,
     type: 0,
     startdate: '',
-    status: 0,
+    status: 1,
     enddate: '',
   },
   status: {
@@ -795,7 +795,7 @@ async function getItems(reset) {
     status: data.search.status,
     startdate: data.search.startdate,
     enddate: data.search.enddate,
-    orderby: 'cu_id desc',
+    orderby: 'b_name',
   })
 
   let items = []
@@ -1279,10 +1279,11 @@ const bill = reactive({
     { id: 1, name: '기간별' },
     { id: 2, name: '지정월' },
   ],
-  durationtype: 1
+  durationtype: 1,
+  items: []
 })
 
-function clickBill() {
+async function clickBill() {
   if (listSelection.value.length == 0) {
     util.alert('매출 실행 대상을 선택하세요')
     return
@@ -1293,7 +1294,9 @@ function clickBill() {
   bill.month = 1
   bill.year = 2024
   bill.durationmonth = []
-  
+
+  bill.items = util.clone(listSelection.value)
+
   bill.visible = true
 }
 
@@ -1307,8 +1310,8 @@ async function clickBillSubmit() {
     let ids = []
     let prices = []
     let vats = []
-    for (let i = 0; i < listSelection.value.length; i++) {
-      let value = listSelection.value[i]
+    for (let i = 0; i < bill.items.length; i++) {
+      let value = bill.items[i]
 
       ids.push(value.extra.building.id)
       prices.push(util.getInt(value.contractprice))
