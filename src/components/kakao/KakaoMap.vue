@@ -12,10 +12,13 @@ const data = reactive({
   markers: [],
   latitude: 0,
   longitude: 0,
+  geocoder: null,
+  position: [],
 })
 
 const props = defineProps({
-  positions: Array<Array<number>>,
+  positions: Array,
+  positionName: Array,
 })
 
 onMounted(async () => {
@@ -26,17 +29,22 @@ onMounted(async () => {
 
   // get position 나의 위치
   navigator.geolocation.getCurrentPosition(
-    pos => {
+    async pos => {
       data.latitude = pos.coords.latitude
       data.longitude = pos.coords.longitude
 
       if (window.kakao && window.kakao.maps) {
+        await loadPositions()
         initMap()
       } else {
         const script = document.createElement('script')
-        /* global kakao */
-        script.onload = () => kakao.maps.load(initMap)
-        script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${key}`
+        script.onload = async () => {
+          kakao.maps.load(async () => {
+            await loadPositions()
+            initMap()
+          })
+        }
+        script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${key}&libraries=services`
         document.head.appendChild(script)
       }
     },
@@ -46,6 +54,28 @@ onMounted(async () => {
   )
 })
 
+async function loadPositions() {
+  const geocoder = new kakao.maps.services.Geocoder()
+  const positionPromises = props.positionName.map(name => searchMap(name, geocoder))
+  const positions = await Promise.all(positionPromises)
+  // Filter out any null results
+  data.position = positions.filter(position => position !== null)
+}
+
+async function searchMap(address, geocoder) {
+  return new Promise((resolve, reject) => {
+    geocoder.addressSearch(address, (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        resolve([parseFloat(result[0].y), parseFloat(result[0].x)])
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        resolve(null) // No result found for the address
+      } else {
+        reject(new Error(`Failed to search address: ${address}`))
+      }
+    })
+  })
+}
+
 function initMap() {
   const container = document.getElementById('map')
   const options = {
@@ -53,11 +83,10 @@ function initMap() {
     level: 1,
   }
   data.map = new kakao.maps.Map(container, options)
-  // displayMarker([[data.latitude, data.longitude]])
-  displayMarker(props.positions)
+
+  displayMarker(data.position)
 }
 
-//markerPositions <- 위도 경도 2차원 배열로 넣어주면 됨
 function displayMarker(markerPositions) {
   if (data.markers.length > 0) {
     data.markers.forEach(marker => marker.setMap(null))
