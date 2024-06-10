@@ -121,4 +121,20 @@ export default class Facility {
     }
     
 
+
+     static async deleteByBuilding(building) {
+        let item = {
+          building
+        }
+        
+        const res = await request({
+            method: 'DELETE',
+            url: '/api/facility/bybuilding',
+            data: item
+        })
+
+        return res
+    }
+    
+
 }
