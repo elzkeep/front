@@ -342,12 +342,12 @@ async function initData() {
      */
   }
 
-  async function getItems() {  
+async function getItems() {  
   let res = await model.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    company: data.search.company,
+    company: data.session.company,
     building: data.search.building,
     status: util.getInt(data.search.status),
     startbilldate: data.search.startbilldate,
@@ -385,6 +385,7 @@ function clickUpdate(item, index) {
 
 onMounted(async () => {
   data.session = store.getters['getUser']
+  data
 
   util.loading(true)
 

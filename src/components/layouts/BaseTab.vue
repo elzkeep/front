@@ -15,7 +15,7 @@
     <ul v-if="isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax')">
       <li class="tab">
         <router-link class="tab-title" :to="{ name: 'ManagementStatistics' }">
-          <h2 :class="isMenuActive('ManagementStatistics') ? 'tab-tit' : 'tab-subtit'">매출 관리</h2>
+          <h2 :class="isMenuActive('ManagementStatistics') ? 'tab-tit' : 'tab-subtit'">매출 현황</h2>
         </router-link>
       </li>
       <li class="tab">

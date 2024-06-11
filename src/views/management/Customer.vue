@@ -781,15 +781,11 @@ async function getItems(reset) {
     data.items = []
   }
 
-  if (data.session.level != User.level.rootadmin) {
-    data.search.company = data.session.company
-  }
-
   let res = await model.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    company: data.search.company,
+    company: data.session.company,
     building: data.search.building,
     billingtype: data.search.billingtype,
     status: data.search.status,
