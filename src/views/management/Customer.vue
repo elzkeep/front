@@ -50,7 +50,6 @@
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.currentuser }}</p>
     </div>
     <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
-
       <p style="float: center; font-weight: 700; font-size: 16px">계약해지 고객수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.user }}</p>
     </div>
@@ -102,23 +101,23 @@
 
     <el-table-column label="청구방법" align="center" width="60">
       <template #default="scope">
-        {{data.billingtypes[scope.row.billingtype].name}}        
+        {{ data.billingtypes[scope.row.billingtype].name }}
       </template>
     </el-table-column>
     <el-table-column label="청구일" align="center" width="70">
       <template #default="scope">
-        <span v-if="scope.row.billingdate > 0">{{scope.row.billingdate}} 일</span>
+        <span v-if="scope.row.billingdate > 0">{{ scope.row.billingdate }} 일</span>
       </template>
     </el-table-column>
     <el-table-column label="납부기한" align="center" width="70">
       <template #default="scope">
         <span v-if="scope.row.collectday > 0">
-		    <span v-if="scope.row.collectmonth == 1">당월</span>
-            <span v-else>차월</span>
-            {{ scope.row.collectday }} 일
-          </span>
-        </template>
-      </el-table-column>
+          <span v-if="scope.row.collectmonth == 1">당월</span>
+          <span v-else>차월</span>
+          {{ scope.row.collectday }} 일
+        </span>
+      </template>
+    </el-table-column>
 
     <el-table-column label="영업자명" align="center" width="60">
       <template #default="scope">
@@ -205,9 +204,9 @@
   <el-dialog v-model="data.single" width="800px">
     <y-table>
       <y-tr>
-        <y-th style="width:120px;">코드번호</y-th>
+        <y-th style="width: 120px">코드번호</y-th>
         <y-td>
-          {{data.item.number}}
+          {{ data.item.number }}
         </y-td>
       </y-tr>
       <y-tr>
@@ -223,8 +222,8 @@
         <y-td>
           <el-select v-model.number="data.item.building" size="small" placeholder="건물명" style="width: 250px" @change="changeBuilding">
             <el-option v-for="item in data.buildings" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>          
-          &nbsp;&nbsp;&nbsp;<span v-if="data.building.companyno != ''">사업자번호 : {{data.building.companyno}}</span>
+          </el-select>
+          &nbsp;&nbsp;&nbsp;<span v-if="data.building.companyno != ''">사업자번호 : {{ data.building.companyno }}</span>
         </y-td>
       </y-tr>
 
@@ -239,7 +238,6 @@
         </y-td>
       </y-tr>
 
-      
       <y-tr v-if="data.item.contracttype != 2">
         <y-th>한전 고객번호</y-th>
         <y-td>
@@ -293,33 +291,27 @@
             <el-radio-button size="small" value="4">이체</el-radio-button>
           </el-radio-group>
 
-          &nbsp;&nbsp;<el-checkbox v-model="data.item.usevat" label="VAT 사용" size="small" v-if="data.item.billingtype == 4" />          
+          &nbsp;&nbsp;<el-checkbox v-model="data.item.usevat" label="VAT 사용" size="small" v-if="data.item.billingtype == 4" />
         </y-td>
       </y-tr>
 
       <y-tr>
         <y-th>계약금액</y-th>
-        <y-td v-if="data.item.billingtype != 4">          
+        <y-td v-if="data.item.billingtype != 4">
           <el-input v-model="data.item.contractprice" style="width: 100px" /> 원, VAT <el-input v-model="data.item.contractvat" style="width: 100px" /> 원
         </y-td>
-        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == true">          
+        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == true">
           <div><el-input v-model="data.item.contracttotalprice" style="width: 100px" @keyup="changeTotalprice" /> 원</div>
-          <div style="margin-top:3px;">계약금액 {{util.money(data.item.contractprice)}} 원, VAT {{util.money(data.item.contractvat)}} 원</div>
+          <div style="margin-top: 3px">계약금액 {{ util.money(data.item.contractprice) }} 원, VAT {{ util.money(data.item.contractvat) }} 원</div>
         </y-td>
-        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == false">          
-          <el-input v-model="data.item.contractprice" style="width: 100px" /> 원
-        </y-td>
+        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == false"> <el-input v-model="data.item.contractprice" style="width: 100px" /> 원 </y-td>
       </y-tr>
-      
+
       <y-tr>
-        <y-th>
-          청구일
-        </y-th>
-        <y-td>          
-          <el-input v-model="data.item.billingdate" style="width: 50px" /> 일
-        </y-td>
+        <y-th> 청구일 </y-th>
+        <y-td> <el-input v-model="data.item.billingdate" style="width: 50px" /> 일 </y-td>
       </y-tr>
-      
+
       <y-tr>
         <y-th>
           <!--
@@ -359,7 +351,7 @@
       <y-tr>
         <y-th>정기점검일</y-th>
         <y-td>
-          <el-date-picker v-model="data.item.lastdate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />          
+          <el-date-picker v-model="data.item.lastdate" type="date" size="small" style="width: 120px" format="YYYY.MM.DD" value-format="YYYY-MM-DD" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -382,7 +374,7 @@
       <y-tr>
         <y-th>특이사항</y-th>
         <y-td>
-          <el-input v-model="data.item.remark"  :rows="5" type="textarea" />
+          <el-input v-model="data.item.remark" :rows="5" type="textarea" />
         </y-td>
       </y-tr>
     </y-table>
@@ -400,7 +392,7 @@
   <el-dialog v-model="bill.visible" width="900px">
     <y-table style="margin: 10px 0px">
       <y-tr>
-        <y-th style="width:90px;">
+        <y-th style="width: 90px">
           <el-select v-model.number="bill.durationtype" size="small" style="margin-left: 5px; width: 80px">
             <el-option v-for="item in bill.durationtypes" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
@@ -426,17 +418,15 @@
 
             <el-checkbox-group v-model="bill.durationmonth" size="small">
               <el-checkbox-button v-for="item in bill.durationmonths" :key="item.id" :value="item.id">
-              {{item.name}}
+                {{ item.name }}
               </el-checkbox-button>
             </el-checkbox-group>
-            
           </div>
         </y-td>
       </y-tr>
     </y-table>
-
     <el-table :data="bill.items" border :height="400" width="950px">
-      <el-table-column prop="number" label="코드번호" align="right" width="70"/>
+      <el-table-column prop="number" label="코드번호" align="right" width="70" />
       <el-table-column label="건물명" align="left">
         <template #default="scope">
           {{ scope.row.extra.building.name }}
@@ -450,16 +440,12 @@
       <el-table-column prop="extra.building.companyno" label="사업자번호" align="center" width="100" />
       <el-table-column label="공급가액" align="right" width="90">
         <template #default="scope">
-          <div style="display:flex;">
-            <el-input v-model.number="bill.items[scope.$index].contractprice" />&nbsp;원
-          </div>
+          <div style="display: flex"><el-input v-model.number="bill.items[scope.$index].contractprice" />&nbsp;원</div>
         </template>
       </el-table-column>
       <el-table-column label="부가세" align="right" width="90">
         <template #default="scope">
-          <div style="display:flex;">
-            <el-input v-model.number="bill.items[scope.$index].contractvat" />&nbsp;원            
-          </div>
+          <div style="display: flex"><el-input v-model.number="bill.items[scope.$index].contractvat" />&nbsp;원</div>
         </template>
       </el-table-column>
       <el-table-column label="합계금액" align="right" width="80">
@@ -467,21 +453,20 @@
       </el-table-column>
       <el-table-column label="청구형태" align="center" width="60">
         <template #default="scope">
-          {{data.billingtypes[scope.row.billingtype].name}}          
+          {{ data.billingtypes[scope.row.billingtype].name }}
         </template>
       </el-table-column>
       <el-table-column label="청구일" align="center" width="50">
         <template #default="scope">
-          <span v-if="scope.row.billingdate > 0">{{scope.row.billingdate}} 일</span>          
+          <span v-if="scope.row.billingdate > 0">{{ scope.row.billingdate }} 일</span>
         </template>
       </el-table-column>
-    
+
       <el-table-column label="담당자" align="center" width="60">
         <template #default="scope">
           {{ getUser(scope.row.user).name }}
         </template>
       </el-table-column>
-      
     </el-table>
 
     <template #footer>
@@ -519,7 +504,7 @@
   <el-dialog v-model="data.visibleInspector" width="800px">
     <y-table style="margin: 10px 0px">
       <y-tr>
-        <y-th style="width: 80px;">이름</y-th>
+        <y-th style="width: 80px">이름</y-th>
         <y-td>
           {{ getUser(data.inspector).name }}
         </y-td>
@@ -536,7 +521,6 @@
           {{ getUser(data.inspector).tel }}
         </y-td>
       </y-tr>
-      
     </y-table>
     <template #footer>
       <el-button size="small" type="primary" @click="clickInspector">담당자 변경</el-button>
@@ -616,13 +600,13 @@ const item = {
   billingname: '',
   billingtel: '',
   billingemail: '',
-  billingtype: 2,  
+  billingtype: 2,
   status: 1,
   company: 0,
   building: 0,
   user: 0,
   contracttotalprice: 0,
-  usevat: false, 
+  usevat: false,
   date: '',
   extra: {
     building: {
@@ -734,9 +718,9 @@ const data = reactive({
     { id: 4, name: '이체' },
   ],
   building: {
-    companyno: ''
+    companyno: '',
   },
-  inspectorchange: false
+  inspectorchange: false,
 })
 
 async function clickSearch() {
@@ -750,7 +734,6 @@ function clickInspectorSearch() {
 async function initData() {
   let res = await Customer.init()
   console.log(res)
-
   if (res.companys == null) {
     res.companys = []
   }
@@ -758,20 +741,20 @@ async function initData() {
   if (res.users == null) {
     res.users = []
   }
-  
+
   let companys = res.companys.map(item => item.extra.company)
-  
+
   data.companys = [{ id: 0, name: ' ' }, ...companys]
-  
+
   data.users = [{ id: 0, name: ' ' }, ...res.users]
-  
+
   res.score = res.score.toFixed(1)
   data.status = res
 
   if (res.departments == null) {
     res.departments = []
   }
-  
+
   data.departments = [{ id: 0, name: ' ' }, ...res.departments]
 }
 
@@ -855,13 +838,13 @@ async function getInspectors(reset) {
   data.inspectorpage++
 }
 
-async function clickSingle() {  
+async function clickSingle() {
   data.item = util.clone(item)
 
   let res = await Extra.maxnumber(data.session.company)
   data.item.number = res.max
-  
-  data.buildings = [{id: 0, name: ' '}]
+
+  data.buildings = [{ id: 0, name: ' ' }]
   data.single = true
   data.visible = false
 }
@@ -913,9 +896,9 @@ async function clickUpdate(item, index) {
 
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
   */
-  
+
   item.company = item.extra.company.id
-  item.building = item.extra.building.id  
+  item.building = item.extra.building.id
 
   changeCompany(item.company)
   changeBuilding(item.building)
@@ -925,9 +908,9 @@ async function clickUpdate(item, index) {
   } else {
     item.usevat = false
   }
-  
+
   data.item = util.clone(item)
-  
+
   let res = await User.get(item.user)
   if (res.item != null) {
     data.inspect = res.item
@@ -935,8 +918,7 @@ async function clickUpdate(item, index) {
     data.inspect = util.clone(user)
   }
   console.log(res)
-  
-  
+
   data.single = true
 }
 
@@ -1058,19 +1040,18 @@ async function clickSubmit() {
       item.usevat = 1
     } else {
       item.usevat = 0
-    } 
+    }
   } else {
     item.usevat = 1
   }
   item.status = util.getInt(item.status)
-  
+
   if ((item.kepconumber != '' || item.kesconumber != '') && item.contracttype != 2) {
-    let res = await model.find({
-    })
+    let res = await model.find({})
 
     let flag = true
     let flag2 = true
-    
+
     for (let i = 0; i < res.items.length; i++) {
       let d = res.items[i]
 
@@ -1140,7 +1121,7 @@ function getCompany(id) {
     return {
       id: 0,
       name: '',
-      companyno: ''
+      companyno: '',
     }
   }
 
@@ -1164,7 +1145,7 @@ function getBuilding(id) {
     return {
       id: 0,
       name: '',
-      companyno: ''
+      companyno: '',
     }
   }
 
@@ -1207,17 +1188,17 @@ async function changeCompany(item) {
   })
 
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
-  data.building = {companyno: ''}
+  data.building = { companyno: '' }
 }
 
-function changeBuilding(id) {  
+function changeBuilding(id) {
   let building = getBuilding(id)
   if (building.companyno == '') {
     let company = getCompany(building.company)
 
     building.companyno = company.companyno
   }
-  
+
   data.building = building
 }
 
@@ -1264,19 +1245,19 @@ const bill = reactive({
   ],
   base: 1,
   year: 2024,
-  years: [    
+  years: [
     { id: 2024, name: '2020' },
     { id: 2024, name: '2021' },
     { id: 2024, name: '2022' },
     { id: 2024, name: '2023' },
-    { id: 2024, name: '2024' }    
+    { id: 2024, name: '2024' },
   ],
   durationtypes: [
     { id: 1, name: '기간별' },
     { id: 2, name: '지정월' },
   ],
   durationtype: 1,
-  items: []
+  items: [],
 })
 
 async function clickBill() {
@@ -1284,7 +1265,7 @@ async function clickBill() {
     util.alert('매출 실행 대상을 선택하세요')
     return
   }
-  
+
   bill.durationtype = 1
   bill.base = 1
   bill.month = 1
@@ -1311,8 +1292,8 @@ async function clickBillSubmit() {
 
       ids.push(value.extra.building.id)
       prices.push(util.getInt(value.contractprice))
-      vats.push(util.getInt(value.contractvat))        
-  }
+      vats.push(util.getInt(value.contractvat))
+    }
 
     await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids, prices, vats)
 
@@ -1333,29 +1314,29 @@ function getCompanyInfo(item) {
   if (item.id == 0) {
     return ''
   }
-  
+
   return `${item.name} (${item.companyno})`
 }
 
 async function clickInspectorSave() {
   util.loading(true)
-  
+
   let item = util.clone(data.item)
 
   item.user = util.getInt(data.inspector)
 
   await model.update(item)
-  
+
   await getItems(true)
 
   data.visibleInspector = false
   util.loading(false)
 }
 
-function changeTotalprice(value) {  
+function changeTotalprice(value) {
   let div = util.getFloat(data.item.contracttotalprice) / 11
   data.item.contractprice = util.getInt(div * 10)
-  data.item.contractvat = util.getInt(data.item.contracttotalprice) - util.getInt(data.item.contractprice)   
+  data.item.contractvat = util.getInt(data.item.contracttotalprice) - util.getInt(data.item.contractprice)
 }
 
 function changeBillingtype(value) {
@@ -1364,7 +1345,7 @@ function changeBillingtype(value) {
   }
 
   if (data.item.contracttotalprice == 0) {
-    data.item.contracttotalprice = util.getInt(data.item.contractprice) + util.getInt(data.item.contractvat) 
-  } 
+    data.item.contracttotalprice = util.getInt(data.item.contractprice) + util.getInt(data.item.contractvat)
+  }
 }
 </script>

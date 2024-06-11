@@ -52,7 +52,7 @@
     <div style="flex: 1; text-align: right; gap: 5"></div>
   </div>
 
-  <KakaoMap :positions="[[33.450701, 126.570667]]" style="margin-bottom: 30px" />
+  <KakaoMap :positions="[[33.450701, 126.570667]]" :positionName="data.positionName" v-if="data.positionName.length > 0" style="margin-bottom: 30px" />
 
   <el-table :data="data.items" border :height="height(858)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column prop="id" label="ID" align="center" width="80" />
@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, popScopeId } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
 import { User, Customer, Building, Company, Report } from '~/models'
@@ -180,6 +180,7 @@ const data = reactive({
     { id: 4, name: '작성완료' },
   ],
   target: 0,
+  positionName: [],
 })
 
 const reportInsert = ref({})
@@ -256,16 +257,19 @@ async function getItems() {
   }
 
   let items = []
+  data.positionName = []
 
   for (let i = 0; i < res.items.length; i++) {
     let item = res.items[i]
 
     item.index = i + 1
+    data.positionName.push(item.extra.building.address)
     items.push(item)
   }
 
   data.total = res.total
   data.items = items
+  console.log(data.positionName)
 }
 
 function clickInsert() {
