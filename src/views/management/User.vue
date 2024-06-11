@@ -575,9 +575,9 @@ const data = reactive({
   companys: [],
   departments: [],
   statuss: [
-    {id: 0, name: ' '},
-    {id: 1, name: '사용'},
-    {id: 2, name: '사용 안함'}
+    { id: 0, name: ' ' },
+    { id: 1, name: '사용' },
+    { id: 2, name: '사용 안함' },
   ],
   levels: [
     { id: 0, name: ' ' },
@@ -865,7 +865,7 @@ const toggleListSelection = rows => {
 }
 const changeList = val => {
   for (let i = 0; i < val.length; i++) {
-    if (val[i].id == data.session.id) {
+    if (val[i].id == data.session.id || val[i].level == 3) {
       listRef.value!.toggleRowSelection(val[i], undefined)
       break
     }
