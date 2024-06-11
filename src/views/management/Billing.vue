@@ -7,26 +7,13 @@
         <div style="text-align: center">대상</div>
       </template>
 
-
-      <el-select size="small" v-model.number="data.search.company" placeholder="사업자" style="width:150px;margin-right:5px;" @change="changeCompany">
-        <el-option
-          v-for="item in data.companys"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
+      <el-select size="small" v-model.number="data.search.company" placeholder="사업자" style="width: 150px; margin-right: 5px" @change="changeCompany">
+        <el-option v-for="item in data.companys" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
 
-      <el-select size="small" v-model.number="data.search.building" placeholder="건물" style="width:150px;">
-        <el-option
-          v-for="item in data.buildings"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
+      <el-select size="small" v-model.number="data.search.building" placeholder="건물" style="width: 150px">
+        <el-option v-for="item in data.buildings" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-
-      
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -66,9 +53,7 @@
   <el-table :data="data.items" border :height="height(300)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="청구대상 월" align="center" width="140">
-      <template #default="scope">
-        {{scope.row.month.replaceAll('-', '.')}} ~ {{scope.row.endmonth.replaceAll('-', '.')}} 
-      </template>
+      <template #default="scope"> {{ scope.row.month.replaceAll('-', '.') }} ~ {{ scope.row.endmonth.replaceAll('-', '.') }} </template>
     </el-table-column>
     <el-table-column label="기간" align="center" width="70">
       <template #default="scope"> {{ scope.row.period }}개월분 </template>
@@ -175,15 +160,7 @@
   </el-dialog>
 
   <el-dialog v-model="data.visibleGiro" width="800px">
-    <el-upload
-      :action="data.upload"
-      :headers="headers"
-      :multiple="true"
-      :show-file-list="true"
-      :on-success="handleFileSuccess"
-      :auto-upload="true"
-      v-model:file-list="data.files"
-    >
+    <el-upload :action="data.upload" :headers="headers" :multiple="true" :show-file-list="true" :on-success="handleFileSuccess" :auto-upload="true" v-model:file-list="data.files">
       <el-button size="small" type="success">지로 수금 파일 업로드</el-button>
     </el-upload>
     <template #footer>
@@ -191,7 +168,6 @@
       <el-button size="small" type="primary" @click="clickSubmitGiro">등록</el-button>
     </template>
   </el-dialog>
-
 </template>
 
 <script setup lang="ts">
@@ -249,7 +225,7 @@ const data = reactive({
     type: 0,
     startbilldate: '',
     endbilldate: '',
-    duration: 1
+    duration: 1,
   },
   buildings: [],
   allbuildings: [],
@@ -261,10 +237,10 @@ const data = reactive({
   durations: [
     { id: 1, name: '기간별' },
     { id: 2, name: '연도별' },
-    { id: 3, name: '월별' }
+    { id: 3, name: '월별' },
   ],
   upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
-  files: []
+  files: [],
 })
 
 const setting = reactive({
@@ -313,7 +289,7 @@ async function initData() {
     setting[`x${i}`] = item[`x${i}`]
     setting[`y${i}`] = item[`y${i}`]
   }
-    /*
+  /*
        let res = await Customer.find({
        company: data.session.company,
        orderby: 'b_name',
@@ -340,14 +316,14 @@ async function initData() {
        setting[`y${i}`] = item[`y${i}`]
        }
      */
-  }
+}
 
-  async function getItems() {  
+async function getItems() {
   let res = await model.find({
     name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    company: data.search.company,
+    company: data.session.company,
     building: data.search.building,
     status: util.getInt(data.search.status),
     startbilldate: data.search.startbilldate,
@@ -538,7 +514,7 @@ async function clickSubmitSetting() {
   util.loading(true)
 
   let res = await Company.get(data.session.company)
-  let item = util.clone(res.item)  
+  let item = util.clone(res.item)
 
   for (let i = 1; i <= 13; i++) {
     item[`x${i}`] = util.getFloat(setting[`x${i}`])
@@ -565,8 +541,8 @@ async function changeCompany(item) {
   })
 
   data.buildings = [{ id: 0, name: ' ' }, ...res.items]
-  
-  data.search.building = 0  
+
+  data.search.building = 0
 }
 
 async function clickGiroMultiInput() {
@@ -575,7 +551,7 @@ async function clickGiroMultiInput() {
 }
 
 function clickCancelGiro() {
-  data.visibleGiro = false  
+  data.visibleGiro = false
 }
 
 async function clickSubmitGiro() {
@@ -596,7 +572,5 @@ const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   console.log(response)
   console.log(response.filename)
   console.log(response.originalfilename)
-
 }
-
 </script>

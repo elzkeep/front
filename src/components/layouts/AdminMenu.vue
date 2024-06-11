@@ -1,5 +1,5 @@
-<template>  
-  <el-menu @select="clickMenu" :collapse="false" style="padding-top:10px;">
+<template>
+  <el-menu @select="clickMenu" :collapse="false" style="padding-top: 10px">
     <el-menu-item index="1">
       <template #title>
         <el-icon><Document /></el-icon>업체 관리
@@ -16,8 +16,8 @@
       <template #title>
         <el-icon><User /></el-icon>직원 관리
       </template>
-    </el-menu-item>    
-    
+    </el-menu-item>
+
     <el-menu-item index="4">
       <template #title>
         <el-icon><Cpu /></el-icon>면허 관리
@@ -44,7 +44,7 @@
 
     <el-menu-item index="8">
       <template #title>
-        <el-icon><Money /></el-icon>매출 관리
+        <el-icon><Money /></el-icon>매출 보고서
       </template>
     </el-menu-item>
 
@@ -76,13 +76,12 @@
       <template #title>
         <el-icon><User /></el-icon>사전등록 관리
       </template>
-    </el-menu-item>    
-
+    </el-menu-item>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
@@ -93,11 +92,11 @@ const route = useRoute()
 const data = reactive({
   session: {
     level: 0,
-    company: 0
+    company: 0,
   },
   company: {
-    type: 0
-  }
+    type: 0,
+  },
 })
 
 onMounted(async () => {
@@ -110,7 +109,7 @@ const clickMenu = async (key: string, keyPath: string[]) => {
   } else if (key == '2') {
     router.push('/admin/department')
   } else if (key == '3') {
-    router.push('/admin/user')    
+    router.push('/admin/user')
   } else if (key == '4') {
     router.push('/admin/companylicense')
   } else if (key == '5') {
@@ -131,9 +130,8 @@ const clickMenu = async (key: string, keyPath: string[]) => {
     router.push('/admin/notice')
   } else if (key == '41') {
     router.push('/admin/faq')
-    } else if (key == '42') {
-      router.push('/admin/join')
-    }
+  } else if (key == '42') {
+    router.push('/admin/join')
+  }
 }
-
 </script>
