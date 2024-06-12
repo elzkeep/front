@@ -266,6 +266,7 @@
 
   <div style="margin-top: 10px; text-align: left">
     <el-button class="filter-item" type="success" @click="clickSubmit">저장</el-button>
+    <el-button class="filter-item" type="danger" @click="clickRemove">삭제</el-button>
   </div>
 </template>
 
@@ -521,6 +522,32 @@ async function clickSubmit() {
 
   util.alert('저장되었습니다')
 
+  util.loading(false)
+}
+
+async function clickRemove() {
+  util.loading(true)
+  await model.deleteByBuildingCategory(data.id, 10)
+  await model.deleteByBuildingCategory(data.id, 11)
+  await model.deleteByBuildingCategory(data.id, 12)
+  await model.deleteByBuildingCategory(data.id, 13)
+
+  data.item = util.clone(item)
+  data.items = []
+  data.items.push(util.clone(item))
+
+  data.highs = []
+  let item2 = util.clone(item)
+  item2.content = [util.clone(item)]
+  data.highs.push(item2)
+
+  data.transs = []
+  item2 = util.clone(item)
+  item2.name = 'TR1'
+  data.transs.push(item2)
+
+  await Extra.score(data.id)
+  util.alert('삭제되었습니다')
   util.loading(false)
 }
 
