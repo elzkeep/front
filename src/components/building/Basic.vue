@@ -1,4 +1,4 @@
-q<template>
+<template>
   <y-table>
     <y-tr>
       <y-th style="width: 200px">수전설비 설치여부</y-th>
@@ -167,9 +167,9 @@ q<template>
     </y-tr>
   </y-table>
 
-  <Title title="고압차단기" v-if="data.item.value3 == '2'" />
+  <Title title="고압차단기" v-if="data.item.type == '2'" />
 
-  <y-table style="margin-top: 10px" v-if="data.item.value3 == '2'">
+  <y-table style="margin-top: 10px" v-if="data.item.type == '2'">
     <y-tr>
       <y-th>설치장소</y-th>
       <y-th>차단기명</y-th>
@@ -270,10 +270,10 @@ q<template>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from "vue"
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
-import { util, size }  from "~/global"
-import { Company, Facility, Building } from "~/models"
+import { util, size } from '~/global'
+import { Company, Facility, Building } from '~/models'
 import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
@@ -282,100 +282,100 @@ import type { UploadProps } from 'element-plus'
 
 const props = defineProps({
   id: Number,
-});
+})
 
-const { width, height } = size();
+const { width, height } = size()
 
-const store = useStore();
-const route = useRoute();
+const store = useStore()
+const route = useRoute()
 
-const model = Facility;
+const model = Facility
 
 const item = {
   id: 0,
   type: 1,
-  value1: "",
-  value2: "",
-  value3: "",
-  value4: "",
-  value5: "",
-  value6: "",
-  value7: "",
-  value8: "",
-  value9: "",
-  value10: "",
+  value1: '',
+  value2: '',
+  value3: '',
+  value4: '',
+  value5: '',
+  value6: '',
+  value7: '',
+  value8: '',
+  value9: '',
+  value10: '',
   building: 0,
-};
+}
 
 const data = reactive({
   id: 0,
   item: util.clone(item),
   positions: [
-    { id: "0", name: " " },
-    { id: "1", name: "지하" },
-    { id: "2", name: "단독/옥내" },
-    { id: "3", name: "옥상" },
-    { id: "4", name: "옥외" },
-    { id: "5", name: "복도/계단" },
-    { id: "6", name: "현관" },
-    { id: "7", name: "직접입력" },
+    { id: '0', name: ' ' },
+    { id: '1', name: '지하' },
+    { id: '2', name: '단독/옥내' },
+    { id: '3', name: '옥상' },
+    { id: '4', name: '옥외' },
+    { id: '5', name: '복도/계단' },
+    { id: '6', name: '현관' },
+    { id: '7', name: '직접입력' },
   ],
   volts: [
-    { id: "0", name: " " },
-    { id: "1", name: "[저압] 380/220" },
-    { id: "2", name: "[특고압] 22,900" },
-    { id: "3", name: "직접입력" },
+    { id: '0', name: ' ' },
+    { id: '1', name: '[저압] 380/220' },
+    { id: '2', name: '[특고압] 22,900' },
+    { id: '3', name: '직접입력' },
   ],
   faucets: [
-    { id: "0", name: " " },
-    { id: "1", name: "일반형" },
-    { id: "2", name: "일체형" },
+    { id: '0', name: ' ' },
+    { id: '1', name: '일반형' },
+    { id: '2', name: '일체형' },
   ],
   supplys: [
-    { id: "0", name: " " },
-    { id: "1", name: "매입형" },
-    { id: "2", name: "노출형" },
+    { id: '0', name: ' ' },
+    { id: '1', name: '매입형' },
+    { id: '2', name: '노출형' },
   ],
   sides: [
-    { id: "0", name: " " },
-    { id: "1", name: "1~5" },
-    { id: "2", name: "6~10" },
-    { id: "3", name: "11~20" },
-    { id: "4", name: "21~30" },
-    { id: "5", name: "31~40" },
-    { id: "6", name: "41~50" },
-    { id: "7", name: "51~60" },
-    { id: "8", name: "61~70" },
-    { id: "9", name: "71~80" },
-    { id: "10", name: "81~90" },
-    { id: "11", name: "91~100" },
-    { id: "12", name: "100초과" },
-    { id: "13", name: "직접입력" },
+    { id: '0', name: ' ' },
+    { id: '1', name: '1~5' },
+    { id: '2', name: '6~10' },
+    { id: '3', name: '11~20' },
+    { id: '4', name: '21~30' },
+    { id: '5', name: '31~40' },
+    { id: '6', name: '41~50' },
+    { id: '7', name: '51~60' },
+    { id: '8', name: '61~70' },
+    { id: '9', name: '71~80' },
+    { id: '10', name: '81~90' },
+    { id: '11', name: '91~100' },
+    { id: '12', name: '100초과' },
+    { id: '13', name: '직접입력' },
   ],
   names: [
-    { id: "0", name: " " },
-    { id: "1", name: "VCB" },
-    { id: "2", name: "GCV" },
+    { id: '0', name: ' ' },
+    { id: '1', name: 'VCB' },
+    { id: '2', name: 'GCV' },
   ],
   relaynames: [
-    { id: "0", name: " " },
-    { id: "1", name: "OCR" },
-    { id: "2", name: "OCGR" },
-    { id: "3", name: "UVR" },
-    { id: "4", name: "OVR" },
-    { id: "5", name: "POR" },
-    { id: "6", name: "디지털" },
+    { id: '0', name: ' ' },
+    { id: '1', name: 'OCR' },
+    { id: '2', name: 'OCGR' },
+    { id: '3', name: 'UVR' },
+    { id: '4', name: 'OVR' },
+    { id: '5', name: 'POR' },
+    { id: '6', name: '디지털' },
   ],
   forms: [
-    { id: "0", name: " " },
-    { id: "1", name: "유입형" },
-    { id: "2", name: "몰드형" },
+    { id: '0', name: ' ' },
+    { id: '1', name: '유입형' },
+    { id: '2', name: '몰드형' },
   ],
   items: [],
   highs: [],
   transs: [],
   upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
-});
+})
 
 async function initData() {}
 
@@ -383,220 +383,220 @@ async function getItems() {
   let res = await model.find({
     building: data.id,
     category: 10,
-    orderby: "f_id",
-  });
+    orderby: 'f_id',
+  })
 
   console.log(res)
 
   if (res.items.length > 0) {
-    data.item = res.items[0];
+    data.item = res.items[0]
   }
 
   res = await model.find({
     building: data.id,
     category: 11,
-    orderby: "f_id",
-  });
+    orderby: 'f_id',
+  })
 
-  data.items = res.items;
+  data.items = res.items
 
   if (data.items.length == 0) {
-    data.items.push(util.clone(item));
+    data.items.push(util.clone(item))
   }
 
   res = await model.find({
     building: data.id,
     category: 12,
-    orderby: "f_id",
-  });
+    orderby: 'f_id',
+  })
 
-  data.transs = res.items;
+  data.transs = res.items
 
   if (data.transs.length == 0) {
-    let item2 = util.clone(item);
-    item2.name = "TR1";
-    data.transs.push(item2);
+    let item2 = util.clone(item)
+    item2.name = 'TR1'
+    data.transs.push(item2)
   }
 
   res = await model.find({
     building: data.id,
     category: 13,
-    orderby: "f_id",
-  });
+    orderby: 'f_id',
+  })
 
-  data.highs = res.items;
+  data.highs = res.items
 
   if (data.highs.length == 0) {
-    let item2 = util.clone(item);
+    let item2 = util.clone(item)
 
-    item2.content = [util.clone(item)];
+    item2.content = [util.clone(item)]
 
-    data.highs.push(item2);
+    data.highs.push(item2)
   } else {
     for (let i = 0; i < data.highs.length; i++) {
-      data.highs[i].content = JSON.parse(data.highs[i].content);
+      data.highs[i].content = JSON.parse(data.highs[i].content)
     }
   }
 }
 
 onMounted(async () => {
-  data.id = util.getInt(route.params.id);
+  data.id = util.getInt(route.params.id)
 
-  util.loading(true);
+  util.loading(true)
 
-  await initData();
-  await getItems();
+  await initData()
+  await getItems()
 
-  util.loading(false);
-});
+  util.loading(false)
+})
 
 function clickAdd() {
-  data.items.push(util.clone(item));
+  data.items.push(util.clone(item))
 }
 
 function clickDelete(pos) {
-  let items = util.clone(data.items);
+  let items = util.clone(data.items)
 
-  items.splice(pos, 1);
-  data.items = items;
+  items.splice(pos, 1)
+  data.items = items
 }
 
 function changeVolt(item) {}
 
 function makeData(item) {
   for (let i = 1; i <= 10; i++) {
-    const name = `value${i}`;
-    item[name] = "" + item[name];
+    const name = `value${i}`
+    item[name] = '' + item[name]
   }
 
-  return item;
+  return item
 }
 async function clickSubmit() {
-  util.loading(true);
+  util.loading(true)
 
-  let item = makeData(util.clone(data.item));
-  item.building = data.id;
-  item.category = 10;
+  let item = makeData(util.clone(data.item))
+  item.building = data.id
+  item.category = 10
   item.type = util.getInt(item.type)
-  
+
   if (item.id > 0) {
-    await model.update(item);
+    await model.update(item)
   } else {
-    await model.insert(item);
+    await model.insert(item)
   }
 
-  await model.deleteByBuildingCategory(data.id, 11);
+  await model.deleteByBuildingCategory(data.id, 11)
 
   for (let i = 0; i < data.items.length; i++) {
-    let item = makeData(util.clone(data.items[i]));
-    item.building = data.id;
-    item.category = 11;
+    let item = makeData(util.clone(data.items[i]))
+    item.building = data.id
+    item.category = 11
 
-    await model.insert(item);
+    await model.insert(item)
   }
 
-  await model.deleteByBuildingCategory(data.id, 12);
+  await model.deleteByBuildingCategory(data.id, 12)
 
   for (let i = 0; i < data.transs.length; i++) {
-    let item = makeData(util.clone(data.transs[i]));
-    item.building = data.id;
-    item.category = 12;
+    let item = makeData(util.clone(data.transs[i]))
+    item.building = data.id
+    item.category = 12
 
-    await model.insert(item);
+    await model.insert(item)
   }
 
-  await model.deleteByBuildingCategory(data.id, 13);
+  await model.deleteByBuildingCategory(data.id, 13)
 
   for (let i = 0; i < data.highs.length; i++) {
-    let item = makeData(util.clone(data.highs[i]));
-    item.building = data.id;
-    item.category = 13;
+    let item = makeData(util.clone(data.highs[i]))
+    item.building = data.id
+    item.category = 13
 
-    item.content = JSON.stringify(item.content);
+    item.content = JSON.stringify(item.content)
 
-    await model.insert(item);
+    await model.insert(item)
   }
 
-  await Extra.score(data.id);  
-  
+  await Extra.score(data.id)
+
   util.alert('저장되었습니다')
-  
-  util.loading(false)  
+
+  util.loading(false)
 }
 
-const imageUrl = ref("");
+const imageUrl = ref('')
 
-const handleFileSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
-  
-  console.log(response.filename);
-  console.log(response.originalfilename);
-  data.filename = response.filename;
-  data.originalfilename = response.originalfilename;
-};
 
-const beforeFileUpload: UploadProps["beforeUpload"] = rawFile => {
-  if (rawFile.type  !== "image/jpeg") {
-    return false;
+  console.log(response.filename)
+  console.log(response.originalfilename)
+  data.filename = response.filename
+  data.originalfilename = response.originalfilename
+}
+
+const beforeFileUpload: UploadProps['beforeUpload'] = rawFile => {
+  if (rawFile.type !== 'image/jpeg') {
+    return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    return false;
+    return false
   }
-  return true;
-};
+  return true
+}
 
 function clickAddHigh() {
-  data.highs.push(util.clone(item));
+  data.highs.push(util.clone(item))
 }
 
 function clickDeleteHigh(pos) {
-  let items = util.clone(data.highs);
+  let items = util.clone(data.highs)
 
-  items.splice(pos, 1);
-  data.highs = items;
+  items.splice(pos, 1)
+  data.highs = items
 }
 
 function clickAddTrans() {
-  const regex = /TR[0-9]+/;
-  let pos = 1;
+  const regex = /TR[0-9]+/
+  let pos = 1
   for (let i = 0; i < data.transs.length; i++) {
-    let item2 = data.transs[i];
+    let item2 = data.transs[i]
     if (regex.test(item2.name)) {
-      item2.name = `TR${pos}`;
-      pos++;
+      item2.name = `TR${pos}`
+      pos++
     }
   }
 
-  let item2 = util.clone(item);
-  item2.name = `TR${pos}`;
-  data.transs.push(item2);
+  let item2 = util.clone(item)
+  item2.name = `TR${pos}`
+  data.transs.push(item2)
 }
 
 function clickDeleteTrans(pos) {
-  let items = util.clone(data.transs);
+  let items = util.clone(data.transs)
 
-  items.splice(pos, 1);
+  items.splice(pos, 1)
 
-  const regex = /TR[0-9]+/;
-  let num = 1;
+  const regex = /TR[0-9]+/
+  let num = 1
   for (let i = 0; i < items.length; i++) {
-    let item2 = items[i];
+    let item2 = items[i]
     if (regex.test(item2.name)) {
-      item2.name = `TR${num}`;
-      num++;
+      item2.name = `TR${num}`
+      num++
     }
   }
 
-  data.transs = items;
+  data.transs = items
 }
 
 function clickAddRelay(index) {
-  data.highs[index].content.push(util.clone(item));
+  data.highs[index].content.push(util.clone(item))
 }
 
 function clickDeleteRelay(index, pos) {
-  let items = util.clone(data.highs[index].content);
+  let items = util.clone(data.highs[index].content)
 
-  items.splice(pos, 1);
-  data.highs[index].content = items;
+  items.splice(pos, 1)
+  data.highs[index].content = items
 }
 </script>
