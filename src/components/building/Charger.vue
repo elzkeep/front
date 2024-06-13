@@ -189,7 +189,7 @@ async function getItems() {
   })
 
   if (res.items.length > 0) {
-    if (res.items[0].value25 == 1) {
+    if (res.items[0].value25 == '1') {
       res.items[0].value25 = true
     } else {
       res.items[0].value25 = false
@@ -245,9 +245,9 @@ async function clickSubmit() {
   item.type = util.getInt(item.type)
 
   if (item.value25 == true) {
-    item.value25 = 1
+    item.value25 = '1'
   } else {
-    item.value25 = 0
+    item.value25 = '0'
   }
 
   if (item.id > 0) {
@@ -288,6 +288,7 @@ async function clickRemove() {
   data.items.push(util.clone(item))
 
   await Extra.score(data.id)
+  changeValue()
   util.alert('삭제되었습니다')
   util.loading(false)
 }
@@ -301,6 +302,7 @@ function clickDelete(pos) {
 
   items.splice(pos, 1)
   data.items = items
+  changeValue()
 }
 
 function changeValue() {
