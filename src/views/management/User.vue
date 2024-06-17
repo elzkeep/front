@@ -51,6 +51,11 @@
     <el-table-column label="점수" align="center" width="70">
       <template #default="scope"> {{ getTotalscore(scope.row.totalscore) }} / {{ scope.row.score }} </template>
     </el-table-column>
+    <el-table-column label="자격증" align="center" width="70">
+      <template #default="scope">
+        <el-button size="small" type="primary" @click="clickViewLicense(scope.row)" style="margin-right: -5px">보기</el-button>
+      </template>
+    </el-table-column>
     <el-table-column label="등록일" align="center" width="140">
       <template #default="scope">
         {{ util.viewDatetime(scope.row.date) }}
@@ -137,7 +142,10 @@
       </y-tr>
       <y-tr>
         <y-th>경력</y-th>
-        <y-td> <el-input v-model="data.item.careeryear" style="width: 50px" /> 년 <el-input v-model="data.item.careermonth" style="width: 50px" /> 월 </y-td>
+        <y-td>
+          {{ calculateDateDifference(data.item.joindate, data.item.careeryear, data.item.careermonth) }}
+          <!-- <el-input v-model="data.item.careeryear" style="width: 50px" /> {{ data.item.careeryear }} 년 <el-input v-model="data.item.careermonth" style="width: 50px" /> {{ data.item.joindate }} 월 -->
+        </y-td>
       </y-tr>
       <y-tr>
         <y-th>권한</y-th>
@@ -168,6 +176,67 @@
       <el-button size="small" @click="clickCancel">취소</el-button>
       <el-button size="small" type="primary" @click="clickSubmit">등록</el-button>
     </template>
+  </el-dialog>
+
+  <el-dialog v-model="data.visibleViewLicense" width="800px">
+    <Title title="자격정보" />
+    <y-table v-for="item in data.license.items" :key="item.id" style="margin-bottom: 10px">
+      <y-tr>
+        <y-th rowspan="2" colspan="1">기술자격증명</y-th>
+        <y-td> (자격명) </y-td>
+        <y-td>
+          {{ item.extra.licensecategory.name }}
+        </y-td>
+        <y-td> (등록번호) </y-td>
+        <y-td>
+          {{ item.number }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-td> (기술자격등급) </y-td>
+        <y-td>
+          {{ item.extra.licenselevel.name }}
+        </y-td>
+        <y-td> (취득일) </y-td>
+        <y-td>
+          {{ item.takingdate }}
+        </y-td>
+      </y-tr>
+    </y-table>
+    <!-- <y-table style="margin-top: 10px">
+      <y-tr>
+        <y-th>법정교육일자</y-th>
+        <y-td>
+          {{ data.item.educationdate }}
+        </y-td>
+        <y-th>법정교육기관</y-th>
+        <y-td>
+          {{ data.item.educationinstitution }}
+        </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>특별교육일자</y-th>
+        <y-td>
+          {{ data.item.specialeducationdate }}
+        </y-td>
+        <y-th>특별교육기관</y-th>
+        <y-td>
+          {{ data.item.specialeducationinstitution }}
+        </y-td>
+      </y-tr>
+    </y-table> -->
+    <!-- <el-table :data="data.license.items" border :height="'500px'">
+      <el-table-column prop="extra.building.name" label="건물명" align="left" width="100" />
+      <el-table-column label="고객명" align="left" width="100">
+        <template #default="scope">
+          {{ getCompany(scope.row.extra.building.company) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="주소" align="left">
+        <template #default="scope"> {{ scope.row.extra.building.address }} {{ scope.row.extra.building.addressetc }} </template>
+      </el-table-column>
+      <el-table-column prop="extra.building.score" label="점수" align="right" width="70" />
+    </el-table> -->
   </el-dialog>
 
   <el-dialog v-model="data.visibleView" width="800px">
@@ -565,6 +634,7 @@ const data = reactive({
   visibleView: false,
   visibleSelect: false,
   visibleMulti: false,
+  visibleViewLicense: false,
   search: {
     text: '',
     status: 1,
@@ -827,7 +897,11 @@ function clickUpdate(item, index) {
     return
   }
 
-  if (index.no == 11) {
+  if (index.no == 10) {
+    return
+  }
+
+  if (index.no == 12) {
     return
   }
 
@@ -1026,6 +1100,18 @@ function clickCancelView() {
   data.visibleView = false
 }
 
+async function clickViewLicense(item) {
+  getLicense(item.id)
+
+  data.visibleViewLicense = true
+}
+
+function clickCancelViewLicense() {
+  data.license.items = []
+  data.license.total = 0
+  data.visibleViewLicense = false
+}
+
 function changeJoindate() {
   let joindate = moment(data.item.joindate)
   let now = moment()
@@ -1098,5 +1184,30 @@ const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   console.log(response.originalfilename)
   external.filename = response.filename
   external.originalfilename = response.originalfilename
+}
+
+function calculateDateDifference(dateString: string, careeryear: string, careermonth: string): string {
+  let date1
+  if (dateString == '') {
+    date1 = new Date()
+  } else {
+    date1 = new Date(dateString)
+  }
+  const date2 = new Date()
+
+  let years = date2.getFullYear() - date1.getFullYear()
+  let months = date2.getMonth() - date1.getMonth()
+
+  // Adjust years and months if necessary
+  if (months < 0) {
+    years -= 1
+    months += 12
+  }
+
+  // if (careeryear == '') {
+  //   career
+  // }
+
+  return `${years + Number(careeryear)}년 ${months + Number(careermonth)}개월`
 }
 </script>

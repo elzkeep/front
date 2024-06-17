@@ -151,6 +151,10 @@ async function clickSignup() {
 
   util.loading(false)
 
-  router.push('/signin')
+  util.messagebox('알림', '회원가입이 완료되었습니다.', function () {
+    router.push('/signin')
+  })
+
+  // router.push('/signin')
 }
 </script>

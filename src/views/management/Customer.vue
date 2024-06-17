@@ -65,6 +65,7 @@
 
   <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
+    <el-table-column prop="index" width="60" align="right" label="순번" />
     <el-table-column prop="number" width="60" align="right" label="코드번호" />
     <el-table-column label="건물명" align="left">
       <template #default="scope">
@@ -525,7 +526,7 @@
     <template #footer>
       <el-button size="small" type="primary" @click="clickInspector">담당자 변경</el-button>
       <el-button size="small" type="success" v-if="data.inspectorchange" @click="clickInspectorSave">저장</el-button>
-      <el-button size="small" @click="data.visibleInspector = false">취소</el-button>
+      <el-button size="small" @click="clickCancelInspector">취소</el-button>
     </template>
   </el-dialog>
 
@@ -949,8 +950,17 @@ function clickCancel() {
   data.visible = false
 }
 
+function clickCancelInspector() {
+  data.inspect = util.clone(user)
+  data.visibleInspector = false
+}
+
 const listRef = ref<InstanceType<typeof ElTable>>()
 const listSelection = ref([])
+const setCurrent = (row?: User) => {
+  listRef.value!.setCurrentRow(row)
+}
+
 const toggleListSelection = rows => {
   if (rows) {
     rows.forEach(row => {
@@ -970,6 +980,7 @@ const changeInspectorList = val => {
   data.inspector = val.id
   data.inspectorchange = true
   clickSubmitInspector()
+  setCurrent()
 }
 
 function clickSubmitInspector() {
@@ -1334,6 +1345,7 @@ async function clickInspectorSave() {
   await getItems(true)
 
   data.visibleInspector = false
+  data.inspect = util.clone(user)
   util.loading(false)
 }
 
