@@ -737,6 +737,7 @@ async function clickSubmitBuilding() {
 function clickDownloadExcelExample() {
   let url = '/api/download/companyexample'
   let filename = `고객.xlsx`
+
   util.download(store, url, filename)
 }
 

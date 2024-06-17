@@ -1,5 +1,5 @@
 <template>
-  <Title title="매출 보고서" />
+  <Title title="매출 현황" />
 
   <el-descriptions class="margin-top" :column="3" border style="margin-bottom: 10px">
     <el-descriptions-item>

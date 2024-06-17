@@ -2,6 +2,10 @@
   <Title title="소속회원 관리" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+    <el-select v-model.number="data.search.department" size="small" placeholder="" style="width: 150px">
+      <el-option v-for="item in data.departments2" :key="item.id" :label="item.name" :value="item.id" />
+    </el-select>
+    
     <el-select v-model.number="data.search.status" size="small" placeholder="" style="width: 90px">
       <el-option v-for="item in data.statuss" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
@@ -18,7 +22,24 @@
     </div>
   </div>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
+  <div style="margin-top: 10px; margin-bottom: 20px; display: flex; gap: 20px;">
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
+      <p style="float: center; font-weight: 700; font-size: 16px">전체 회원수</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.totalusers }}</p>
+    </div>
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
+
+      <p style="float: center; font-weight: 700; font-size: 16px">재직 회원수</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.users }}</p>
+    </div>
+    <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
+      <p style="float: center; font-weight: 700; font-size: 16px">점수</p>
+      <p style="float: center; font-weight: 700; font-size: 25px">{{ getTotalscore(data.status.totalscore) }} / {{ getTotalscore(data.status.score) }}</p>
+    </div>    
+  </div>
+
+  
+  <el-table :data="data.items" border :height="height(340)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="업체" align="left" v-if="data.session.level == User.level.rootadmin">
       <template #default="scope">
@@ -250,7 +271,11 @@
       <el-table-column label="주소" align="left">
         <template #default="scope"> {{ scope.row.extra.building.address }} {{ scope.row.extra.building.addressetc }} </template>
       </el-table-column>
-      <el-table-column prop="extra.building.score" label="점수" align="right" width="70" />
+      <el-table-column label="점수" align="right" width="70">
+        <template #default="scope">
+          {{getTotalscore(scope.row.extra.building.score)}}
+        </template>
+      </el-table-column>
     </el-table>
   </el-dialog>
 
@@ -637,6 +662,7 @@ const data = reactive({
   visibleViewLicense: false,
   search: {
     text: '',
+    department: 0,
     status: 1,
     company: 0,
     department: 0,
@@ -645,9 +671,9 @@ const data = reactive({
   companys: [],
   departments: [],
   statuss: [
-    { id: 0, name: ' ' },
-    { id: 1, name: '사용' },
-    { id: 2, name: '사용 안함' },
+    {id: 0, name: '상태'},
+    {id: 1, name: '사용'},
+    {id: 2, name: '사용 중지'}
   ],
   levels: [
     { id: 0, name: ' ' },
@@ -672,6 +698,12 @@ const data = reactive({
     items: [],
     total: 0,
   },
+  status: {
+    users: 0,
+    totalusers: 0,
+    score: 0,
+    totalscore: 0
+  }
 })
 
 async function clickSearch() {
@@ -687,6 +719,9 @@ async function initData() {
 
   data.companys = [{ id: 0, name: ' ' }, ...res.items]
 
+  res = await Company.get(data.session.company)
+  data.company = res.item
+  
   res = await Department.find({
     page: 0,
     pagesize: data.pagesize,
@@ -694,10 +729,8 @@ async function initData() {
     orderby: 'de_order,de_name',
   })
 
-  let ress = await Company.get(data.session.company)
-  data.company = ress.item
-
   data.departments = [{ id: 0, name: data.company.name }, ...res.items]
+  data.departments2 = [{ id: 0, name: '팀' }, ...res.items]
 
   data.levels = [
     { id: 0, name: ' ' },
@@ -705,6 +738,9 @@ async function initData() {
     { id: 2, name: '팀장' },
     { id: 3, name: '관리자' },
   ]
+  
+  res = await Userlist.init()
+  data.status = res  
 }
 
 async function getItems(reset) {
@@ -719,6 +755,8 @@ async function getItems(reset) {
 
   let res = await Userlist.find({
     name: data.search.text,
+    department: data.search.department,
+    status: data.search.status,
     page: data.page,
     pagesize: data.pagesize,
     company: data.search.company,
@@ -1088,6 +1126,7 @@ async function changeCompany(item) {
 async function clickView(item) {
   let res = await Customer.find({
     user: item.id,
+    status: 1,
     orderby: 'b_name',
   })
 

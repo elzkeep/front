@@ -1,5 +1,5 @@
 <template>
-  <Title title="청구 및 결제 관리" />
+  <Title title="지로 청구 및 관리" />
 
   <el-descriptions class="margin-top" :column="3" border style="margin-bottom: 10px">
     <el-descriptions-item>
@@ -71,6 +71,9 @@
     <el-table-column prop="billdate" label="납부기한" align="center" width="100" :formatter="util.tableDate" />
     <el-table-column label="금액" align="right" width="100">
       <template #default="scope"> {{ util.money(scope.row.price) }} 원 </template>
+    </el-table-column>
+    <el-table-column label="부가세" align="right" width="80">
+      <template #default="scope"> {{ util.money(scope.row.vat) }} 원 </template>
     </el-table-column>
     <el-table-column label="상태" align="center" width="80">
       <template #default="scope">
@@ -318,7 +321,7 @@ async function initData() {
      */
 }
 
-async function getItems() {
+async function getItems() {  
   let res = await model.find({
     name: data.search.text,
     page: data.page,
@@ -361,6 +364,7 @@ function clickUpdate(item, index) {
 
 onMounted(async () => {
   data.session = store.getters['getUser']
+  data
 
   util.loading(true)
 

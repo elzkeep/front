@@ -1,5 +1,5 @@
 <template>
-  <Title title="매출 보고서" />
+  <Title title="매출 현황" />
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
     <el-select v-model.number="data.search.company" placeholder="업체" style="width: 150px" v-if="data.session.level == User.level.rootadmin">

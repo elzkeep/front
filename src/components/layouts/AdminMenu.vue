@@ -44,7 +44,7 @@
 
     <el-menu-item index="8">
       <template #title>
-        <el-icon><Money /></el-icon>매출 보고서
+        <el-icon><Money /></el-icon>매출 현황
       </template>
     </el-menu-item>
 

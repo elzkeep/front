@@ -78,12 +78,12 @@
           <ul v-if="!store.getters['getNav'] && (isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax'))" class="subtit-ul">
             <li class="subtit-li">
               <router-link :to="{ name: 'ManagementStatistics' }">
-                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementStatistics') }">매출 보고서</span>
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementStatistics') }">매출 현황</span>
               </router-link>
             </li>
             <li class="subtit-mi">
               <router-link :to="{ name: 'ManagementBilling' }">
-                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementBilling') }">청구 및 결제관리</span>
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementBilling') }">지로 청구 및 관리</span>
               </router-link>
             </li>
             <li>
