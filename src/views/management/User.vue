@@ -903,7 +903,7 @@ const toggleListSelection = rows => {
 }
 const changeList = val => {
   for (let i = 0; i < val.length; i++) {
-    if (val[i].id == data.session.id) {
+    if (val[i].id == data.session.id || val[i].level == 3) {
       listRef.value!.toggleRowSelection(val[i], undefined)
       break
     }

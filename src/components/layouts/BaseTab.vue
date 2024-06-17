@@ -20,7 +20,7 @@
       </li>
       <li class="tab">
         <router-link class="tab-title" :to="{ name: 'ManagementBilling' }">
-          <h2 :class="isMenuActive('ManagementBilling') ? 'tab-tit' : 'tab-subtit'">청구 및 결제관리</h2>
+          <h2 :class="isMenuActive('ManagementBilling') ? 'tab-tit' : 'tab-subtit'">지로 청구 및 관리</h2>
         </router-link>
       </li>
       <li class="tab">
