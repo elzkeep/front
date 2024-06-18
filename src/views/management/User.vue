@@ -5,7 +5,7 @@
     <el-select v-model.number="data.search.department" size="small" placeholder="" style="width: 150px">
       <el-option v-for="item in data.departments2" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
-    
+
     <el-select v-model.number="data.search.status" size="small" placeholder="" style="width: 90px">
       <el-option v-for="item in data.statuss" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
@@ -22,23 +22,21 @@
     </div>
   </div>
 
-  <div style="margin-top: 10px; margin-bottom: 20px; display: flex; gap: 20px;">
+  <div style="margin-top: 10px; margin-bottom: 20px; display: flex; gap: 20px">
     <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
       <p style="float: center; font-weight: 700; font-size: 16px">전체 회원수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.totalusers }}</p>
     </div>
     <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
-
       <p style="float: center; font-weight: 700; font-size: 16px">재직 회원수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ data.status.users }}</p>
     </div>
     <div style="float: left; width: 280px; padding: 10px; border: 1px solid">
       <p style="float: center; font-weight: 700; font-size: 16px">점수</p>
       <p style="float: center; font-weight: 700; font-size: 25px">{{ getTotalscore(data.status.totalscore) }} / {{ getTotalscore(data.status.score) }}</p>
-    </div>    
+    </div>
   </div>
 
-  
   <el-table :data="data.items" border :height="height(340)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column label="업체" align="left" v-if="data.session.level == User.level.rootadmin">
@@ -273,7 +271,7 @@
       </el-table-column>
       <el-table-column label="점수" align="right" width="70">
         <template #default="scope">
-          {{getTotalscore(scope.row.extra.building.score)}}
+          {{ getTotalscore(scope.row.extra.building.score) }}
         </template>
       </el-table-column>
     </el-table>
@@ -671,9 +669,9 @@ const data = reactive({
   companys: [],
   departments: [],
   statuss: [
-    {id: 0, name: '상태'},
-    {id: 1, name: '사용'},
-    {id: 2, name: '사용 중지'}
+    { id: 0, name: '상태' },
+    { id: 1, name: '사용' },
+    { id: 2, name: '사용 중지' },
   ],
   levels: [
     { id: 0, name: ' ' },
@@ -702,8 +700,8 @@ const data = reactive({
     users: 0,
     totalusers: 0,
     score: 0,
-    totalscore: 0
-  }
+    totalscore: 0,
+  },
 })
 
 async function clickSearch() {
@@ -721,7 +719,7 @@ async function initData() {
 
   res = await Company.get(data.session.company)
   data.company = res.item
-  
+
   res = await Department.find({
     page: 0,
     pagesize: data.pagesize,
@@ -738,9 +736,9 @@ async function initData() {
     { id: 2, name: '팀장' },
     { id: 3, name: '관리자' },
   ]
-  
+
   res = await Userlist.init()
-  data.status = res  
+  data.status = res
 }
 
 async function getItems(reset) {
@@ -976,13 +974,15 @@ const toggleListSelection = rows => {
   }
 }
 const changeList = val => {
+  let list = []
   for (let i = 0; i < val.length; i++) {
     if (val[i].id == data.session.id || val[i].level == 3) {
       listRef.value!.toggleRowSelection(val[i], undefined)
-      break
+      continue
     }
+    list.push(val[i])
   }
-  listSelection.value = val
+  listSelection.value = list
 }
 
 function clickDeleteMulti() {
