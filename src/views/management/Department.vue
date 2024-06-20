@@ -291,6 +291,7 @@ const handleNodeClick = async (tree: Tree) => {
   if (data.departmentItem.id == 0) {
     return
   }
+  console.log(tree)
   getDepartmentUsers(tree)
 }
 
@@ -424,7 +425,7 @@ async function getItems() {
   }
 
   let item = { label: '', children: [] }
-  item.id = 0
+  item.id = 1
   item.company = data.company.id
   item.name = data.company.name
   item.label = data.company.name
