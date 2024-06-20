@@ -18,7 +18,7 @@
     
   </el-descriptions>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(255)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList">
     <el-table-column prop="month" label="발행일자" align="center"  />
     <el-table-column prop="month" label="공급자" align="center"  />
     <el-table-column prop="month" label="품목" align="center"  />
