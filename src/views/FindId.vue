@@ -2,14 +2,14 @@
   <div class="flex-container">
     <el-card class="box-card">
       <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-        <el-input placeholder="이름 입력" v-model="item.name" style="height: 32px" />
+        <el-input placeholder="이름 입력" v-model="data.name" style="height: 32px" />
       </div>
       <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-        <el-input placeholder="이메일 주소 입력" v-model="item.email" style="width: 300px" />
+        <el-input placeholder="이메일 주소 입력" v-model="data.email" style="width: 300px" />
         <el-button type="primary" @click="clickSns">인증번호 발송</el-button>
       </div>
-      <div v-if="item.sendAuthNum" style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
-        <el-input placeholder="인증번호 입력" v-model="item.authNumber" style="width: 300px" />
+      <div v-if="data.sendAuthNum" style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
+        <el-input placeholder="인증번호 입력" v-model="data.authNumber" style="width: 300px" />
         <el-button type="primary" @click="clickSubmit">확인</el-button>
       </div>
     </el-card>
@@ -25,36 +25,45 @@ import router from '~/router'
 
 const store = useStore()
 
-const item = reactive({
+const sns = {
+  to: '',
+  message: `지킴E 가입 URL\n팀명: \nURL: https://app.zkeep.space/#/join/user`,
+  url: 'https://app.zkeep.space/#/join/user',
+}
+
+const data = reactive({
   name: '',
   email: '',
   authNumber: '',
   sendAuthNum: false,
+  sns: util.clone(sns),
 })
 
 onMounted(async () => {})
 
 async function clickSns() {
-  if (item.name === '') {
+  if (data.name === '') {
     util.alert('이름을 입력하세요')
     return
   }
 
-  if (item.email === '') {
+  if (data.email === '') {
     util.alert('이메일를 입력하세요')
     return
   }
 
-  item.sendAuthNum = true
+  let res = await User.find({ name: data.name, email: data.email })
 
-  // const res = await Login.login(item)
+  data.sendAuthNum = true
+
+  // const res = await Login.login(data)
   // if (res.code === 'ok') {
   //   util.login(store, res)
 
   //   if (res.user.level != User.level.rootadmin) {
   //     let res2 = await Company.get(res.user.company)
   //     console.log(res2)
-  //     let company = res2.item
+  //     let company = res2.data
 
   //     store.commit('setCompany', company)
   //   }
@@ -80,7 +89,7 @@ async function clickSubmit() {}
   -webkit-box-align: center;
   -moz-box-align: center;
   -ms-flex-align: center;
-  align-items: center; /* 수직 정렬 */
+  align-datas: center; /* 수직 정렬 */
 
   -webkit-box-pack: center;
   -moz-box-pack: center;

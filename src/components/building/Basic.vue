@@ -3,7 +3,7 @@
     <y-tr>
       <y-th style="width: 200px">수전설비 설치여부</y-th>
       <y-td>
-        <el-switch v-model="data.item.value1" />
+        <el-switch v-model="data.item.value1" active-value="true" inactive-value="false" />
       </y-td>
     </y-tr>
     <y-tr>
@@ -295,7 +295,7 @@ const model = Facility
 const item = {
   id: 0,
   type: 1,
-  value1: '',
+  value1: 'false',
   value2: '',
   value3: '',
   value4: '',
