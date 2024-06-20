@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
+  <el-table :data="data.items" border :height="height(235)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column prop="name" label="사업자명" align="left" width="250" />
     <el-table-column prop="ceo" label="대표자" align="left" width="120" />

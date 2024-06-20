@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
+  <el-table :data="data.items" border :height="height(235)" @row-click="clickUpdate"  ref="listRef" @selection-change="changeList">
     <el-table-column type="selection" width="40" align="center" />    
     <el-table-column label="면허 종류" align="left">
       <template #default="scope">

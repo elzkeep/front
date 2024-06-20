@@ -63,7 +63,7 @@
     </div>
   </div>
 
-  <el-table :data="data.items" border :height="height(170)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
+  <el-table :data="data.items" border :height="height(337)" @row-click="clickUpdate" ref="listRef" @selection-change="changeList" v-infinite="getItems">
     <el-table-column type="selection" width="40" align="center" />
     <el-table-column prop="number" width="60" align="right" label="코드번호" />
     <el-table-column label="건물명" align="left">
@@ -389,7 +389,7 @@
     <FacilityInsert />
   </el-dialog>
 
-  <el-dialog v-model="bill.visible" width="900px">
+  <el-dialog v-model="bill.visible" width="1100px">
     <y-table style="margin: 10px 0px">
       <y-tr>
         <y-th style="width: 90px">
@@ -465,6 +465,12 @@
       <el-table-column label="담당자" align="center" width="60">
         <template #default="scope">
           {{ getUser(scope.row.user).name }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="비고" align="center" width="200">
+        <template #default="scope">
+          <el-input v-model.number="bill.items[scope.$index].remark" />        
         </template>
       </el-table-column>
     </el-table>
