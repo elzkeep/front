@@ -289,23 +289,24 @@
             <el-radio-button size="small" value="1">지로</el-radio-button>
             <el-radio-button size="small" value="2">계산서</el-radio-button>
             <el-radio-button size="small" value="3">카드</el-radio-button>
-            <el-radio-button size="small" value="4">이체</el-radio-button>
+            <el-radio-button size="small" value="4">CMS</el-radio-button>
+            <el-radio-button size="small" value="5">소매매출</el-radio-button>
           </el-radio-group>
 
-          &nbsp;&nbsp;<el-checkbox v-model="data.item.usevat" label="VAT 사용" size="small" v-if="data.item.billingtype == 4" />
+          &nbsp;&nbsp;<el-checkbox v-model="data.item.usevat" label="VAT 사용" size="small" v-if="data.item.billingtype == 5" />
         </y-td>
       </y-tr>
 
       <y-tr>
         <y-th>계약금액</y-th>
-        <y-td v-if="data.item.billingtype != 4">
+        <y-td v-if="data.item.billingtype != 5">
           <el-input v-model="data.item.contractprice" style="width: 100px" /> 원, VAT <el-input v-model="data.item.contractvat" style="width: 100px" /> 원
         </y-td>
-        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == true">
+        <y-td v-if="data.item.billingtype == 5 && data.item.usevat == true">
           <div><el-input v-model="data.item.contracttotalprice" style="width: 100px" @keyup="changeTotalprice" /> 원</div>
           <div style="margin-top: 3px">계약금액 {{ util.money(data.item.contractprice) }} 원, VAT {{ util.money(data.item.contractvat) }} 원</div>
         </y-td>
-        <y-td v-if="data.item.billingtype == 4 && data.item.usevat == false"> <el-input v-model="data.item.contractprice" style="width: 100px" /> 원 </y-td>
+        <y-td v-if="data.item.billingtype == 5 && data.item.usevat == false"> <el-input v-model="data.item.contractprice" style="width: 100px" /> 원 </y-td>
       </y-tr>
 
       <y-tr>
@@ -722,7 +723,8 @@ const data = reactive({
     { id: 1, name: '지로' },
     { id: 2, name: '계산서' },
     { id: 3, name: '카드' },
-    { id: 4, name: '이체' },
+    { id: 4, name: 'CMS' },
+    { id: 4, name: '소매매출' },
   ],
   building: {
     companyno: '',
@@ -1052,7 +1054,7 @@ async function clickSubmit() {
   item.contractday = util.getInt(item.contractday)
   item.contracttype = util.getInt(item.contracttype)
 
-  if (item.billingtype == 4) {
+  if (item.billingtype == 5) {
     if (item.usevat == true) {
       item.usevat = 1
     } else {
@@ -1358,7 +1360,7 @@ function changeTotalprice(value) {
 }
 
 function changeBillingtype(value) {
-  if (value != 4) {
+  if (value != 5) {
     return
   }
 

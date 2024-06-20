@@ -131,4 +131,20 @@ export default class Customer {
     }
     
 
+
+     static async deleteByCompany(company) {
+        let item = {
+          company
+        }
+        
+        const res = await request({
+            method: 'DELETE',
+            url: '/api/customer/bycompany',
+            data: item
+        })
+
+        return res
+    }
+    
+
 }
