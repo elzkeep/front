@@ -124,9 +124,9 @@
     </y-tr>
   </y-table>
 
-  <Title title="변전설비" />
+  <Title title="변전설비" v-if="data.item.type == '2'" />
 
-  <y-table style="margin-top: 10px">
+  <y-table style="margin-top: 10px" v-if="data.item.type == '2'">
     <y-tr>
       <y-th>설비명</y-th>
       <y-th>형식</y-th>
