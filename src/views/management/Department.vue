@@ -289,7 +289,7 @@ const handleNodeClick = async (tree: Tree) => {
   data.sns.url = `https://app.zkeep.space/#/join/user?company=${data.departmentItem.company}&department=${data.departmentItem.id}`
   data.sns.message = `지킴E 가입 URL\n팀명: ${data.departmentItem.name}\nURL: ${data.sns.url}`
   if (data.departmentItem.id == 0) {
-    return
+    // return
   }
   console.log(tree)
   getDepartmentUsers(tree)
@@ -351,7 +351,7 @@ async function getDepartmentUsers(tree) {
 }
 
 async function dfs(tree) {
-  await getUsers(tree.id)
+  await getUsers(tree.id, tree.status)
   for (var child of tree.children) {
     dfs(child)
   }
@@ -425,33 +425,34 @@ async function getItems() {
   }
 
   let item = { label: '', children: [] }
-  item.id = 1
+  item.id = 0
   item.company = data.company.id
   item.name = data.company.name
   item.label = data.company.name
   item.children = items
+  item.status = 1
 
-  let notApprovedItem = { label: '미승인', children: [] }
-  notApprovedItem.id = 1
+  let notApprovedItem = { label: '미승인', children: [], status: 2 }
+  notApprovedItem.id = 0
   notApprovedItem.children = notApprovedItems
 
   data.total = res.total
   data.items = [item, notApprovedItem]
 
   let reverseItem = res.items.reverse()
-  data.departments = [{ id: 0, name: data.company.name }, ...reverseItem]
+  data.departments = [{ id: 0, name: data.company.name, status: 1 }, ...reverseItem]
 
   data.departmentItem = util.clone(item)
 }
 
-async function getUsers(departmentId) {
+async function getUsers(departmentId, status) {
   let res = await User.find({
     page: data.userpage,
     pagesize: data.userpagesize,
     company: data.session.company,
     department: departmentId,
     approval: 3,
-    status: 1,
+    status: status,
     orderby: 'u_id desc',
   })
 
@@ -509,6 +510,7 @@ function clickInsert() {
   data.item = util.clone(item)
   data.master = util.clone(user)
   data.item.parent = data.departmentItem.id
+  data.item.order = data.departmentItem.children.length + 1
   data.visible = true
 }
 
@@ -622,6 +624,22 @@ async function clickSubmit() {
     }
   }
 
+  let result = data.departments.filter(depart => depart.parent == item.parent)
+  result = result.filter(depart => depart.status == item.status)
+  result = result.filter(re => re.id != item.id)
+  result.reverse()
+  console.log(result)
+
+  for (let i = 0; i < result.length; i++) {
+    if (i + 1 >= item.order) {
+      result[i].order = i + 2
+      await model.update(result[i])
+    } else if (i + 1 < item.order) {
+      result[i].order = i + 1
+      await model.update(result[i])
+    }
+  }
+
   //util.info('등록되었습니다')
 
   await getItems()
@@ -630,7 +648,7 @@ async function clickSubmit() {
   data.departmentItem = tree
   data.userTotal = 0
   data.users = []
-  getUsers(data.departmentItem.id)
+  getUsers(data.departmentItem.id, data.departmentItem.status)
   util.loading(false)
   data.master = util.clone(user)
 }
