@@ -1,48 +1,49 @@
-import { createWebHistory, createRouter } from 'vue-router'
-import { useStore } from 'vuex'
-
-import SignIn from '~/views/SignIn.vue'
-import SignUp from '~/views/SignUp.vue'
-import FindId from '~/views/FindId.vue'
-
-import AdminDashboard from '~/views/admin/Dashboard.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import store from '~/store'
+import AdminBilling from '~/views/admin/Billing.vue'
+import AdminBuilding from '~/views/admin/Building.vue'
 import AdminCompany from '~/views/admin/Company.vue'
 import AdminCompanyinfo from '~/views/admin/Companyinfo.vue'
-import AdminDepartment from '~/views/admin/Department.vue'
-import AdminUser from '~/views/admin/User.vue'
-import AdminLicense from '~/views/admin/License.vue'
 import AdminCompanylicense from '~/views/admin/Companylicense.vue'
-import AdminBuilding from '~/views/admin/Building.vue'
 import AdminCustomer from '~/views/admin/Customer.vue'
-import AdminBilling from '~/views/admin/Billing.vue'
-import AdminReport from '~/views/admin/Report.vue'
-import AdminStatistics from '~/views/admin/Statistics.vue'
-import AdminNotice from '~/views/admin/Notice.vue'
+import AdminDashboard from '~/views/admin/Dashboard.vue'
+import AdminDepartment from '~/views/admin/Department.vue'
 import AdminFaq from '~/views/admin/Faq.vue'
 import AdminJoin from '~/views/admin/Join.vue'
-
-import ManagementDashboard from '~/views/management/Dashboard.vue'
+import AdminLicense from '~/views/admin/License.vue'
+import AdminNotice from '~/views/admin/Notice.vue'
+import AdminReport from '~/views/admin/Report.vue'
+import AdminStatistics from '~/views/admin/Statistics.vue'
+import AdminUser from '~/views/admin/User.vue'
+import BuildingFacility from '~/views/building/Facility.vue'
+import FindId from '~/views/FindId.vue'
+import ManagementBilling from '~/views/management/Billing.vue'
+import ManagementBuilding from '~/views/management/Building.vue'
 import ManagementCompany from '~/views/management/Company.vue'
 import ManagementCompanyinfo from '~/views/management/Companyinfo.vue'
-import ManagementDepartment from '~/views/management/Department.vue'
-import ManagementUser from '~/views/management/User.vue'
-import ManagementLicense from '~/views/management/License.vue'
 import ManagementCompanylicense from '~/views/management/Companylicense.vue'
-import ManagementBuilding from '~/views/management/Building.vue'
+import ManagementContract from '~/views/management/Contract.vue'
 import ManagementCustomer from '~/views/management/Customer.vue'
-import ManagementBilling from '~/views/management/Billing.vue'
+import ManagementCustomercompany from '~/views/management/Customercompany.vue'
+import ManagementDashboard from '~/views/management/Dashboard.vue'
+import ManagementDepartment from '~/views/management/Department.vue'
+import ManagementDeposit from '~/views/management/Deposit.vue'
+import ManagementFacility from '~/views/management/Facility.vue'
+import ManagementGiro from '~/views/management/Giro.vue'
+import ManagementLicense from '~/views/management/License.vue'
+import ManagementPayment from '~/views/management/Payment.vue'
 import ManagementReport from '~/views/management/Report.vue'
 import ManagementStatistics from '~/views/management/Statistics.vue'
-import ManagementCustomercompany from '~/views/management/Customercompany.vue'
-import ManagementContract from '~/views/management/Contract.vue'
-import ManagementPayment from '~/views/management/Payment.vue'
-import ManagementFacility from '~/views/management/Facility.vue'
 import ManagementTax from '~/views/management/Tax.vue'
+import ManagementUser from '~/views/management/User.vue'
+import SignIn from '~/views/SignIn.vue'
+import SignUp from '~/views/SignUp.vue'
 
 
-import BuildingFacility from '~/views/building/Facility.vue'
 
-import store from '~/store'
+
+
+
 
 const routes = [
   {
@@ -218,6 +219,18 @@ const routes = [
     component: ManagementBilling,
   },
   {
+    path: '/management/giro',
+    name: 'ManagementGiro',
+    meta: { authorization: ['admin'] },
+    component: ManagementGiro,
+  },
+  {
+    path: '/management/deposit',
+    name: 'ManagementDeposit',
+    meta: { authorization: ['admin'] },
+    component: ManagementDeposit,
+  },
+  {
     path: '/management/report',
     name: 'ManagementReport',
     meta: { authorization: ['admin'] },
@@ -264,7 +277,7 @@ const routes = [
     name: 'Adminjoin',
     meta: { authorization: ['admin'] },
     component: AdminJoin,
-  }  
+  }
 ]
 
 const router = createRouter({

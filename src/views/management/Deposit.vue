@@ -30,8 +30,7 @@
         <el-radio-group v-model="data.search.status">
           <el-radio value="0">전체</el-radio>
           <el-radio value="1">미수금</el-radio>
-          <el-radio value="2">부분수금</el-radio>          
-          <el-radio value="3">수금</el-radio>
+          <el-radio value="2">수금</el-radio>
         </el-radio-group>
         <div style="flex: 1; display: flex; align-items: center; justify-content: right">
           <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
@@ -42,7 +41,12 @@
 
   <div style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 10px">
     <div style="flex: 1; text-align: right; gap: 5">
-      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: 20px">삭제</el-button>          
+      <el-button size="small" type="danger" @click="clickDeleteMulti" style="margin-right: 20px">삭제</el-button>
+      <el-button size="small" type="primary" @click="clickSetting" style="margin-right: 20px">출력설정</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(1)" style="margin-right: -5px">미수금 처리</el-button>
+      <el-button size="small" type="success" @click="clickStatusMulti(2)">수금 처리</el-button>
+      <el-button size="small" type="primary" @click="clickGiroMultiInput" style="margin-right: -5px">e지로 업로드</el-button>
+      <el-button size="small" type="primary" @click="clickGiroMulti">지로발행</el-button>
     </div>
   </div>
 
@@ -72,157 +76,109 @@
     <el-table-column label="부가세" align="right" width="80">
       <template #default="scope"> {{ util.money(scope.row.vat) }} 원 </template>
     </el-table-column>
-    <el-table-column label="미수금액" align="right" width="80">
-      <template #default="scope"> {{ util.money(scope.row.vat + scope.row.price - scope.row.depositprice) }} 원</template>
-    </el-table-column>    
-    <el-table-column label="상태" align="center" width="70">
+    <el-table-column label="상태" align="center" width="50">
       <template #default="scope">
         <span v-if="scope.row.status == 1">미수금</span>
-        <span v-if="scope.row.status == 2">부분수금</span>
-        <span v-if="scope.row.status == 3">수금</span>
+        <span v-if="scope.row.status == 2">수금</span>
       </template>
     </el-table-column>
     <el-table-column prop="billingname" label="담당자" align="left" width="80" />
     <el-table-column prop="billingtel" label="연락처" align="left" />
     <el-table-column prop="billingemail" label="이메일" align="left" />
-    
+
+    <el-table-column label="지로" align="center" width="70">
+      <template #default="scope">
+        <span v-if="scope.row.giro == 1">미발행</span>
+        <span v-if="scope.row.giro == 2">발행완료</span>
+      </template>
+    </el-table-column>
   </el-table>
 
-  <el-dialog v-model="deposit.visible" width="800px">
-    <div style="display: flex; justify-content: space-between; gap: 5px">
-      <Title title="매출 정보" />
-
-      <div style="flex: 1; text-align: right; gap: 5; margin-top: 15px">
-        <el-button size="small" type="primary" @click="clickSave">저장</el-button>
-      </div>
-    </div>
-    
+  <el-dialog v-model="data.visibleSetting" width="800px">
     <y-table>
       <y-tr>
-        <y-th style="width: 90px">사업자명</y-th>
+        <y-th style="width: 80px">소식란</y-th>
         <y-td>
-          {{deposit.item.companyname}}
+          <el-input :rows="5" type="textarea" v-model="setting.content" />
         </y-td>
       </y-tr>
       <y-tr>
-        <y-th style="width: 90px">건물</y-th>
-        <y-td>
-          {{deposit.item.buildingname}}
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th style="width: 90px">금액</y-th>
-        <y-td>          
-          {{util.money(deposit.item.price)}} 원
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th style="width: 90px">부가세</y-th>
-        <y-td>
-          {{util.money(deposit.item.vat)}} 원
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th style="width: 90px">미수금액</y-th>
-        <y-td>          
-          {{ util.money(deposit.item.vat + deposit.item.price - deposit.item.depositprice) }} 원
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th style="width: 90px">적요</y-th>
-        <y-td>
-          <el-input v-model="deposit.item.title" />
-        </y-td>
-      </y-tr>
-      <y-tr>
-        <y-th style="width: 90px">비고</y-th>
-        <y-td>
-          <el-input v-model="deposit.item.remark" />
-        </y-td>
-      </y-tr>
-    </y-table>
-
-    <div style="display: flex; justify-content: space-between; gap: 5px">
-      <Title title="건물 정보" />
-
-      <div style="flex: 1; text-align: right; gap: 5; margin-top: 15px">
-        <el-button size="small" type="danger" @click="clickDeleteDepositMulti" style="margin-right: -5px">수금 삭제</el-button>
-        <el-button size="small" type="success" @click="clickInsertDeposit">수금 추가</el-button>
-      </div>
-    </div>
-
-    <el-table :data="deposit.items" border height="200" ref="depositRef" @selection-change="changeListDeposit">
-      <el-table-column type="selection" width="40" align="center" />
-      <el-table-column prop="price" label="구분" align="center" width="80">
-        <template #default="scope">
-          <span v-if="scope.row.type == 1">이체</span>
-          <span v-if="scope.row.type == 2">지로</span>
-          <span v-if="scope.row.type == 3">현금</span>
-          <span v-if="scope.row.type == 4">카드</span>
-          <span v-if="scope.row.type == 5">CMS</span>
-          <span v-if="scope.row.type == 6">기타</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="price" label="금액" align="right" width="120">
-        <template #default="scope">
-          {{util.money(scope.row.price)}}
-        </template>
-      </el-table-column>
-      <el-table-column prop="remark" label="비고" align="left" />
-      <el-table-column prop="date" label="등록일" align="center" width="130" />
-    </el-table>
-
-    <template #footer>
-      <el-button size="small" @click="deposit.visible = false">취소</el-button>      
-    </template>
-  </el-dialog>
-
-  <el-dialog v-model="deposit.visibleInsert" width="800px">
-    <Title title="수금 등록" />
-    
-    <y-table>
-      <y-tr>
-        <y-th style="width: 150px">구분</y-th>
-        <y-td>
-          <el-radio-group v-model="deposit.deposit.type">
-            <el-radio-button size="small" value="1">이체</el-radio-button>
-            <el-radio-button size="small" value="2">지로</el-radio-button>
-            <el-radio-button size="small" value="3">현금</el-radio-button>
-            <el-radio-button size="small" value="4">카드</el-radio-button>
-            <el-radio-button size="small" value="5">CMS</el-radio-button>
-            <el-radio-button size="small" value="6">기타</el-radio-button>
-          </el-radio-group>
-        </y-td>
+        <y-th>주소위치</y-th>
+        <y-td> X : <el-input v-model="setting.x1" style="width: 50px" /> Y : <el-input v-model="setting.y1" style="width: 50px" /> </y-td>
       </y-tr>
       <y-tr>
         <y-th>금액</y-th>
-        <y-td>
-          <el-input v-model="deposit.deposit.price" style="width:100px;" /> 원
-        </y-td>
+        <y-td> X : <el-input v-model="setting.x2" style="width: 50px" /> Y : <el-input v-model="setting.y2" style="width: 50px" /> </y-td>
       </y-tr>
       <y-tr>
-        <y-th>비고</y-th>
-        <y-td>
-          <el-input v-model="deposit.deposit.remark" />
-        </y-td>
+        <y-th>공급가액</y-th>
+        <y-td> X : <el-input v-model="setting.x3" style="width: 50px" /> Y : <el-input v-model="setting.y3" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>세액</y-th>
+        <y-td> X : <el-input v-model="setting.x4" style="width: 50px" /> Y : <el-input v-model="setting.y4" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>등록번호</y-th>
+        <y-td> X : <el-input v-model="setting.x5" style="width: 50px" /> Y : <el-input v-model="setting.y5" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>수용가명</y-th>
+        <y-td> X : <el-input v-model="setting.x6" style="width: 50px" /> Y : <el-input v-model="setting.y6" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>작성년월일</y-th>
+        <y-td> X : <el-input v-model="setting.x7" style="width: 50px" /> Y : <el-input v-model="setting.y7" style="width: 50px" /> </y-td>
+      </y-tr>
+
+      <y-tr>
+        <y-th>소식란</y-th>
+        <y-td> X : <el-input v-model="setting.x8" style="width: 50px" /> Y : <el-input v-model="setting.y8" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>금액</y-th>
+        <y-td> X : <el-input v-model="setting.x9" style="width: 50px" /> Y : <el-input v-model="setting.y9" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>고객코드</y-th>
+        <y-td> X : <el-input v-model="setting.x10" style="width: 50px" /> Y : <el-input v-model="setting.y10" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>상호</y-th>
+        <y-td> X : <el-input v-model="setting.x11" style="width: 50px" /> Y : <el-input v-model="setting.y11" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>성명</y-th>
+        <y-td> X : <el-input v-model="setting.x12" style="width: 50px" /> Y : <el-input v-model="setting.y12" style="width: 50px" /> </y-td>
+      </y-tr>
+      <y-tr>
+        <y-th>항목</y-th>
+        <y-td> X : <el-input v-model="setting.x13" style="width: 50px" /> Y : <el-input v-model="setting.y13" style="width: 50px" /> </y-td>
       </y-tr>
     </y-table>
-    
-    
 
     <template #footer>
-      <el-button size="small" @click="clickCancelDeposit">취소</el-button>
-      <el-button size="small" type="primary" @click="clickSubmitDeposit">등록</el-button>
+      <el-button size="small" @click="clickCancelSetting">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitSetting">등록</el-button>
     </template>
   </el-dialog>
-  
+
+  <el-dialog v-model="data.visibleGiro" width="800px">
+    <el-upload :action="data.upload" :headers="headers" :multiple="true" :show-file-list="true" :on-success="handleFileSuccess" :auto-upload="true" v-model:file-list="data.files">
+      <el-button size="small" type="success">지로 수금 파일 업로드</el-button>
+    </el-upload>
+    <template #footer>
+      <el-button size="small" @click="clickCancelGiro">취소</el-button>
+      <el-button size="small" type="primary" @click="clickSubmitGiro">등록</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
-import { User, Customer, Building, Billinglist, Company, Billing, Billinghistory } from '~/models'
+import { User, Customer, Building, Billinglist, Company, Billing } from '~/models'
 import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
@@ -263,7 +219,9 @@ const data = reactive({
   page: 1,
   pagesize: 0,
   item: util.clone(item),
-  visible: false,  
+  visible: false,
+  visibleSetting: false,
+  visibleGiro: false,
   search: {
     company: 0,
     building: 0,
@@ -278,15 +236,45 @@ const data = reactive({
   statuss: [
     { id: 0, name: ' ' },
     { id: 1, name: '미수금' },
-    { id: 2, name: '부분수금' },
-    { id: 3, name: '수금' },
+    { id: 2, name: '수금' },
   ],
   durations: [
     { id: 1, name: '기간별' },
     { id: 2, name: '연도별' },
     { id: 3, name: '월별' },
   ],
-  index: -1
+  upload: `${import.meta.env.VITE_REPORT_URL}/api/upload/index`,
+  files: []
+})
+
+const setting = reactive({
+  contennt: '',
+  x1: 0,
+  y1: 0,
+  x2: 0,
+  y2: 0,
+  x3: 0,
+  y3: 0,
+  x4: 0,
+  y4: 0,
+  x5: 0,
+  y5: 0,
+  x6: 0,
+  y6: 0,
+  x7: 0,
+  y7: 0,
+  x8: 0,
+  y8: 0,
+  x9: 0,
+  y9: 0,
+  x10: 0,
+  y10: 0,
+  x11: 0,
+  y11: 0,
+  x12: 0,
+  y12: 0,
+  x13: 0,
+  y13: 0
 })
 
 async function clickSearch() {
@@ -298,6 +286,40 @@ async function initData() {
   data.buildings = [{ id: 0, name: ' ' }]
 
   data.companys = [{ id: 0, name: ' ' }, ...res.companys]
+
+  let item = res.company
+  setting.content = item.content
+  for (let i = 1; i <= 13; i++) {
+    setting[`x${i}`] = item[`x${i}`]
+    setting[`y${i}`] = item[`y${i}`]
+  }
+  /*
+     let res = await Customer.find({
+     company: data.session.company,
+     orderby: 'b_name',
+     })
+
+     let items = res.items.map(item => item.extra.building)
+     data.buildings = [{ id: 0, name: ' ' }]
+
+     res = await Company.find({})
+
+     data.companys = [{ id: 0, name: ' ' }, ...res.items]  
+
+     let company = 0
+
+     if (data.session.level != User.level.rootadmin) {
+     company = data.session.company
+     }
+
+     res = await Company.get(data.session.company)
+     let item = res.item
+     setting.content = item.content
+     for (let i = 1; i <= 13; i++) {
+     setting[`x${i}`] = item[`x${i}`]
+     setting[`y${i}`] = item[`y${i}`]
+     }
+   */
 }
 
 async function getItems() {  
@@ -312,6 +334,8 @@ async function getItems() {
     endbilldate: data.search.endbilldate,
     orderby: 'bi_id desc',
   })
+
+  console.log(res.items)
 
   if (res.items == null) {
     res.items = []
@@ -328,6 +352,15 @@ async function getItems() {
 
   data.total = res.total
   data.items = items
+}
+
+function clickInsert() {
+  data.item = util.clone(item)
+  data.visible = true
+}
+
+function clickUpdate(item, index) {
+  return
 }
 
 onMounted(async () => {
@@ -456,6 +489,55 @@ function clickStatusMulti(status) {
   })
 }
 
+function clickGiroMulti() {
+  util.confirm('지로 출력하시겠습니까', async function () {
+    util.loading(true)
+
+    let ids = listSelection.value.map(item => item.id)
+
+    await getItems(true)
+
+    util.loading(false)
+
+    const url = '/api/download/giro/' + ids.join(',')
+    const date = moment().format('YYYYMMDDhhmmss')
+    const filename = `지로출력-${date}.pdf`
+
+    util.download(store, url, filename)
+  })
+}
+
+function clickSetting() {
+  data.visibleSetting = true
+}
+
+function clickCancelSetting() {
+  data.visibleSetting = false
+}
+
+async function clickSubmitSetting() {
+  util.loading(true)
+
+  let res = await Company.get(data.session.company)
+  let item = util.clone(res.item)
+
+  for (let i = 1; i <= 13; i++) {
+    item[`x${i}`] = util.getFloat(setting[`x${i}`])
+    item[`y${i}`] = util.getFloat(setting[`y${i}`])
+  }
+
+  item.content = setting.content
+
+  await Company.update(item)
+
+  //util.info('등록되었습니다')
+
+  await getItems(true)
+
+  data.visibleSetting = false
+  util.loading(false)
+}
+
 async function changeCompany(item) {
   console.log(item)
   let res = await Building.find({
@@ -468,132 +550,32 @@ async function changeCompany(item) {
   data.search.building = 0
 }
 
-const billinghistory = {
-  
+async function clickGiroMultiInput() {
+  data.files = []
+  data.visibleGiro = true
 }
 
-const deposit = reactive({
-  visible: false,
-  visibleInsert: false,
-  item: util.clone(billinghistory)
-})
-
-
-const bulidingRef = ref<InstanceType<typeof ElTable>>()
-const depositSelection = ref([])
-const toggleDepositSelection = rows => {
-  if (rows) {
-    rows.forEach(row => {
-      bulidingRef.value!.toggleRowSelection(row, undefined)
-    })
-  } else {
-    bulidingRef.value!.clearSelection()
-  }
-}
-const changeListDeposit = val => {
-  depositSelection.value = val
+function clickCancelGiro() {
+  data.visibleGiro = false
 }
 
-async function readBillinghistory(id) {
-  let res = await Billinghistory.find({
-    billing: id,
-    orderby: 'bh_id'
-  })
+async function clickSubmitGiro() {
+  util.loading(true)
 
-  deposit.items = res.items
+  let filenames = data.files.map(item => item.response.filename)
+
+  await Extra.externalgiro(filenames)
+  util.alert('등록되었습니다')
+  data.visibleGiro = false
+  await getItems(true)
+  util.loading(false)
 }
 
-async function clickUpdate(item, index) {
-  data.index = index  
-  deposit.item = util.clone(item)  
+const handleFileSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  //imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 
-  await readBillinghistory(item.id)
-  
-  deposit.visible = true
-}
-
-async function clickSave() {
-  await Billing.update(deposit.item)
-
-  let items = util.clone(data.items)
-  items[deposit.item.index - 1] = util.clone(deposit.item)
-  data.items = items
-  
-  util.alert('저장되었습니다')
-}
-
-async function clickDeleteDepositMulti() {
-  util.confirm('삭제하시겠습니까', async function () {
-    util.loading(true)
-
-    let ids = []
-    for (let i = 0; i < depositSelection.value.length; i++) {
-      let value = depositSelection.value[i]
-
-      let item = {
-        id: value.id,
-      }
-
-      ids.push(item)      
-    }
-
-    await Extra.depositdelete({id: deposit.item.id, item: ids})
-
-    await readBillinghistory(deposit.item.id)
-
-    let index = deposit.item.index
-    let res = await Billing.get(deposit.item.id)
-    let billing = util.clone(deposit.item)
-    billing.price = res.item.price
-    billing.vat = res.item.vat
-    billing.depositprice = res.item.depositprice
-    deposit.item = billing    
-
-    let items = util.clone(data.items)
-    items[index - 1] = util.clone(deposit.item)
-    data.items = items
-
-    util.loading(false)
-  })  
-}
-
-async function clickInsertDeposit() {
-  deposit.deposit = util.clone(deposit)
-  deposit.deposit.type = 1
-  
-  deposit.visibleInsert = true
-}
-
-async function clickCancelDeposit() {
-  deposit.visibleInsert = false
-}
-
-async function clickSubmitDeposit() {
-  let item = util.clone(deposit.deposit)
-
-  item.type = util.getInt(item.type)
-  item.price = util.getInt(item.price)
-  
-  item.company = deposit.item.company
-  item.building = deposit.item.building
-  item.billing = deposit.item.id
-
-  await Extra.deposit(item)
-
-  await readBillinghistory(deposit.item.id)
-
-  let index = deposit.item.index
-  let res = await Billing.get(deposit.item.id)
-  let billing = util.clone(deposit.item)
-  billing.price = res.item.price
-  billing.vat = res.item.vat
-  billing.depositprice = res.item.depositprice
-  deposit.item = billing  
-
-  let items = util.clone(data.items)
-  items[index - 1] = util.clone(deposit.item)
-  data.items = items
-  
-  deposit.visibleInsert = false
+  console.log(response)
+  console.log(response.filename)
+  console.log(response.originalfilename)
 }
 </script>

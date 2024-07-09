@@ -391,7 +391,7 @@
     <FacilityInsert />
   </el-dialog>
 
-  <el-dialog v-model="bill.visible" width="1100px">
+  <el-dialog v-model="bill.visible" width="1200px">
     <y-table style="margin: 10px 0px">
       <y-tr>
         <y-th style="width: 90px">
@@ -440,6 +440,13 @@
         </template>
       </el-table-column>
       <el-table-column prop="extra.building.companyno" label="사업자번호" align="center" width="100" />
+      <!--
+      <el-table-column label="적요" align="left" width="150">
+        <template #default="scope">
+          <div style="display: flex"><el-input v-model.number="bill.items[scope.$index].title" /></div>
+        </template>
+      </el-table-column>
+      -->
       <el-table-column label="공급가액" align="right" width="90">
         <template #default="scope">
           <div style="display: flex"><el-input v-model.number="bill.items[scope.$index].contractprice" />&nbsp;원</div>
@@ -1291,7 +1298,15 @@ async function clickBill() {
   bill.year = 2024
   bill.durationmonth = []
 
+  
+
   bill.items = util.clone(listSelection.value)
+  for (let i = 0; i < bill.items.length; i++) {
+    bill.items[i].title = ''
+    bill.items[i].remark = ''
+  }
+
+  console.log(bill.items)
 
   bill.visible = true
 }
@@ -1306,15 +1321,17 @@ async function clickBillSubmit() {
     let ids = []
     let prices = []
     let vats = []
+    let remarks = []
     for (let i = 0; i < bill.items.length; i++) {
       let value = bill.items[i]
 
       ids.push(value.extra.building.id)
       prices.push(util.getInt(value.contractprice))
       vats.push(util.getInt(value.contractvat))
+      remarks.push(encodeURIComponent(value.remark))
     }
 
-    await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids, prices, vats)
+    await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids, prices, vats, remarks)
 
     util.alert('매출 실행되었습니다')
 

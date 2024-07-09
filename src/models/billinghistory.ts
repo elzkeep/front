@@ -1,7 +1,13 @@
 import request from '~/global/request'
 
 export default class Billinghistory {
+    static readonly type = { account: 1, giro: 2, cash: 3, card: 4, cms: 5, etc: 6} as const 
+    static readonly types = ['', '이체', '지로', '현금', '카드', 'CMS', '기타']
         
+    
+    static getType(value: number) {
+        return this.types[value]
+    }
     
     
     static async insert(item: any) {

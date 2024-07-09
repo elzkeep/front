@@ -1,8 +1,8 @@
 import request from '~/global/request'
 
 export default class Billing {
-    static readonly status = { wait: 1, complete: 2} as const 
-    static readonly statuss = ['', '입금대기', '입금완료']
+    static readonly status = { wait: 1, part: 2, complete: 3} as const 
+    static readonly statuss = ['', '입금대기', '부분입금', '입금완료']
     static readonly giro = { wait: 1, complete: 2} as const 
     static readonly giros = ['', '미발행', '발행']
         

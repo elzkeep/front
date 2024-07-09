@@ -59,7 +59,7 @@
             </li>
           </ul>
         </li>
-        <li style="display: block" :class="{ on: isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax') }">
+        <li style="display: block" :class="{ on: isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementGiro') || isMenuActive('ManagementDeposit') || isMenuActive('ManagementTax') }">
           <router-link :to="{ name: 'ManagementBilling' }">
             <img
               v-if="!store.getters['getNav'] && !isMenuActive('ManagementStatistics') && !isMenuActive('ManagementBilling') && !isMenuActive('ManagementTax')"
@@ -75,7 +75,7 @@
             />
             <h3 class="check-tit hiden">매출관리</h3>
           </router-link>
-          <ul v-if="!store.getters['getNav'] && (isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementTax'))" class="subtit-ul">
+          <ul v-if="!store.getters['getNav'] && (isMenuActive('ManagementStatistics') || isMenuActive('ManagementBilling') || isMenuActive('ManagementGiro') || isMenuActive('ManagementDeposit') || isMenuActive('ManagementTax'))" class="subtit-ul">
             <li class="subtit-li">
               <router-link :to="{ name: 'ManagementStatistics' }">
                 <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementStatistics') }">매출 현황</span>
@@ -83,7 +83,22 @@
             </li>
             <li class="subtit-mi">
               <router-link :to="{ name: 'ManagementBilling' }">
-                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementBilling') }">지로 청구 및 관리</span>
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementBilling') }">매출 관리</span>
+              </router-link>
+            </li>
+            <li class="subtit-mi">
+              <router-link :to="{ name: 'ManagementGiro' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementGiro') }">지로 관리</span>
+              </router-link>
+            </li>
+            <li class="subtit-mi">
+              <router-link :to="{ name: 'ManagementDeposit' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementDeposit') }">수금 관리</span>
+              </router-link>
+            </li>
+            <li class="subtit-mi">
+              <router-link :to="{ name: 'ManagementDeposit' }">
+                <span class="check-tit hiden" :class="{ subtit: isMenuActive('ManagementDeposit') }">미수 현황</span>
               </router-link>
             </li>
             <li>

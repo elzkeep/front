@@ -15,7 +15,7 @@ export default class Extra {
 
     static async external(type: number, params: any) {
         const filenames = params.join(',')
-        
+
         const res = await request({
             method: 'GET',
             url: `/api/external?type=${type}&filenames=${filenames}`
@@ -53,7 +53,7 @@ export default class Extra {
 
         return res
     }
-    
+
     static async company(filename: string) {
         const res = await request({
             method: 'GET',
@@ -94,20 +94,21 @@ export default class Extra {
         return res
     }
 
-    static async makebill(durationtype: number, base: number, year: number, month: number, durationmonth: any, items: any, price: any, vat: any) {
+    static async makebill(durationtype: number, base: number, year: number, month: number, durationmonth: any, items: any, price: any, vat: any, remark: any) {
         let data = {
             durationtype: durationtype,
             base: base,
             ids: items.join(','),
             price: price.join(','),
             vat: vat.join(','),
+            remark: remark.join(','),
             month: month,
             durationmonth: durationmonth,
             year: year
         }
 
         console.log(data)
-        
+
         const res = await request({
             method: 'POST',
             url: '/api/billing/make',
@@ -119,9 +120,9 @@ export default class Extra {
 
     static async companyupload(filename: string) {
         let data = {
-            filename: filename            
+            filename: filename
         }
-        
+
         const res = await request({
             method: 'POST',
             url: '/api/company/upload',
@@ -131,7 +132,7 @@ export default class Extra {
         return res
     }
 
-    static async customerstatus(id: number) {        
+    static async customerstatus(id: number) {
         const res = await request({
             method: 'GET',
             url: `/api/customer/status/${id}`
@@ -140,7 +141,7 @@ export default class Extra {
         return res
     }
 
-    static async maxnumber(id: number) {        
+    static async maxnumber(id: number) {
         const res = await request({
             method: 'GET',
             url: `/api/customer/maxnumber/${id}`
@@ -149,10 +150,20 @@ export default class Extra {
         return res
     }
 
-    static async updateBilling(item: any) {
+    static async deposit(item: any) {
         const res = await request({
-            method: 'PUT',
-            url: '/api/billing/process',
+            method: 'POST',
+            url: '/api/billinghistory/deposit',
+            data: item
+        })
+
+        return res
+    }
+
+    static async depositdelete(item: any) {
+        const res = await request({
+            method: 'POST',
+            url: '/api/billinghistory/depositdelete',
             data: item
         })
 
@@ -191,5 +202,5 @@ export default class Extra {
         return res
     }
 
-    
+
 }
