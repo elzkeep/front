@@ -196,13 +196,15 @@ async function getItems() {
     res.customers = []
   }
   
+  data.notices = (res as any).notices ?? []
+
   info.users = res.users
   let customer = res.customers ?? []
 
   info.customers = customer.length
   info.newcustomers = customer.filter(item => item.date > week).length
 
-  let totalscore = customer.reduce((acc, item, idx) => acc + item.extra.building.score, 0)
+  let totalscore = customer.reduce((acc, item, idx) => acc + util.getFloat(item.extra?.building?.score), 0)
   info.totalprice = customer.reduce((acc, item, idx) => acc + item.contractprice, 0)
   if (totalscore > 0) {
     info.avgprice = util.getInt(info.totalprice / totalscore)

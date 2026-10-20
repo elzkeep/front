@@ -390,7 +390,7 @@ const item = {
   addressetc: '',
   type: 1,
   egirologinid: '',
-  erigopasswd: '',
+  egiropasswd: '',
   date: '',
 }
 

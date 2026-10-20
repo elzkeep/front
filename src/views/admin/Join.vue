@@ -23,8 +23,10 @@
         <span v-if="scope.row.category == 4">기타</span>
       </template>
     </el-table-column>
-    <el-table-column prop="title" label="제목" align="left" />
-    <el-table-column prop="order" label="순번" align="center" width="50" />
+    <el-table-column prop="name" label="단체명" align="left" />
+    <el-table-column prop="manager" label="연락담당자" align="center" width="120" />
+    <el-table-column prop="tel" label="연락처" align="center" width="130" />
+    <el-table-column prop="email" label="이메일" align="left" width="200" />
     <el-table-column prop="date" label="등록일" align="center" width="150" />    
   </el-table>  
 
@@ -39,10 +41,10 @@
           <y-th style="width: 80px">구분</y-th>
           <y-td>
             <el-radio-group v-model="data.item.category">
-              <el-radio-button size="small" value="1">안전관리대행사업자</el-radio-button>
-              <el-radio-button size="small" value="2">상주관리자</el-radio-button>
-              <el-radio-button size="small" value="3">기업/시설팀</el-radio-button>
-              <el-radio-button size="small" value="4">기타</el-radio-button>
+              <el-radio-button size="small" :value="1">안전관리대행사업자</el-radio-button>
+              <el-radio-button size="small" :value="2">상주관리자</el-radio-button>
+              <el-radio-button size="small" :value="3">기업/시설팀</el-radio-button>
+              <el-radio-button size="small" :value="4">기타</el-radio-button>
             </el-radio-group>
           </y-td>
         </y-tr>
@@ -132,10 +134,10 @@ async function initData() {
 
 async function getItems() {
   let res = await model.find({
-    title: data.search.text,
+    name: data.search.text,
     page: data.page,
     pagesize: data.pagesize,
-    orderby: 'wf_id desc'
+    orderby: 'wj_id desc'
   })
 
   if (res.items == null) {
@@ -225,6 +227,7 @@ function clickDeleteMulti() {
 
 async function clickSubmit() {  
   let item = util.clone(data.item)
+  item.category = util.getInt(item.category)
 
   if (item.name == '') {
     util.alert('단체명을 입력하세요')

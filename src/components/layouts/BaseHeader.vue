@@ -112,6 +112,8 @@ watch(
         break
       case 'ManagementStatistics':
       case 'ManagementBilling':
+      case 'ManagementGiro':
+      case 'ManagementDeposit':
       case 'ManagementTax':
         data.title = '매출 및 청구 관리'
         break
