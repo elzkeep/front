@@ -86,7 +86,7 @@ async function getItems() {
   if (data.mode == 'year') {
     res = await Statisticsyear.find({company: store.getters.getUser.company, orderby: 'bi_duration'})
   } else if (data.mode == 'month') {
-    res = await Statisticsmonth.find({company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration'})
+    res = await Statisticsmonth.find({company: store.getters.getUser.company, year: data.duration, orderby: 'bi_duration'})
   } else if (data.mode == 'day') {
     res = await Statisticsday.find({company: store.getters.getUser.company, duration: data.duration, orderby: 'bi_duration'})
   }

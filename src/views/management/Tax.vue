@@ -160,7 +160,7 @@ const data = reactive({
 })
 
 const setting = reactive({
-  contennt: '',
+  content: '',
   x1: 0,
   y1: 0,
   x2: 0,

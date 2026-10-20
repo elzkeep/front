@@ -185,6 +185,7 @@ import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
+import type { UploadProps } from 'element-plus'
 import axios from 'axios'
 import moment from 'moment'
 
@@ -251,7 +252,7 @@ const data = reactive({
 })
 
 const setting = reactive({
-  contennt: '',
+  content: '',
   x1: 0,
   y1: 0,
   x2: 0,
@@ -493,6 +494,11 @@ function clickStatusMulti(status) {
 }
 
 function clickGiroMulti() {
+  if (listSelection.value.length == 0) {
+    util.alert('지로 출력 대상을 선택하세요')
+    return
+  }
+
   util.confirm('지로 출력하시겠습니까', async function () {
     util.loading(true)
 

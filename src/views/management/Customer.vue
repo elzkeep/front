@@ -608,7 +608,7 @@ const item = {
   managertel: '',
   manageremail: '',
   contractstartdate: null,
-  contractendate: null,
+  contractenddate: null,
   contractprice: 0,
   contracttype: 1,
   billingdate: 1,
@@ -1081,7 +1081,7 @@ async function clickSubmit() {
     for (let i = 0; i < res.items.length; i++) {
       let d = res.items[i]
 
-      if (d.kepconumber == item.kepconumber) {
+      if (item.kepconumber != '' && d.kepconumber == item.kepconumber) {
         if (item.id > 0) {
           if (d.id != item.id) {
             flag = false
@@ -1093,7 +1093,7 @@ async function clickSubmit() {
         }
       }
 
-      if (d.kesconumber == item.kesconumber) {
+      if (item.kesconumber != '' && d.kesconumber == item.kesconumber) {
         if (item.id > 0) {
           if (d.id != item.id) {
             flag2 = false
@@ -1330,11 +1330,20 @@ async function clickBillSubmit() {
       remarks.push(encodeURIComponent(value.remark))
     }
 
-    await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(bill.durationmonth), ids, prices, vats, remarks)
+    // 체크 순서가 아닌 월 순서로 전송 (서버는 이전 월보다 작은 월을 다음 해로 처리)
+    let durationmonth = [...bill.durationmonth].map(m => util.getInt(m)).sort((a, b) => a - b)
+
+    let res: any = await Extra.makebill(bill.durationtype, bill.base, bill.year, bill.month, util.makeArray(durationmonth), ids, prices, vats, remarks)
+
+    util.loading(false)
+
+    if (res != null && res.code == 'error') {
+      util.alert(res.error || '매출 실행 중 오류가 발생했습니다')
+      return
+    }
 
     util.alert('매출 실행되었습니다')
 
-    util.loading(false)
     bill.visible = false
   })
 }

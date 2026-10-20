@@ -257,7 +257,7 @@ async function getBills() {
     items.push(item)
   }
 
-  data.total = res.total
+  data.total = items.length
   data.items = items
 }
 
@@ -265,7 +265,7 @@ async function getDepartments() {
   let res = await Department.find({
     name: data.search.text,
     page: data.page,
-    pagesize: data.pagesize,
+    pagesize: 0,
     company: store.getters.getUser.company,
     orderby: 'de_parent desc, de_order, de_name',
   })
