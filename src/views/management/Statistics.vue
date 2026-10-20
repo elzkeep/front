@@ -415,7 +415,22 @@ function clickBackDay() {
   getItems(true)
 }
 
-function clickDownload() {}
+function clickDownload() {
+  const params = new URLSearchParams()
+  if (data.search.startdate) {
+    params.append('startdate', data.search.startdate)
+  }
+  if (data.search.enddate) {
+    params.append('enddate', data.search.enddate)
+  }
+  if (data.manager.length > 0) {
+    params.append('users', data.manager.map(item => item.id).join(','))
+  }
+
+  const url = `/api/download/statistics?${params.toString()}`
+  const filename = `매출현황-${moment().format('YYYY-MM-DD')}.xlsx`
+  util.download(store, url, filename)
+}
 
 const getSummary = (param: SummaryMethodProps) => {
   const { columns, data } = param
