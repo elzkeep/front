@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '../store'
 import router from '../router'
+import util from './util'
 
 // create an axios instance
 const request = axios.create({
@@ -56,6 +57,9 @@ request.interceptors.response.use(
     return res;
   },
   function (error) {
+    // 요청 실패 시 전체 화면 로딩이 남지 않도록 닫는다
+    util.loading(false)
+
     if (error.response && error.response.status === 401) {
       store.commit('setLogout')
       router.push({ name: 'SignIn' })
