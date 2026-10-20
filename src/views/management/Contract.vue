@@ -229,7 +229,7 @@ const item = {
   managertel: '',
   manageremail: '',
   contractstartdate: null,
-  contractendate: null,
+  contractenddate: null,
   contractprice: 0,
   billingdate: 1,
   billingname: '',
