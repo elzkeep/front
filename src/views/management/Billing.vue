@@ -432,7 +432,7 @@ async function clickSubmit() {
 
 function clickStatusMulti(status) {
   let title = ''
-  if (status == 2) {
+  if (status == Billing.status.complete) {
     title = '수금 처리하시겠습니까'
   } else {
     title = '미수금 처리하시겠습니까'

@@ -30,7 +30,8 @@
         <el-radio-group v-model="data.search.status">
           <el-radio value="0">전체</el-radio>
           <el-radio value="1">미수금</el-radio>
-          <el-radio value="2">수금</el-radio>
+          <el-radio value="2">부분수금</el-radio>
+          <el-radio value="3">수금</el-radio>
         </el-radio-group>
         <div style="flex: 1; display: flex; align-items: center; justify-content: right">
           <el-button size="small" class="filter-item" type="primary" @click="clickSearch">검색</el-button>
@@ -77,7 +78,8 @@
     <el-table-column label="상태" align="center" width="50">
       <template #default="scope">
         <span v-if="scope.row.status == 1">미수금</span>
-        <span v-if="scope.row.status == 2">수금</span>
+        <span v-if="scope.row.status == 2">부분수금</span>
+        <span v-if="scope.row.status == 3">수금</span>
       </template>
     </el-table-column>
     <el-table-column prop="billingname" label="담당자" align="left" width="80" />
@@ -234,7 +236,8 @@ const data = reactive({
   statuss: [
     { id: 0, name: ' ' },
     { id: 1, name: '미수금' },
-    { id: 2, name: '수금' },
+    { id: 2, name: '부분수금' },
+    { id: 3, name: '수금' },
   ],
   durations: [
     { id: 1, name: '기간별' },
@@ -463,7 +466,7 @@ async function clickSubmit() {
 
 function clickStatusMulti(status) {
   let title = ''
-  if (status == 2) {
+  if (status == Billing.status.complete) {
     title = '수금 처리하시겠습니까'
   } else {
     title = '미수금 처리하시겠습니까'
