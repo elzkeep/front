@@ -57,7 +57,7 @@ request.interceptors.response.use(
   },
   function (error) {
     if (error.response && error.response.status === 401) {
-      store.commit('clear')
+      store.commit('setLogout')
       router.push({ name: 'SignIn' })
     }
     console.log('err' + error)
