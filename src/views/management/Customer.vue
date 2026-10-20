@@ -102,7 +102,7 @@
 
     <el-table-column label="청구방법" align="center" width="60">
       <template #default="scope">
-        {{ data.billingtypes[scope.row.billingtype].name }}
+        {{ data.billingtypes[scope.row.billingtype]?.name }}
       </template>
     </el-table-column>
     <el-table-column label="청구일" align="center" width="70">
@@ -462,7 +462,7 @@
       </el-table-column>
       <el-table-column label="청구형태" align="center" width="60">
         <template #default="scope">
-          {{ data.billingtypes[scope.row.billingtype].name }}
+          {{ data.billingtypes[scope.row.billingtype]?.name }}
         </template>
       </el-table-column>
       <el-table-column label="청구일" align="center" width="50">
@@ -731,7 +731,7 @@ const data = reactive({
     { id: 2, name: '계산서' },
     { id: 3, name: '카드' },
     { id: 4, name: 'CMS' },
-    { id: 4, name: '소매매출' },
+    { id: 5, name: '소매매출' },
   ],
   building: {
     companyno: '',
@@ -1237,6 +1237,8 @@ async function clickDataSubmit() {
   util.loading(false)
 }
 
+const currentYear = new Date().getFullYear()
+
 const bill = reactive({
   visible: false,
   month: 1,
@@ -1270,14 +1272,11 @@ const bill = reactive({
     { id: 12, name: '12월' },
   ],
   base: 1,
-  year: 2024,
-  years: [
-    { id: 2024, name: '2020' },
-    { id: 2024, name: '2021' },
-    { id: 2024, name: '2022' },
-    { id: 2024, name: '2023' },
-    { id: 2024, name: '2024' },
-  ],
+  year: currentYear,
+  years: Array.from({ length: 6 }, (_, i) => {
+    const year = currentYear - 4 + i
+    return { id: year, name: `${year}` }
+  }),
   durationtypes: [
     { id: 1, name: '기간별' },
     { id: 2, name: '지정월' },
@@ -1295,7 +1294,7 @@ async function clickBill() {
   bill.durationtype = 1
   bill.base = 1
   bill.month = 1
-  bill.year = 2024
+  bill.year = currentYear
   bill.durationmonth = []
 
   
