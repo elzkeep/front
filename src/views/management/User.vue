@@ -1194,12 +1194,16 @@ async function clickMultiSubmit() {
   util.loading(true)
 
   let filename = external.files[0].response.filename
-  await Extra.user(filename)
+  let res = await Extra.user(filename)
 
   data.visibleSelect = false
   data.visibleMulti = false
 
-  util.alert('저장되었습니다')
+  if (res.skipped != null && res.skipped.length > 0) {
+    util.alert(`저장되었습니다. 초기비밀번호(K열)가 없어 등록하지 않은 회원: ${res.skipped.join(', ')}`)
+  } else {
+    util.alert('저장되었습니다')
+  }
 
   await getItems(true)
 
