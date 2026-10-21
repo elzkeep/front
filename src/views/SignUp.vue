@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue'
 import { request, util } from '~/global'
-import { Company, User } from '~/models'
+import Signup from '~/models/signup'
 import router from '~/router'
 
 const item = reactive({
@@ -69,8 +69,8 @@ async function clickSignup() {
     return
   }
 
-  let res = await User.find({ loginid: item.loginid })
-  if (res.items.length > 0) {
+  let res: any = await Signup.check({ loginid: item.loginid, email: item.email, companyno: item.companyno })
+  if (res.loginid) {
     util.alert('이미 등록된 로그인아이디 입니다')
     return
   }
@@ -90,8 +90,7 @@ async function clickSignup() {
     return
   }
 
-  res = await User.find({ email: item.email })
-  if (res.items.length > 0) {
+  if (res.email) {
     util.alert('이미 등록된 이메일 입니다')
     return
   }
@@ -106,8 +105,7 @@ async function clickSignup() {
     return
   }
 
-  res = await Company.find({ companyno: item.companyno })
-  if (res.items.length > 0) {
+  if (res.companyno) {
     util.alert('이미 등록된 사업장입니다.')
     return
   }
@@ -129,7 +127,7 @@ async function clickSignup() {
 
   util.loading(true)
 
-  res = await Company.insert({
+  res = await Signup.company({
     name: item.companyname,
     companyno: item.companyno,
     ceo: item.ceo,
@@ -137,10 +135,7 @@ async function clickSignup() {
     email: item.email,
     address: item.address,
     addressetc: item.addressetc,
-    type: 1,
-  })
-
-  await User.insert({
+  }, {
     loginid: item.loginid,
     passwd: item.passwd,
     name: item.ceo,
@@ -148,11 +143,13 @@ async function clickSignup() {
     tel: item.tel,
     address: item.address,
     addressetc: item.addressetc,
-    level: User.level.admin,
-    approval: User.approval.complete,
-    status: User.status.use,
-    company: res.id,
   })
+
+  if (res.code != 'ok') {
+    util.loading(false)
+    util.alert(res.message || '회원가입에 실패했습니다')
+    return
+  }
 
   util.loading(false)
 
