@@ -603,6 +603,7 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import router from '~/router'
 import { util, size } from '~/global'
 import { User, Userlist, Company, Department, Customer, License } from '~/models'
+import Signup from '~/models/signup'
 import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
@@ -1024,8 +1025,8 @@ async function clickSubmit() {
       return
     }
 
-    let res = await User.find({ loginid: item.loginid })
-    if (res.items.some((u: any) => u.id != item.id)) {
+    let res: any = await Signup.check({ loginid: item.loginid, except: item.id })
+    if (res.loginid) {
       util.alert('이미 등록된 로그인아이디 입니다')
       return
     }

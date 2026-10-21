@@ -204,6 +204,7 @@ import { User, Userlist, Company, Department } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
+import Signup from '~/models/signup'
 
 const { width, height } = size()
 
@@ -428,8 +429,8 @@ async function clickSubmit() {
     return
   }
 
-  let res = await User.find({loginid: item.loginid})
-  if (res.items.some((u: any) => u.id != item.id)) {
+  let res: any = await Signup.check({ loginid: item.loginid, except: item.id })
+  if (res.loginid) {
     util.alert('이미 등록된 로그인아이디 입니다')
     return
   }
