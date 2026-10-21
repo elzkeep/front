@@ -116,7 +116,7 @@
     <y-tr>
       <y-th>단선결선도</y-th>
       <y-td>
-        <el-upload class="file-uploader" :action="data.upload" :show-file-list="false" :on-success="handleFileSuccess" :auto-upload="true">
+        <el-upload class="file-uploader" :action="data.upload" :headers="headers" :show-file-list="false" :on-success="handleFileSuccess" :auto-upload="true">
           <img v-if="imageUrl" :src="imageUrl" class="file" />
           <el-icon v-else class="file-uploader-icon"><Plus /></el-icon>
         </el-upload>
@@ -290,6 +290,10 @@ const { width, height } = size()
 const store = useStore()
 const route = useRoute()
 
+const headers = {
+  Authorization: 'Bearer ' + store.state.token,
+}
+
 const model = Facility
 
 const item = {
@@ -435,7 +439,17 @@ async function getItems() {
     data.highs.push(item2)
   } else {
     for (let i = 0; i < data.highs.length; i++) {
-      data.highs[i].content = JSON.parse(data.highs[i].content)
+      let high: any = data.highs[i]
+
+      try {
+        high.content = JSON.parse(high.content)
+      } catch (e) {
+        high.content = []
+      }
+
+      if (!Array.isArray(high.content)) {
+        high.content = []
+      }
     }
   }
 }
@@ -572,7 +586,9 @@ const beforeFileUpload: UploadProps['beforeUpload'] = rawFile => {
 }
 
 function clickAddHigh() {
-  data.highs.push(util.clone(item))
+  let item2 = util.clone(item)
+  item2.content = []
+  data.highs.push(item2)
 }
 
 function clickDeleteHigh(pos) {

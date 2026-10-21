@@ -209,7 +209,7 @@ export default class util {
     return num
   }
 
-  _loading: any = null
+  static _loading: any = null
 
   static loading(value: boolean) {
     if (value == true) {
@@ -218,8 +218,9 @@ export default class util {
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
       })
-    } else {
+    } else if (this._loading != null) {
       this._loading.close()
+      this._loading = null
     }
   }
 

@@ -257,7 +257,7 @@ async function getBills() {
     items.push(item)
   }
 
-  data.total = res.total
+  data.total = items.length
   data.items = items
 }
 
@@ -265,7 +265,7 @@ async function getDepartments() {
   let res = await Department.find({
     name: data.search.text,
     page: data.page,
-    pagesize: data.pagesize,
+    pagesize: 0,
     company: store.getters.getUser.company,
     orderby: 'de_parent desc, de_order, de_name',
   })
@@ -415,7 +415,22 @@ function clickBackDay() {
   getItems(true)
 }
 
-function clickDownload() {}
+function clickDownload() {
+  const params = new URLSearchParams()
+  if (data.search.startdate) {
+    params.append('startdate', data.search.startdate)
+  }
+  if (data.search.enddate) {
+    params.append('enddate', data.search.enddate)
+  }
+  if (data.manager.length > 0) {
+    params.append('users', data.manager.map(item => item.id).join(','))
+  }
+
+  const url = `/api/download/statistics?${params.toString()}`
+  const filename = `매출현황-${moment().format('YYYY-MM-DD')}.xlsx`
+  util.download(store, url, filename)
+}
 
 const getSummary = (param: SummaryMethodProps) => {
   const { columns, data } = param

@@ -22,8 +22,8 @@
             @click="clickId"
             style="margin-right: 10px; margin-left: 10px"
             >아이디 찾기</el-link
-          >|
-          <el-link :underline="false" @click="clickPasswd" style="margin-left: 10px">비밀번호 찾기</el-link>
+          >
+          <!-- 비밀번호 찾기 화면(/findpasswd)이 없어 링크 숨김 -->
         </div>
       </div>
     </el-card>
@@ -82,10 +82,6 @@ function clickSignup() {
 
 function clickId() {
   router.push('/findid')
-}
-
-function clickPasswd() {
-  router.push('/findpasswd')
 }
 </script>
 <style>

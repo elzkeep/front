@@ -114,7 +114,7 @@
       <y-tr>
         <y-th>비밀번호</y-th>
         <y-td>
-          <el-input v-model="data.item.passwd" show-password />
+          <el-input v-model="data.item.passwd" show-password :placeholder="data.item.id > 0 ? '변경 시에만 입력하세요' : ''" />
         </y-td>
       </y-tr>
       <y-tr>
@@ -607,6 +607,7 @@ import Extra from '~/models/extra'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
+import type { UploadProps } from 'element-plus'
 import moment from 'moment'
 
 const { width, height } = size()
@@ -879,8 +880,8 @@ function clickInsert() {
   }
 
   data.item = util.clone(item)
-  data.item.passwd2 = data.item.passwd
-  data.item.joindate = moment().format('YYYY.MM.DD')
+  data.item.passwd2 = ''
+  data.item.joindate = moment().format('YYYY-MM-DD')
   data.visible = true
 }
 
@@ -942,7 +943,8 @@ function clickUpdate(item, index) {
   }
 
   data.item = util.clone(item)
-  data.item.passwd2 = data.item.passwd
+  data.item.passwd = ''
+  data.item.passwd2 = ''
   data.visible = true
 }
 
@@ -1023,19 +1025,21 @@ async function clickSubmit() {
     }
 
     let res = await User.find({ loginid: item.loginid })
-    if ((item.id == 0 && res.items.length > 0) || (item.id != 0 && res.items.length > 1)) {
+    if (res.items.some((u: any) => u.id != item.id)) {
       util.alert('이미 등록된 로그인아이디 입니다')
       return
     }
 
-    if (item.passwd == '') {
-      util.alert('비밀번호를 입력하세요')
-      return
-    }
+    if (item.id == 0 || item.passwd != '') {
+      if (item.passwd == '') {
+        util.alert('비밀번호를 입력하세요')
+        return
+      }
 
-    if (item.passwd2 == '') {
-      util.alert('비밀번호를 입력하세요')
-      return
+      if (item.passwd2 == '') {
+        util.alert('비밀번호를 입력하세요')
+        return
+      }
     }
 
     if (item.name == '') {
@@ -1043,7 +1047,7 @@ async function clickSubmit() {
       return
     }
 
-    if (item.passwd != item.passwd2) {
+    if (item.passwd != '' && item.passwd != item.passwd2) {
       util.alert('비밀번호가 정확하지 않습니다')
       return
     }

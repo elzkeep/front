@@ -185,12 +185,12 @@
         <y-th style="width: 150px">구분</y-th>
         <y-td>
           <el-radio-group v-model="deposit.deposit.type">
-            <el-radio-button size="small" value="1">이체</el-radio-button>
-            <el-radio-button size="small" value="2">지로</el-radio-button>
-            <el-radio-button size="small" value="3">현금</el-radio-button>
-            <el-radio-button size="small" value="4">카드</el-radio-button>
-            <el-radio-button size="small" value="5">CMS</el-radio-button>
-            <el-radio-button size="small" value="6">기타</el-radio-button>
+            <el-radio-button size="small" :value="1">이체</el-radio-button>
+            <el-radio-button size="small" :value="2">지로</el-radio-button>
+            <el-radio-button size="small" :value="3">현금</el-radio-button>
+            <el-radio-button size="small" :value="4">카드</el-radio-button>
+            <el-radio-button size="small" :value="5">CMS</el-radio-button>
+            <el-radio-button size="small" :value="6">기타</el-radio-button>
           </el-radio-group>
         </y-td>
       </y-tr>
@@ -432,7 +432,7 @@ async function clickSubmit() {
 
 function clickStatusMulti(status) {
   let title = ''
-  if (status == 2) {
+  if (status == Billing.status.complete) {
     title = '수금 처리하시겠습니까'
   } else {
     title = '미수금 처리하시겠습니까'
@@ -446,7 +446,7 @@ function clickStatusMulti(status) {
 
       let res = await Billing.get(value.id)
       res.item.status = status
-      await Extra.updateBilling(res.item)
+      await Billing.update(res.item)
     }
 
     //util.info('삭제되었습니다')
@@ -472,10 +472,17 @@ const billinghistory = {
   
 }
 
+const depositItem = {
+  type: 1,
+  price: 0,
+  remark: ''
+}
+
 const deposit = reactive({
   visible: false,
   visibleInsert: false,
-  item: util.clone(billinghistory)
+  item: util.clone(billinghistory),
+  deposit: util.clone(depositItem)
 })
 
 
@@ -558,8 +565,7 @@ async function clickDeleteDepositMulti() {
 }
 
 async function clickInsertDeposit() {
-  deposit.deposit = util.clone(deposit)
-  deposit.deposit.type = 1
+  deposit.deposit = util.clone(depositItem)
   
   deposit.visibleInsert = true
 }

@@ -172,12 +172,12 @@ async function initData() {
 
   res = await Customer.find({company:data.session.company})
   data.buildingscore = res.items.reduce((acc, cur, index) => {
-    return acc = cur.extra.building.score
+    return acc + util.getFloat(cur.extra?.building?.score)
   }, 0)
 
   res = await User.find({company:data.session.company})
   data.userscore = res.items.reduce((acc, cur, index) => {
-    return acc = cur.score
+    return acc + util.getFloat(cur.score)
   }, 0)  
 }
 
@@ -250,24 +250,17 @@ onMounted(async () => {
   util.loading(false)
 })
 
+// 달력 항목 클릭 시 이동할 화면(route)이 없어 동작하지 않도록 둔다
 function clickOrder(item) {
-  let n = { day: item.day }
-  router.push({name: 'ShopOrdertrans', params: n})
 }
 
 function clickCancel(item) {
-  let n = { day: item.day }
-  router.push({name: 'ShopCancel', params: n})
 }
 
 function clickChange(item) {
-  let n = { day: item.day }
-  router.push({name: 'ShopChange', params: n})
 }
 
 function clickReturn(item) {
-  let n = { day: item.day }
-  router.push({name: 'ShopReturn', params: n})
 }
 
 function clickUpdateNotice(item, index) {  

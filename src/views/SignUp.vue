@@ -101,6 +101,11 @@ async function clickSignup() {
     return
   }
 
+  if (item.companyno == '') {
+    util.alert('사업자번호를 입력하세요')
+    return
+  }
+
   res = await Company.find({ companyno: item.companyno })
   if (res.items.length > 0) {
     util.alert('이미 등록된 사업장입니다.')

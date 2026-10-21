@@ -37,8 +37,8 @@
           <y-th style="width: 80px">구분</y-th>
           <y-td>
             <el-radio-group v-model="data.item.category">
-              <el-radio-button size="small" value="1">프로그램</el-radio-button>
-              <el-radio-button size="small" value="2">일반이용</el-radio-button>
+              <el-radio-button size="small" :value="1">프로그램</el-radio-button>
+              <el-radio-button size="small" :value="2">일반이용</el-radio-button>
             </el-radio-group>
           </y-td>
         </y-tr>

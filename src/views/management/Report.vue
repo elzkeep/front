@@ -124,7 +124,7 @@ const item = {
   managertel: '',
   manageremail: '',
   contractstartdate: null,
-  contractendate: null,
+  contractenddate: null,
   contractprice: 0,
   billingdate: 1,
   billingname: '',
@@ -197,7 +197,12 @@ async function initData() {
 
   data.companys = [{ id: 0, name: ' ' }, ...res.items]
 
+  if (data.session.level != User.level.rootadmin) {
+    data.search.company = data.session.company
+  }
+
   res = await Building.find({
+    company: data.search.company,
     orderby: 'b_name',
   })
 
@@ -206,7 +211,7 @@ async function initData() {
   let company = 0
 
   res = await User.find({
-    company: data.session.company,
+    company: data.search.company,
     orderby: 'u_name',
   })
 
@@ -225,7 +230,7 @@ async function initData() {
     let item = res.items[i]
     if (item.status == 1) {
       status1++
-    } else if (item.status == 3) {
+    } else if (item.status == 2) {
       status2++
     } else if (item.status == 3 || item.status == 4) {
       status3++
@@ -247,7 +252,7 @@ async function getItems() {
     pagesize: data.pagesize,
     company: data.search.company,
     building: data.search.building,
-    user: data.session.user,
+    user: data.search.user,
     status: data.search.status,
     orderby: 'r_id desc',
   })

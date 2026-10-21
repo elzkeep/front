@@ -31,7 +31,7 @@
       </template>
     </el-table-column>        
     <el-table-column prop="name" label="명칭" align="left" />
-    <el-table-column prop="remark" label="대표" align="left" width="100" />
+    <el-table-column prop="ceo" label="대표" align="left" width="100" />
     <el-table-column prop="remark" label="주소" align="left">
       <template #default="scope">
         {{scope.row.address}} {{scope.row.addressetc}}

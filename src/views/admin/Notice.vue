@@ -36,8 +36,8 @@
           <y-th style="width: 80px">구분</y-th>
           <y-td>
             <el-radio-group v-model="data.item.category">
-              <el-radio-button size="small" value="1">공지</el-radio-button>
-              <el-radio-button size="small" value="2">안내</el-radio-button>
+              <el-radio-button size="small" :value="1">공지</el-radio-button>
+              <el-radio-button size="small" :value="2">안내</el-radio-button>
             </el-radio-group>
           </y-td>
         </y-tr>
@@ -94,6 +94,7 @@ import { Webnotice } from "~/models"
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ElTable } from 'element-plus'
+import type { UploadProps } from 'element-plus'
 
 const { width, height } = size()
 
