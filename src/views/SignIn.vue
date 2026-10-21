@@ -70,8 +70,9 @@ async function clickSignin() {
     }
 
     router.push('/')
+  } else if (res.message === 'approval error') {
+    util.alert('가입 승인 대기 중이거나 승인되지 않은 계정입니다')
   } else {
-    console.log(res)
     util.alert('로그인 정보가 정확하지 않습니다')
   }
 }
