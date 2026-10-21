@@ -1200,7 +1200,7 @@ async function clickMultiSubmit() {
   data.visibleMulti = false
 
   if (res.skipped != null && res.skipped.length > 0) {
-    util.alert(`저장되었습니다. 초기비밀번호(K열)가 없어 등록하지 않은 회원: ${res.skipped.join(', ')}`)
+    util.alert(`저장되었습니다. 초기비밀번호(K열)가 없거나 72자를 넘어 등록하지 않은 회원: ${res.skipped.join(', ')}`)
   } else {
     util.alert('저장되었습니다')
   }
